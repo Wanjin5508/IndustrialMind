@@ -1,189 +1,184 @@
-IndustrialMind.ai Solution Design Challenge
+# IndustrialMind.ai 解决方案设计挑战（Solution Design Challenge）
 
-Background
+## 背景（Background）
 
-IndustrialMind.ai builds AI Agents for manufacturing and engineering teams. Our platform helps industrial companies automate engineering workflows, accelerate quotation and process planning, improve quality, and capture engineering knowledge.
+IndustrialMind.ai 为制造与工程团队构建人工智能智能体（AI Agents）。我们的平台帮助工业企业实现工程工作流自动化（Engineering Workflow Automation），加快报价与工艺规划，提高质量，并沉淀工程知识。
 
-Typical use cases include:
+典型应用场景包括：
 
-* Drawing & Document Understanding
-* AI Quotation Management
-* Bill of Materials (BOM) Generation
-* Design Review & Engineering Validation
-* Process Planning & Routing Generation
-* Root Cause Analysis & Manufacturing Intelligence
-* AI Engineering Assistants
+* 图纸与文档理解（Drawing & Document Understanding）
+* AI 报价管理（AI Quotation Management）
+* 物料清单生成（Bill of Materials Generation，BOM Generation）
+* 设计审查与工程验证（Design Review & Engineering Validation）
+* 工艺规划与工艺路线生成（Process Planning & Routing Generation）
+* 根因分析与制造智能（Root Cause Analysis & Manufacturing Intelligence）
+* AI 工程助手（AI Engineering Assistants）
 
-You can review our website and publicly available materials to understand our products and positioning.
+你可以查阅我们的网站和公开资料，了解我们的产品及市场定位。
 
-⸻
+---
 
-Customer Scenario
+## 客户场景（Customer Scenario）
 
-You are working as a Solution Architect at IndustrialMind.ai.
+假设你在 IndustrialMind.ai 担任解决方案架构师（Solution Architect）。
 
-A manufacturing company approaches you with the following challenge:
+一家制造企业向你提出了以下挑战。
 
-Customer Profile
+### 客户概况（Customer Profile）
 
-Company: PrecisionMotion GmbH
+* 公司：PrecisionMotion GmbH
+* 行业：工业自动化零部件（Industrial Automation Components）
+* 所在地：德国
+* 员工人数：2,500 人
+* 工程团队：150 名工程师
+* 工厂分布：德国、波兰和中国
 
-Industry: Industrial Automation Components
+### 当前状况（Current Situation）
 
-Location: Germany
+该公司生产以下产品：
 
-Employees: 2,500
+* 齿轮箱（Gearboxes）
+* 伺服电机（Servo Motors）
+* 工业执行器（Industrial Actuators）
+* 定制机械总成（Custom Mechanical Assemblies）
 
-Engineering Team: 150 engineers
+每年收到的客户需求与工程资料大约包括：
 
-Factories: Germany, Poland, and China
+* 15,000 份客户询价请求（Requests for Quotation，RFQs）
+* 50,000 张工程图纸（Engineering Drawings）
+* 30,000 个计算机辅助设计模型（Computer-Aided Design Models，CAD Models）
+* 数千份工程变更请求（Engineering Change Requests）
 
-Current Situation
+现有流程高度依赖人工：
 
-The company manufactures:
+1. 工程师手动审查图纸。
+2. 手动创建物料清单（BOM）。
+3. 手动编制工艺路线（Routing）与工艺方案（Process Plans）。
+4. 报价需要投入大量工程工作。
+5. 设计审查依赖资深工程师。
+6. 工程知识分散在各类文档和员工的个人经验中。
 
-* Gearboxes
-* Servo Motors
-* Industrial Actuators
-* Custom Mechanical Assemblies
+管理层希望探索如何利用 AI 提高工程团队的生产力，并缩短业务处理周期（Lead Time）。
 
-Every year they receive approximately:
+---
 
-* 15,000 customer RFQs
-* 50,000 engineering drawings
-* 30,000 CAD models
-* Thousands of engineering change requests
+## 任务（Assignment）
 
-Their current process is highly manual:
+利用 IndustrialMind.ai 的能力，设计一套由 AI 驱动的解决方案。
 
-1. Engineers review drawings manually.
-2. BOMs are created manually.
-3. Routing and process plans are prepared manually.
-4. Quotations require significant engineering effort.
-5. Design reviews depend on senior engineers.
-6. Engineering knowledge is scattered across documents and employee experience.
+你的方案应回答以下问题。
 
-Management wants to explore how AI can improve engineering productivity and reduce lead time.
+### 第一部分：问题分析（Problem Analysis）
 
-⸻
+* 最主要的业务痛点是什么？
+* 哪些流程占用的工程人力和工时最多？
+* AI 应用于哪些环节能够带来最高的投资回报率（Return on Investment，ROI）？
 
-Assignment
+---
 
-Design an AI-powered solution using IndustrialMind.ai capabilities.
+### 第二部分：解决方案设计（Solution Design）
 
-Your solution should answer:
+为客户设计一个 AI 工程平台（AI Engineering Platform）。
 
-Part 1: Problem Analysis
+请说明：
 
-* What are the biggest business pain points?
-* Which processes consume the most engineering effort?
-* Where would AI generate the highest ROI?
+* 核心 AI 智能体（Core AI Agents）
+* 数据来源（Data Sources）
+* 用户工作流（User Workflows）
+* 预期输出（Expected Outputs）
 
-⸻
+可参考以下示例：
 
-Part 2: Solution Design
+* 图纸助手（Drawing Assistant）
+* 报价智能体（Quotation Agent）
+* 物料清单智能体（BOM Agent）
+* 设计审查智能体（Design Review Agent）
+* 工艺规划智能体（Process Planning Agent）
+* 工程知识智能体（Engineering Knowledge Agent）
 
-Design an AI Engineering Platform for the customer.
+---
 
-Describe:
+### 第三部分：技术架构（Technical Architecture）
 
-* Core AI Agents
-* Data sources
-* User workflows
-* Expected outputs
+请说明：
 
-Examples:
+* 系统总体架构（High-Level System Architecture）
+* 大语言模型（Large Language Models，LLMs）及其他 AI 模型
+* 知识库（Knowledge Base）
+* 智能体编排（Agent Orchestration）
+* 人在回路中的参与和审核机制（Human-in-the-Loop）
+* 与企业资源计划（Enterprise Resource Planning，ERP）、产品生命周期管理（Product Lifecycle Management，PLM）及制造执行系统（Manufacturing Execution System，MES）的集成
 
-* Drawing Assistant
-* Quotation Agent
-* BOM Agent
-* Design Review Agent
-* Process Planning Agent
-* Engineering Knowledge Agent
+可根据需要使用图示。
 
-⸻
+---
 
-Part 3: Technical Architecture
+### 第四部分：商业论证（Business Case）
 
-Describe:
+请估算：
 
-* High-level system architecture
-* LLMs and AI models
-* Knowledge base
-* Agent orchestration
-* Human-in-the-loop design
-* Integration with ERP / PLM / MES systems
+* 潜在的生产力提升幅度（Productivity Improvements）
+* 可节省或重新调配的人员数量（Headcount Savings or Reallocation）
+* 报价周期（Quotation Lead Time）的缩短幅度
+* 工程工作量（Engineering Effort）的减少幅度
+* 三年内的投资回报率（ROI）
 
-You may use diagrams if desired.
+请明确说明所有估算假设。
 
-⸻
+---
 
-Part 4: Business Case
+### 第五部分：实施路线图（Roadmap）
 
-Estimate:
+请提出以下阶段的实施方案：
 
-* Potential productivity improvements
-* Headcount savings or reallocation
-* Reduction in quotation lead time
-* Reduction in engineering effort
-* ROI within 3 years
+#### 第一阶段（0–3 个月）
 
-State any assumptions clearly.
+开展能够快速见效的改进（Quick Wins）和试点项目（Pilot Project）。
 
-⸻
+#### 第二阶段（3–9 个月）
 
-Part 5: Roadmap
+在部门范围内推广部署（Department Rollout）。
 
-Propose:
+#### 第三阶段（9–24 个月）
 
-Phase 1 (0–3 months)
+建设企业级 AI 工程平台（Enterprise AI Engineering Platform）。
 
-Quick wins and pilot project
+---
 
-Phase 2 (3–9 months)
+## 交付成果（Deliverables）
 
-Department rollout
+从以下两种形式中选择一种。
 
-Phase 3 (9–24 months)
+### 选项 A：演示文稿（Presentation）
 
-Enterprise AI Engineering Platform
+制作一份 PowerPoint 演示文稿，共 8–12 页幻灯片。
 
-⸻
+建议结构：
 
-Deliverables
+1. 客户理解（Customer Understanding）
+2. 当前挑战（Current Challenges）
+3. 拟议的 AI 解决方案（Proposed AI Solution）
+4. 架构（Architecture）
+5. 工作流示例（Example Workflow）
+6. 投资回报率分析（ROI Analysis）
+7. 实施路线图（Implementation Roadmap）
+8. 风险与应对措施（Risks & Mitigation）
 
-Choose one of the following:
+---
 
-Option A – Presentation
+### 选项 B：通过 AI 辅助编程构建原型（Vibe Coding Prototype）
 
-Prepare a PowerPoint presentation (8–12 slides).
+构建一个轻量级原型（Lightweight Prototype），演示以下一项或多项功能：
 
-Recommended structure:
+* AI 图纸审查助手（AI Drawing Review Assistant）
+* AI 询价与报价智能体（AI RFQ & Quotation Agent）
+* AI 工艺规划智能体（AI Process Planning Agent）
+* AI 工程知识检索（AI Engineering Knowledge Search）
+* AI 物料清单生成助手（AI BOM Generation Assistant）
 
-1. Customer Understanding
-2. Current Challenges
-3. Proposed AI Solution
-4. Architecture
-5. Example Workflow
-6. ROI Analysis
-7. Implementation Roadmap
-8. Risks & Mitigation
+要求：
 
-⸻
-
-Option B – Vibe Coding Prototype
-
-Build a lightweight prototype demonstrating one or more of the following:
-
-* AI Drawing Review Assistant
-* AI RFQ & Quotation Agent
-* AI Process Planning Agent
-* AI Engineering Knowledge Search
-* AI BOM Generation Assistant
-
-Requirements:
-
-* Use any framework (LangGraph, CrewAI, OpenAI SDK, Claude, Gemini, etc.)
-* Working prototype preferred over polished UI
-* Explain architecture decisions
-* Demonstrate sample input/output
+* 可使用任意框架或相关工具，例如 LangGraph、CrewAI、OpenAI SDK、Claude、Gemini 等。
+* 优先保证原型能够实际运行，其次再考虑用户界面（User Interface，UI）的美观与完善。
+* 解释架构决策（Architecture Decisions）的依据。
+* 展示输入与输出示例（Sample Input/Output）。
