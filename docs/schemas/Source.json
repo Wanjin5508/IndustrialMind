@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "document_id": {
+      "title": "Document Id",
+      "type": "string"
+    },
+    "page": {
+      "minimum": 1,
+      "title": "Page",
+      "type": "integer"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "bbox": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bbox"
+    },
+    "locator": {
+      "default": "text",
+      "enum": [
+        "text",
+        "page"
+      ],
+      "title": "Locator",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "document_id",
+    "page",
+    "text"
+  ],
+  "title": "Source",
+  "type": "object"
+}

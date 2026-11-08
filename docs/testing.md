@@ -1,0 +1,14 @@
+# 测试与验收策略
+
+Owner: Engineering · Status: active · Updated: 2026-11-08
+
+| 层级 | 验证内容 | 证据 |
+|---|---|---|
+| M0 契约 | 正整数数量、拒绝未知字段、来源 hash、真值隔离 | `tests/test_contracts.py` |
+| M1 业务/API | 100/500 件独立计算、冲突阻断、审批失效、持久化、并发版本与权限 | 后续 M1 测试记录 |
+| M2 文件与界面 | 实际 PDF/文本抽取、冲突修正、来源查看、完整操作 | 后续集成测试与浏览器验收 |
+| M2 live | 显式调用配置的多模态模型，记录模型、耗时与结果 | 单独 live 验收记录；未配置时明确未通过 |
+
+运行：`.\.venv\Scripts\python.exe -m pytest -q`。风格：`python -m ruff check apps/api scripts tests` 和 `python -m ruff format --check apps/api scripts tests`。前端实现后执行 typecheck 与 production build。
+
+优先测试会造成错误价格、过期审批、越权读取或重复结果的行为。独立使用硬编码预期金额校验公式，不用同一计算函数生成答案。真实模型测试显式 opt-in，不消耗用户未配置的服务额度。

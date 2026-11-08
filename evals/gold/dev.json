@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "review_status": "assistant-authored; independently checked by acceptance tests and PDF visual review; no customer engineering sign-off",
+  "notice": "Evaluation only. Never index this file or send it to an extraction provider.",
+  "cases": {
+    "DEV-001": {"part_number": "PM-BRKT-010", "required_revision": "B", "drawing_revision": "B", "material": "Al-6061-T6", "unit": "mm", "currency": "EUR", "quantity": 100, "unit_cost": "19.10", "unit_price": "25.47", "total_price": "2547.00", "blocking_issues": []},
+    "DEV-002": {"quantity": 500, "unit_cost": "18.38", "unit_price": "24.51", "total_price": "12255.00", "blocking_issues": []},
+    "DEV-003": {"required_revision": "B", "drawing_revision": "A", "blocking_issues": ["REVISION_CONFLICT"]},
+    "DEV-004": {"material": null, "blocking_issues": ["MISSING_FIELD"]},
+    "DEV-005": {"unit": "inch", "blocking_issues": ["UNSUPPORTED_UNIT"]},
+    "DEV-006": {"material": "Steel-S235", "blocking_issues": ["UNSUPPORTED_MATERIAL"]}
+  }
+}

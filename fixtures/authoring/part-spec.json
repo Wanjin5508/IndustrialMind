@@ -1,0 +1,30 @@
+{
+  "origin_type": "synthetic",
+  "runtime_access": false,
+  "part_number": "PM-BRKT-010",
+  "shape": "flat actuator mounting plate",
+  "width_mm": 80,
+  "height_mm": 50,
+  "thickness_mm": 12,
+  "holes": {
+    "diameter_mm": 6.5,
+    "centers_mm": [
+      [
+        10,
+        10
+      ],
+      [
+        70,
+        10
+      ],
+      [
+        10,
+        40
+      ],
+      [
+        70,
+        40
+      ]
+    ]
+  }
+}
