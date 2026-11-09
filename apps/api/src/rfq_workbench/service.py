@@ -146,6 +146,7 @@ class Workflow:
                 "quote_hash": fingerprint(body["quote"]),
                 "draft_version": body["quote"]["draft_version"],
                 "internal_only": True,
+                "technical_confirmed": True,
             }
             body["state"] = RunState.APPROVED_DRAFT
             return body["approval"]
@@ -190,7 +191,7 @@ class Workflow:
             lines += ["", "## Pending / excluded"] + [f"- {item}" for item in quote["pending"]]
             lines += [
                 "",
-                f"Approved by: {actor}",
+                f"Approved by: {approval['actor']}",
                 f"Input hash: {quote['input_hash']}",
                 f"Reference hash: {quote['reference_hash']}",
                 f"Draft version: {quote['draft_version']}",

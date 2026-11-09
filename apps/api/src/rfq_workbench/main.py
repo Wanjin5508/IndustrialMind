@@ -2,13 +2,22 @@
 
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Header
+from fastapi import Depends, FastAPI, File, Form, Header, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from rfq_workbench.config import Settings
-from rfq_workbench.contracts import ApproveRequest, ChangeInputs, ConfirmedInputs, Mutation
+from rfq_workbench.contracts import (
+    AnalyzeRequest,
+    ApproveRequest,
+    ChangeInputs,
+    ConfirmedInputs,
+    CorrectFields,
+    Mutation,
+)
+from rfq_workbench.documents import MAX_FILE_BYTES, asset_path
 from rfq_workbench.errors import DomainError
+from rfq_workbench.file_workflow import FileWorkflow, fixture_catalog
 from rfq_workbench.repository import Repository
 from rfq_workbench.service import Workflow
 
@@ -17,6 +26,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     repository = Repository(settings.data_dir / "workbench.sqlite3")
     workflow = Workflow(settings, repository)
+    file_workflow = FileWorkflow(settings, repository)
     app = FastAPI(
         title="PrecisionMotion RFQ Workbench",
         version="0.1.0",
@@ -24,6 +34,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.workflow = workflow
     app.state.settings = settings
+    app.state.file_workflow = file_workflow
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.allowed_origin],
@@ -62,6 +73,48 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def list_runs(_who: Annotated[str, Depends(actor)]):
         return repository.list()
 
+    @app.get("/capabilities")
+    def capabilities(_who: Annotated[str, Depends(actor)]):
+        return {
+            "live_available": bool(settings.model_key and settings.model_name),
+            "model": settings.model_name or None,
+            "local_mode": "LOCAL_TEXT",
+            "scope": "PM-DEMO / DE-DEMO / PM-BRKT-010",
+            "max_file_mib": 5,
+            "max_pdf_pages": 3,
+        }
+
+    @app.get("/fixtures")
+    def fixtures(_who: Annotated[str, Depends(actor)]):
+        return [
+            {"id": c["id"], "label": c["label"], "origin_type": c["origin_type"]}
+            for c in fixture_catalog()
+        ]
+
+    @app.post("/runs/from-fixture/{case_id}", status_code=201)
+    def from_fixture(case_id: str, who: Annotated[str, Depends(engineer)]):
+        return file_workflow.from_fixture(case_id, who)
+
+    def read_upload(upload: UploadFile) -> bytes:
+        try:
+            return upload.file.read(MAX_FILE_BYTES + 1)
+        finally:
+            upload.file.close()
+
+    @app.post("/runs/upload", status_code=201)
+    def upload(
+        who: Annotated[str, Depends(engineer)],
+        rfq: Annotated[UploadFile, File()],
+        drawing: Annotated[UploadFile, File()],
+    ):
+        return file_workflow.create(
+            rfq.filename or "rfq.md",
+            read_upload(rfq),
+            drawing.filename or "drawing.pdf",
+            read_upload(drawing),
+            who,
+        )
+
     @app.post("/runs/confirmed", status_code=201)
     def confirmed(inputs: ConfirmedInputs, who: Annotated[str, Depends(engineer)]):
         return workflow.create_confirmed(inputs, who)
@@ -69,6 +122,39 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/runs/{run_id}")
     def get_run(run_id: str, _who: Annotated[str, Depends(actor)]):
         return repository.get(run_id)
+
+    @app.post("/runs/{run_id}/analyze")
+    def analyze(run_id: str, request: AnalyzeRequest, who: Annotated[str, Depends(engineer)]):
+        return file_workflow.analyze(run_id, request.expected_version, request.mode, who)
+
+    @app.patch("/runs/{run_id}/fields")
+    def correct_fields(run_id: str, request: CorrectFields, who: Annotated[str, Depends(engineer)]):
+        return file_workflow.correct(run_id, request, who)
+
+    @app.post("/runs/{run_id}/drawing")
+    def replace_drawing(
+        run_id: str,
+        who: Annotated[str, Depends(engineer)],
+        drawing: Annotated[UploadFile, File()],
+        expected_version: Annotated[int, Form(ge=1)],
+        reason: Annotated[str, Form(min_length=3, max_length=1000)],
+    ):
+        return file_workflow.replace_drawing(
+            run_id,
+            expected_version,
+            drawing.filename or "drawing.pdf",
+            read_upload(drawing),
+            reason,
+            who,
+        )
+
+    @app.get("/runs/{run_id}/documents/{document_id}/pages/{page}")
+    def preview(run_id: str, document_id: str, page: int, _who: Annotated[str, Depends(actor)]):
+        return FileResponse(
+            asset_path(settings.data_dir, repository.get(run_id), document_id, page),
+            media_type="image/png",
+            headers={"Cache-Control": "private, no-store"},
+        )
 
     @app.patch("/runs/{run_id}/inputs")
     def change_inputs(run_id: str, request: ChangeInputs, who: Annotated[str, Depends(engineer)]):

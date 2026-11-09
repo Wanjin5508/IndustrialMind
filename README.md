@@ -23,3 +23,7 @@ python -m venv .venv
 M0 数据可用 `scripts/generate_fixtures.py` 重建，公开 schema 可用 `scripts/export_schemas.py` 重建。不要把评测答案加入检索目录。
 
 真实多模态配置使用根目录 `.env.local`，参考 `.env.example`；密钥只供后端读取。缺少凭据时可开发和验证确定性核心，不能将离线结果标为真实模型验收。
+
+当前 M0/M1 已验收提交；M2 本地工作台闭环已实现，真实模型验收待配置凭据。使用 `scripts/start-api.ps1` 与 `scripts/start-web.ps1` 两终端启动，Node 参数见 [运行手册](docs/runbook.md)。界面地址 `http://127.0.0.1:3000`。
+
+[验收记录与限制](docs/acceptance-m2.md) · [演示步骤](docs/demo.md)。工程管理已包含锁定依赖、格式检查、测试、生成契约、ADR、计划快照、分支记录与 CI 定义；系统仍为本地演示原型。

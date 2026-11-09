@@ -20,6 +20,12 @@
   "inspection_hourly": "50.00",
   "inspection_hours": "0.02",
   "target_margin": "0.25",
+  "applicability": {
+    "part_number": "PM-BRKT-010",
+    "dimensions": {"width_mm": "80", "height_mm": "50", "thickness_mm": "12", "hole_diameter_mm": "6.5"},
+    "surface_finish": "Anodize",
+    "notice": "Single demonstration part template. Engineering must confirm hole count, positions and all geometry before approval."
+  },
   "routing": [
     {"step": 10, "operation": "Blank preparation", "basis": "Included in material allowance"},
     {"step": 20, "operation": "Milling and drilling", "basis": "0.12 h/part + 1.50 h/batch; synthetic template"},
