@@ -1,0 +1,36 @@
+---
+owner: Engineering
+status: passed-development-scope
+updated: 2026-11-09
+milestone: M3
+---
+# M3 抽取证据与稳健性验收
+
+> [!success] 已通过 roadmap 的 M3 开发验收
+> M2 真实调用前置条件见 [[m2-live-result]]。本次包括证据状态契约、来源/值匹配、空值、扫描页人工确认、配置、耗时和费用记录；不是冻结集准确率报告。
+
+## DeepSeek 真实开发样例
+
+全部调用使用用户配置的 `deepseek-flash`，真实发送合成文本与 PNG 页图；没有本地回退或答案注入。
+
+| 样例 | 结果 | 耗时 ms | USD 估算费用 |
+|---|---|---:|---:|
+| DEV-001 正常 | 关键字段有文本依据；可计价 | 6,766 | 0.00164134 |
+| DEV-003 A/B 冲突 | REVISION_CONFLICT；计价请求被拒 | 6,063 | 0.00173617 |
+| DEV-004 材料缺失 | 材料 null；MISSING_FIELD；计价请求被拒 | 6,375 | 0.00174277 |
+
+费用按已核对的高峰费率估算，并非服务商账单；依据为 [DeepSeek 官方价格页](https://api-docs.deepseek.com/quick_start/pricing/)，快照见 `config/model-pricing.json`。三次估算合计 USD 0.00512028，不包括 M2 调用与未知失败费用。
+
+完整运行证据存于被 Git 忽略的 `var/acceptance/m3-live.json`，包含任务 ID、响应 ID、字段、证据、usage、耗时和费率 hash。可用 `python scripts/m3_live_acceptance.py` 显式重跑；将产生真实 API 调用费用。
+
+## 自动与界面验证
+
+- 累计 60 项自动测试通过（另有上游 Starlette/httpx 弃用提示，不影响结果）。包含跨文档/过期来源、原文不支持、同文档冲突、空值及非法类型、数字等价、真实扫描 PDF 页级人工确认、费用和超时配置。
+- SDK 测试实际经过请求序列化和响应解析，验证 PNG + JSON Schema 发送；网络使用测试替身，不冒充真实调用。
+- 401、429、服务端错误与超时的安全错误码和耗时有测试；原始错误中的敏感文本不会进入面向用户的记录。
+- Ruff、Prettier、TypeScript 和生产构建通过。CI 定义已更新覆盖新增自动测试，远端尚未运行。
+- 浏览器检查 DEV-004：材料显示未知、计价按钮禁用；其他字段显示证据状态；点击版次回到真实 PDF 页图，标明页级；调用记录显示服务、token、耗时、估算费用和响应 ID。
+
+## 后续边界
+
+不宣称扫描图自动验证、区域框选或完整 CAD 理解；视觉事实仍需工程师确认。不自动将真实客户文件发送给模型。自动重试、中断恢复、冻结评测和受控知识扩展按 M4–M7 推进。

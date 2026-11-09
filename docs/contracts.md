@@ -19,3 +19,7 @@ Owner: Engineering · Status: M0 baseline · Updated: 2026-11-08
 金额规则：`unit_cost = variable_cost + setup_cost / quantity`；`unit_price = ROUND_HALF_UP(unit_cost / (1-margin), 2)`；`total = rounded_unit_price * quantity`。报价仅为受限内部预算草案，不含未知运输、税费等。
 
 变更请求携带 `expected_version`；过期写入返回冲突。输入或参考依赖发生变化后，不能继续使用旧审批导出。
+
+## M3 证据契约
+
+新增 `EvidenceCheck` 与 `ReviewedField`，schema 在 docs/schemas。`source_exists` 与 `value_supported` 分开；`human_confirmed` 不改写原始证据结论。未知标记规范化为 null，字段最长 200 字符。定位分 text/page；当前 PDF bbox 为 null。模型调用 metrics 可包含服务主机、用量、估算费用和完整费率快照。历史记录不回填不存在的测量。

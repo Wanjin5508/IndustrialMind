@@ -47,3 +47,9 @@ Python 3.12+，Node 20.9+。在项目根目录建立 `.venv`，安装 `requireme
 默认 UI 使用工程师/审批人演示令牌。配置 key/model 后重启 API 才能启用 LIVE。运行 `python scripts/live_acceptance.py` 验证真实调用，随后在 UI 继续人工复核和审批；见 [[acceptance-m2]]。
 
 干净演示：在 API 终端设置 `$env:RFQ_DATA_DIR='var/demo-fresh'` 为未使用的新目录再启动，不删除原有任务。测试始终使用临时数据库。
+
+## M3 模型诊断与费用
+
+`MODEL_CONNECTION_FAILED` 检查网络，`MODEL_AUTH_FAILED` 检查密钥，`MODEL_RATE_LIMIT` 等待服务额度恢复，`MODEL_TIMEOUT` 检查服务耗时与超时参数。错误不会打印供应商原始正文。配置更改后重启后端。
+
+默认费率在 `config/model-pricing.json`，可用绝对路径 `RFQ_MODEL_PRICING_FILE` 覆盖。复核期限后自动显示未知，需核对官方价格再更新；估算不是账单。`python scripts/m3_live_acceptance.py` 对三个开发样例发起真实调用，证据保存到当前 RFQ_DATA_DIR 下的 acceptance/m3-live.json。

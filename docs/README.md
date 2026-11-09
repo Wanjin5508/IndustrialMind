@@ -32,3 +32,6 @@ updated: 2026-11-08
 4. 可执行契约由 Pydantic 导出 JSON Schema，API 上线后导出 OpenAPI；生成文件不得手工改写。
 5. 凭据、原始敏感客户资料、运行数据库和服务日志不进入 Git。验收报告只记录脱敏的配置与结果。
 6. “通过”需要真实证据；本地文本抽取和测试替身不能代替 M2 的真实多模态调用。
+
+- [M3 验收](acceptance-m3.md)：证据与模型成本实测。
+- [证据与费用 ADR](adr/002-evidence-and-model-accounting.md)：验证强度和计费口径。

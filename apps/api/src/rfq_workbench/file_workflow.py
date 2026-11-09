@@ -7,10 +7,17 @@ from decimal import Decimal, InvalidOperation
 from pydantic import ValidationError
 
 from rfq_workbench.config import ROOT, Settings
-from rfq_workbench.contracts import ConfirmedInputs, CorrectFields, RunState
+from rfq_workbench.contracts import (
+    ConfirmedInputs,
+    CorrectFields,
+    ExtractedValue,
+    Extraction,
+    RunState,
+)
 from rfq_workbench.costing import load_reference, validate_inputs
 from rfq_workbench.documents import ingest
 from rfq_workbench.errors import DomainError
+from rfq_workbench.evidence import verify
 from rfq_workbench.extraction import LABELS, LocalTextProvider, OpenAIProvider, Provider
 from rfq_workbench.repository import Repository, utc_now
 from rfq_workbench.service import clear_results, new_run
@@ -54,6 +61,11 @@ def check_fields(body: dict, settings: Settings) -> None:
             )
         elif not field.get("source_valid") and not field.get("human_confirmed"):
             issue("INVALID_SOURCE", key, "Value has no valid document evidence.")
+        elif field.get("evidence", {}).get("status") in {
+            "TEXT_MISMATCH",
+            "AMBIGUOUS",
+        } and not field.get("human_confirmed"):
+            issue(field["evidence"]["status"], key, field["evidence"]["message"])
         elif field.get("needs_visual_review") and not field.get("human_confirmed"):
             issue("VISUAL_REVIEW", key, "Page-level visual fact requires engineering confirmation.")
     body["inputs"] = None
@@ -183,34 +195,12 @@ class FileWorkflow:
             result = self.providers[mode].extract(claimed)
 
             def complete(body: dict) -> dict:
-                source_map = {s["id"]: s for s in body["sources"]}
-                kinds = {d["id"]: d["kind"] for d in body["documents"]}
-                for kind, values in result.fields.model_dump().items():
+                validated = Extraction.model_validate(result.fields.model_dump())
+                for kind, values in validated.model_dump().items():
                     for key, field in values.items():
-                        source = source_map.get(field["source_id"])
-                        valid = bool(source and kinds[source["document_id"]] == kind)
-                        # A page citation can support a visual fact, but cannot auto-verify it.
-                        supported_text = (
-                            valid
-                            and bool(field["value"])
-                            and bool(
-                                re.search(
-                                    r"^"
-                                    + re.escape(LABELS[kind][key])
-                                    + r":\s*"
-                                    + re.escape(field["value"])
-                                    + r"\s*$",
-                                    source["text"],
-                                    re.I | re.M,
-                                )
-                            )
+                        body["fields"][f"{kind}.{key}"] = verify(
+                            body, kind, key, LABELS[kind][key], ExtractedValue.model_validate(field)
                         )
-                        body["fields"][f"{kind}.{key}"] = field | {
-                            "original_value": field["value"],
-                            "source_valid": valid,
-                            "needs_visual_review": valid and not supported_text,
-                            "human_confirmed": False,
-                        }
                 body["metrics"] = result.metrics
                 check_fields(body, self.settings)
                 return {"metrics": result.metrics, "blocking_issues": len(body["issues"])}
@@ -227,6 +217,7 @@ class FileWorkflow:
 
             def failed(body: dict) -> dict:
                 body["state"] = RunState.FAILED_RETRYABLE
+                body["metrics"] = error.metrics
                 body["issues"] = [
                     {
                         "code": error.code,
@@ -235,7 +226,7 @@ class FileWorkflow:
                         "severity": "blocking",
                     }
                 ]
-                return {"code": error.code}
+                return {"code": error.code, "metrics": error.metrics}
 
             self.repo.update(run_id, claimed["version"], actor, "extraction_failed", failed)
             raise error from exc
@@ -259,7 +250,7 @@ class FileWorkflow:
                 field = body["fields"][key]
                 changes[key] = {"before": field["value"], "after": value.strip() or None}
                 field.update(
-                    value=value.strip() or None,
+                    value=ExtractedValue(value=value, source_id=None).value,
                     human_confirmed=True,
                     correction={"actor": actor, "reason": request.reason, "at": utc_now()},
                 )

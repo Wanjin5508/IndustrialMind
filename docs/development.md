@@ -22,3 +22,7 @@ Owner: Engineering · Status: active · Updated: 2026-11-08
 ## 完成一次变更
 
 关联里程碑/规则 → 实现 → 运行相应测试 → 更新设计/接口/运行说明 → 记录实际证据 → 检查 staged diff → 提交。失败后修复相关行为，再运行受影响检查；不反复扩大无关测试。
+
+## M3 分支与检查
+
+从已验收 M2 `4a58648` 创建 `codex/m3-extraction-evidence`。格式化：Python 使用 Ruff；前端使用项目锁定 Prettier。修改契约后运行两个 schema 导出脚本。真实调用用独立验收脚本 opt-in，自动测试不读取本机密钥。编辑器 `.history/` 不进入 Git，避免本机配置的历史副本被提交。

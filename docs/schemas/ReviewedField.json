@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "EvidenceCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "MISSING",
+            "INVALID_SOURCE",
+            "TEXT_VERIFIED",
+            "TEXT_MISMATCH",
+            "AMBIGUOUS",
+            "VISUAL_REVIEW"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "source_exists": {
+          "title": "Source Exists",
+          "type": "boolean"
+        },
+        "value_supported": {
+          "title": "Value Supported",
+          "type": "boolean"
+        },
+        "locator": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "page"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Locator"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "source_exists",
+        "value_supported",
+        "locator",
+        "message"
+      ],
+      "title": "EvidenceCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "value": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Value"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "maxLength": 150,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Id"
+    },
+    "original_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Original Value"
+    },
+    "source_valid": {
+      "title": "Source Valid",
+      "type": "boolean"
+    },
+    "needs_visual_review": {
+      "title": "Needs Visual Review",
+      "type": "boolean"
+    },
+    "human_confirmed": {
+      "title": "Human Confirmed",
+      "type": "boolean"
+    },
+    "evidence": {
+      "$ref": "#/$defs/EvidenceCheck"
+    }
+  },
+  "required": [
+    "value",
+    "source_id",
+    "original_value",
+    "source_valid",
+    "needs_visual_review",
+    "human_confirmed",
+    "evidence"
+  ],
+  "title": "ReviewedField",
+  "type": "object"
+}

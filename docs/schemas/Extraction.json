@@ -51,6 +51,7 @@
         "value": {
           "anyOf": [
             {
+              "maxLength": 200,
               "type": "string"
             },
             {
@@ -62,6 +63,7 @@
         "source_id": {
           "anyOf": [
             {
+              "maxLength": 150,
               "type": "string"
             },
             {

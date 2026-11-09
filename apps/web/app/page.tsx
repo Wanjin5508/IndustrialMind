@@ -14,6 +14,13 @@ type Fact = {
   source_id: string | null;
   original_value: string | null;
   human_confirmed: boolean;
+  evidence?: {
+    status: string;
+    source_exists: boolean;
+    value_supported: boolean;
+    locator: string | null;
+    message: string;
+  };
   correction?: { reason: string };
 };
 type Quote = {
@@ -54,10 +61,31 @@ type Run = {
     action: string;
     detail: unknown;
   }[];
-  metrics: { real_model_call?: boolean; model?: string; elapsed_ms?: number };
+  metrics: {
+    real_model_call?: boolean;
+    attempted_live?: boolean;
+    model?: string;
+    endpoint_host?: string;
+    elapsed_ms?: number;
+    response_id?: string;
+    error_code?: string;
+    estimated_cost?: string | null;
+    cost_currency?: string;
+    cost_note?: string;
+    usage?: { input_tokens: number; output_tokens: number };
+    pricing?: { version: string; source: string };
+  };
 };
 type Capability = { live_available: boolean; model: string | null };
 const views = ["任务总览", "资料与证据", "成本草案", "审批与审计"];
+const evidenceNames: Record<string, string> = {
+  MISSING: "未知 · 需补充",
+  INVALID_SOURCE: "无效来源",
+  TEXT_VERIFIED: "文本依据已核对",
+  TEXT_MISMATCH: "原文不支持该值",
+  AMBIGUOUS: "同文档存在冲突",
+  VISUAL_REVIEW: "页图可回查 · 需人工确认",
+};
 const names: Record<string, string> = {
   "rfq.part_number": "RFQ 零件号",
   "rfq.required_revision": "要求版次",
@@ -151,6 +179,9 @@ export default function Workbench() {
     setSource(null);
     setConfirmed(false);
   }, [run?.id, run?.version]);
+  useEffect(() => {
+    setMode(run?.mode === "LIVE" ? "live" : "local_text");
+  }, [run?.id, run?.mode]);
   useEffect(() => {
     let cancelled = false,
       url = "";
@@ -518,6 +549,12 @@ export default function Workbench() {
                           <div>
                             <small>{names[key] || key}</small>
                             <strong>{fact.value ?? "未知 / 待补充"}</strong>
+                            <small>
+                              {fact.evidence
+                                ? evidenceNames[fact.evidence.status] ||
+                                  fact.evidence.status
+                                : "历史记录 · 未执行 M3 证据校验"}
+                            </small>
                             {fact.human_confirmed && (
                               <small className="human">
                                 人工确认 · 原值 {fact.original_value ?? "未知"}
@@ -525,7 +562,10 @@ export default function Workbench() {
                             )}
                           </div>
                           <button
-                            disabled={!fact.source_id}
+                            disabled={
+                              !fact.source_id ||
+                              (fact.evidence && !fact.evidence.source_exists)
+                            }
                             onClick={() =>
                               setSource(
                                 run.sources.find(
@@ -551,10 +591,18 @@ export default function Workbench() {
                           </span>
                           <pre>{source.text}</pre>
                           {preview && (
-                            <img
-                              src={preview}
-                              alt={`来源图纸第 ${source.page} 页`}
-                            />
+                            <a
+                              href={preview}
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label="打开原尺寸图纸页图"
+                            >
+                              <img
+                                src={preview}
+                                alt={`来源图纸第 ${source.page} 页`}
+                              />
+                              <small>打开原尺寸页图 ↗</small>
+                            </a>
                           )}
                           <p className="muted">
                             页级定位未宣称区域框选。人工修正值与原始依据分别保留。
@@ -567,6 +615,54 @@ export default function Workbench() {
                       )}
                     </section>
                   </div>
+                  {run.metrics.model && (
+                    <section>
+                      <h2>模型调用记录</h2>
+                      <p>
+                        {run.metrics.model} ·{" "}
+                        {run.metrics.endpoint_host || "历史记录未保存服务地址"}{" "}
+                        ·{" "}
+                        {run.metrics.real_model_call
+                          ? "真实响应"
+                          : "调用未完成"}
+                      </p>
+                      <div className="stats">
+                        <article>
+                          <small>耗时 / ms</small>
+                          <strong>{run.metrics.elapsed_ms ?? "未知"}</strong>
+                        </article>
+                        <article>
+                          <small>输入 tokens</small>
+                          <strong>
+                            {run.metrics.usage?.input_tokens ?? "未知"}
+                          </strong>
+                        </article>
+                        <article>
+                          <small>输出 tokens</small>
+                          <strong>
+                            {run.metrics.usage?.output_tokens ?? "未知"}
+                          </strong>
+                        </article>
+                        <article>
+                          <small>
+                            估算费用 / {run.metrics.cost_currency || "未配置"}
+                          </small>
+                          <strong className="text-stat">
+                            {run.metrics.estimated_cost ?? "未知"}
+                          </strong>
+                        </article>
+                      </div>
+                      <p className="muted">
+                        {run.metrics.cost_note}{" "}
+                        {run.metrics.pricing &&
+                          `费率版本：${run.metrics.pricing.version}`}
+                      </p>
+                      <small>
+                        响应 ID：{run.metrics.response_id || "无可用响应"}{" "}
+                        {run.metrics.error_code}
+                      </small>
+                    </section>
+                  )}
                   <section>
                     <h2>工程确认与补充依据</h2>
                     <form

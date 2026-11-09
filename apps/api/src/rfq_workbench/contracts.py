@@ -9,7 +9,7 @@ from decimal import Decimal
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class Contract(BaseModel):
@@ -50,10 +50,56 @@ class Source(Contract):
     bbox: list[float] | None = None
     locator: Literal["text", "page"] = "text"
 
+    @model_validator(mode="after")
+    def valid_box(self):
+        if self.bbox is not None:
+            if len(self.bbox) != 4 or not all(0 <= n <= 1 for n in self.bbox):
+                raise ValueError("bbox must contain four normalized coordinates")
+            if self.bbox[0] >= self.bbox[2] or self.bbox[1] >= self.bbox[3]:
+                raise ValueError("bbox must have positive area")
+        return self
+
 
 class ExtractedValue(Contract):
-    value: str | None
-    source_id: str | None
+    value: str | None = Field(max_length=200)
+    source_id: str | None = Field(max_length=150)
+
+    @field_validator("value", "source_id", mode="before")
+    @classmethod
+    def normalize_unknown(cls, value):
+        if isinstance(value, str):
+            value = value.strip()
+            if value.casefold() in {
+                "",
+                "unknown",
+                "null",
+                "n/a",
+                "tbd",
+                "not provided",
+                "[not provided]",
+                "未知",
+                "未提供",
+            }:
+                return None
+        return value
+
+
+class EvidenceCheck(Contract):
+    status: Literal[
+        "MISSING", "INVALID_SOURCE", "TEXT_VERIFIED", "TEXT_MISMATCH", "AMBIGUOUS", "VISUAL_REVIEW"
+    ]
+    source_exists: bool
+    value_supported: bool
+    locator: Literal["text", "page"] | None
+    message: str
+
+
+class ReviewedField(ExtractedValue):
+    original_value: str | None
+    source_valid: bool
+    needs_visual_review: bool
+    human_confirmed: bool
+    evidence: EvidenceCheck
 
 
 class DrawingExtraction(Contract):

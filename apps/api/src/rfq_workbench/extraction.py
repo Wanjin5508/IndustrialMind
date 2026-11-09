@@ -11,14 +11,16 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
+from urllib.parse import urlsplit
 
-from openai import OpenAI, OpenAIError
+from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAI, OpenAIError
 from pydantic import ValidationError
 
 from rfq_workbench.config import Settings
 from rfq_workbench.contracts import Extraction
 from rfq_workbench.documents import asset_path
 from rfq_workbench.errors import DomainError
+from rfq_workbench.model_usage import estimate_cost
 
 LABELS = {
     "rfq": {
@@ -155,27 +157,56 @@ class OpenAIProvider:
                     text_format=Extraction,
                 )
         except (OpenAIError, ValidationError) as exc:
+            code = "MODEL_REQUEST_FAILED"
+            if isinstance(exc, APITimeoutError):
+                code = "MODEL_TIMEOUT"
+            elif isinstance(exc, APIConnectionError):
+                code = "MODEL_CONNECTION_FAILED"
+            elif isinstance(exc, APIStatusError):
+                code = {
+                    401: "MODEL_AUTH_FAILED",
+                    403: "MODEL_ACCESS_DENIED",
+                    429: "MODEL_RATE_LIMIT",
+                }.get(exc.status_code, "MODEL_HTTP_ERROR")
+            elif isinstance(exc, ValidationError):
+                code = "MODEL_SCHEMA_INVALID"
             raise DomainError(
-                "MODEL_REQUEST_FAILED",
-                "Model request failed or returned an invalid schema. Check configuration and retry.",
+                code,
+                "Model request failed. See the safe error code and verify service configuration.",
                 502,
+                metrics={
+                    "provider": "RESPONSES_COMPATIBLE",
+                    "endpoint_host": urlsplit(settings.model_base_url).hostname,
+                    "model": settings.model_name,
+                    "real_model_call": False,
+                    "attempted_live": True,
+                    "elapsed_ms": round((time.monotonic() - started) * 1000),
+                    "error_code": code,
+                    "estimated_cost": None,
+                    "cost_note": "Failed call; billable usage unknown.",
+                },
             ) from exc
+        metrics = {
+            "provider": "RESPONSES_COMPATIBLE",
+            "endpoint_host": urlsplit(settings.model_base_url).hostname,
+            "requested_model": settings.model_name,
+            "timeout_seconds": settings.model_timeout,
+            "max_output_tokens": 4000,
+            "prompt_version": "rfq-extraction-v1",
+            "real_model_call": True,
+            "model": response.model,
+            "response_id": response.id,
+            "elapsed_ms": round((time.monotonic() - started) * 1000),
+            "usage": response.usage.model_dump() if response.usage else None,
+            **estimate_cost(
+                settings, response.model, response.usage.model_dump() if response.usage else None
+            ),
+        }
         if response.output_parsed is None:
             raise DomainError(
                 "MODEL_NO_RESULT",
                 "Model did not return structured fields. Review the input and retry.",
                 502,
+                metrics=metrics | {"error_code": "MODEL_NO_RESULT"},
             )
-        return ExtractionResult(
-            response.output_parsed,
-            {
-                "provider": "OPENAI_RESPONSES",
-                "real_model_call": True,
-                "model": response.model,
-                "response_id": response.id,
-                "elapsed_ms": round((time.monotonic() - started) * 1000),
-                "usage": response.usage.model_dump() if response.usage else None,
-                "estimated_cost": None,
-                "cost_note": "Pricing not configured; no cost estimate asserted.",
-            },
-        )
+        return ExtractionResult(response.output_parsed, metrics)

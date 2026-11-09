@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "MISSING",
+        "INVALID_SOURCE",
+        "TEXT_VERIFIED",
+        "TEXT_MISMATCH",
+        "AMBIGUOUS",
+        "VISUAL_REVIEW"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "source_exists": {
+      "title": "Source Exists",
+      "type": "boolean"
+    },
+    "value_supported": {
+      "title": "Value Supported",
+      "type": "boolean"
+    },
+    "locator": {
+      "anyOf": [
+        {
+          "enum": [
+            "text",
+            "page"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Locator"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "source_exists",
+    "value_supported",
+    "locator",
+    "message"
+  ],
+  "title": "EvidenceCheck",
+  "type": "object"
+}

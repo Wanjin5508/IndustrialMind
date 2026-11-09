@@ -12,3 +12,7 @@ Owner: Engineering · Status: active · Updated: 2026-11-08
 运行：`.\.venv\Scripts\python.exe -m pytest -q`。风格：`python -m ruff check apps/api scripts tests` 和 `python -m ruff format --check apps/api scripts tests`。前端实现后执行 typecheck 与 production build。
 
 优先测试会造成错误价格、过期审批、越权读取或重复结果的行为。独立使用硬编码预期金额校验公式，不用同一计算函数生成答案。真实模型测试显式 opt-in，不消耗用户未配置的服务额度。
+
+## M3 实测
+
+`tests/test_evidence.py` 覆盖证据与扫描页、`tests/test_model_adapter.py` 覆盖 SDK 与安全错误、`scripts/m3_live_acceptance.py` 为显式真实调用。完整结果见 [[acceptance-m3]]。M1、M2 已验收，见相邻里程碑记录。

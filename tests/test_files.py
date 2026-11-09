@@ -134,7 +134,7 @@ def test_bad_source_and_fake_geometry_cannot_auto_cost(client):
 
     client.app.state.file_workflow.providers["local_text"] = BadProvider()
     run = analyze(client, fixture_run(client))
-    assert {"INVALID_SOURCE", "VISUAL_REVIEW"} <= {i["code"] for i in run["issues"]}
+    assert {"INVALID_SOURCE", "TEXT_MISMATCH"} <= {i["code"] for i in run["issues"]}
     assert cost(client, run).status_code == 422
 
 
