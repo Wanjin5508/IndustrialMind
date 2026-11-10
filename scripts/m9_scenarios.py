@@ -18,7 +18,7 @@ from rfq_workbench.errors import DomainError
 from rfq_workbench.integrations.faults import Failpoints, SimulatedCrash
 from rfq_workbench.integrations.mappers import map_quote_to_erp_draft_v1
 from rfq_workbench.main import create_app
-from rfq_workbench.sync import SyncService
+from rfq_workbench.sync import SyncService, compare_payload
 
 ENGINEER = {"X-Demo-Token": "demo-engineer"}
 APPROVER = {"X-Demo-Token": "demo-approver"}
@@ -121,6 +121,10 @@ class Environment:
             "draft_count": len(rows),
             "put_calls": self.systems.call_count("erp.put_draft"),
             "attempts": final.attempts,
+            "verified_payload_matches": final.state != "VERIFIED"
+            or (len(rows) == 1 and not compare_payload(final.payload, rows[0].payload)),
+            "target_versions": [row.version for row in rows],
+            "target_hashes": [fingerprint(row.payload) for row in rows],
             **extra,
         }
 
@@ -137,7 +141,7 @@ def execute(identifier: str, env: Environment) -> dict:
     sync, systems = env.sync, env.systems
     if identifier == "M9-13":
         errors = []
-        for field, value in (("unit", "inch"), ("plant", "PL-DEMO")):
+        for field, value in (("unit", "inch"), ("plant", "PL-DEMO"), ("currency", "USD")):
             try:
                 map_quote_to_erp_draft_v1(
                     env.run["quote"],
@@ -155,7 +159,7 @@ def execute(identifier: str, env: Environment) -> dict:
             )
         except DomainError as exc:
             errors.append(exc.code)
-        assert errors == ["MAPPING_UNSUPPORTED", "MAPPING_UNSUPPORTED", "MAPPING_PRECISION"]
+        assert errors == ["MAPPING_UNSUPPORTED"] * 3 + ["MAPPING_PRECISION"]
         return {"state": "BLOCKED", "draft_count": systems.count_drafts(), "errors": errors}
     if identifier == "M9-14":
         systems.faults.add("plm.read_item_revision", "schema_drift")

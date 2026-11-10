@@ -17,6 +17,8 @@ from rfq_workbench.integrations.ports import HttpError, RawRecord, TransportErro
 def transport_fault(kind: str | None) -> None:
     if kind == "connect":
         raise TransportError("connect")
+    if kind == "reset":
+        raise TransportError("reset")
     if kind in {"timeout_before_commit", "timeout_after_commit", "stale_read"}:
         raise TransportError("read_timeout")
     if kind and kind.startswith("http_"):

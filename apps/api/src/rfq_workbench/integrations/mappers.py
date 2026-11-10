@@ -38,6 +38,8 @@ def money(value: Decimal) -> str:
 def map_quote_to_erp_draft_v1(
     quote: dict, inputs: dict, run_id: str, approval: dict, operation: str = "CREATE_DRAFT"
 ) -> ErpDraftPayload:
+    if inputs.get("currency") != "EUR" or quote.get("currency", "EUR") != "EUR":
+        raise DomainError("MAPPING_UNSUPPORTED", "当前币种无法映射。")
     parsed, confirmed = Quote.model_validate(quote), ConfirmedInputs.model_validate(inputs)
     if (
         confirmed.currency != "EUR"

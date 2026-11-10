@@ -79,6 +79,8 @@ class SyncService:
         )
 
     def request_sync(self, run_id: str, version: int, actor: str, note: str) -> dict:
+        if actor != "demo-approver":
+            raise DomainError("FORBIDDEN", "同步需要审批人权限。", 403)
         body = self.repo.get(run_id)
         if not self.approved(body):
             raise DomainError("SYNC_NOT_APPROVED", "请先批准当前草案。", 409)
@@ -95,7 +97,7 @@ class SyncService:
         latest = verified[-1] if verified else None
         # Preserve target identity even when a later attempt required human resolution.
         known = [i for i in previous if i.external_id and i.receipt]
-        anchor = latest or (known[-1] if known else None)
+        anchor = known[-1] if known else latest
         operation = "UPDATE_DRAFT" if anchor else "CREATE_DRAFT"
         payload = map_quote_to_erp_draft_v1(
             body["quote"], body["inputs"], run_id, body["approval"], operation
@@ -112,7 +114,13 @@ class SyncService:
             base_snapshot_ids=body["snapshot_refs"]["ids"],
             mapping_version=MAPPING_VERSION,
             external_id=anchor.external_id if anchor else None,
-            expected_target_version=anchor.receipt.target_version if anchor else None,
+            expected_target_version=(
+                anchor.expected_target_version
+                if anchor and anchor.state == "SUPERSEDED"
+                else anchor.receipt.target_version
+                if anchor
+                else None
+            ),
             requested_by=actor,
             max_attempts=self.settings.sync_max_attempts,
             created_at=self.clock.now(),
@@ -379,10 +387,10 @@ class SyncService:
                 )
         except HttpError as exc:
             if exc.status != 404:
-                return self.view(intent)
+                return self.lookup_failed(intent, actor)
             result = ReconciliationResult(status="MISSING", checked_at=self.clock.now())
         except Exception:
-            return self.view(intent)
+            return self.lookup_failed(intent, actor)
         return self.view(self.store.reconcile(intent, result, actor))
 
     def reconcile_unknown(self, intent, actor: str = "system-dispatcher") -> dict:
@@ -390,7 +398,7 @@ class SyncService:
             found = self.erp.find_by_idempotency_key(intent.idempotency_key)
             records = self.erp.find_by_business_key(intent.business_key)
         except Exception:
-            return self.view(intent)
+            return self.lookup_failed(intent, actor)
         if len(records) > 1:
             result = ReconciliationResult(status="DUPLICATE", checked_at=self.clock.now())
             return self.view(self.store.reconcile(intent, result, actor))
@@ -431,6 +439,31 @@ class SyncService:
         state = "QUARANTINED" if intent.attempts >= intent.max_attempts else "PREPARED"
         return self.view(self.transition(intent, state, actor, "TARGET_NOT_FOUND"))
 
+    def lookup_failed(self, intent, actor: str) -> dict:
+        """Bound failed confirmation reads without retrying an uncertain write."""
+        with self.repo.connect() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            current = self.store.get(intent.id, conn)
+            if current.state != intent.state or current.updated_at != intent.updated_at:
+                return self.view(current)
+            rows = conn.execute(
+                "SELECT detail FROM events WHERE run_id=? AND action='sync_lookup_failed'",
+                (intent.run_id,),
+            ).fetchall()
+            import json
+
+            failures = (
+                sum(json.loads(row["detail"]).get("intent_id") == intent.id for row in rows) + 1
+            )
+            if failures >= current.max_attempts and current.state != "VERIFIED":
+                current.state = "QUARANTINED"
+            current.last_error_class, current.last_error_code = "unknown", "LOOKUP_UNAVAILABLE"
+            self.store.save(conn, current)
+            self.store.event(
+                conn, current, "sync_lookup_failed", actor, confirmation_failures=failures
+            )
+        return self.view(self.store.get(intent.id))
+
     def reconcile(self, identifier: str, actor: str = "system-dispatcher") -> dict:
         self.recover(identifier, actor)
         intent = self.store.get(identifier)
@@ -457,6 +490,10 @@ class SyncService:
             raise DomainError("SYNC_PRECONDITION_FAILED", "当前状态无需人工决议。", 409)
         if decision == "rebase":
             body = self.repo.get(intent.run_id)
+            targets = self.erp.find_by_business_key(intent.business_key)
+            if len(targets) > 1:
+                raise DomainError("TARGET_DIVERGED", "请先人工核对目标中的重复草案。", 409)
+            target = targets[0] if targets else None
 
             def invalidate(current, conn):
                 from rfq_workbench.service import clear_results
@@ -470,6 +507,11 @@ class SyncService:
                 ):
                     raise DomainError("VERSION_CONFLICT", "同步意图已更新，请刷新。", 409)
                 current_intent.state, current_intent.updated_at = "SUPERSEDED", self.clock.now()
+                if target:
+                    current_intent.external_id = target.ref.external_id
+                    current_intent.expected_target_version = target.version
+                    if current_intent.receipt is None:
+                        current_intent.receipt = self.receipt(target)
                 self.store.save(conn, current_intent)
                 return {"intent_id": identifier, "decision": decision, "note": note}
 

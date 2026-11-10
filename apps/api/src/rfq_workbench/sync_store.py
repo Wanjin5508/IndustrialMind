@@ -56,7 +56,7 @@ class SyncStore:
             rows = conn.execute(
                 "SELECT * FROM outbox"
                 + (" WHERE run_id=?" if run_id else "")
-                + " ORDER BY created_at,id",
+                + " ORDER BY created_at,rowid",
                 (run_id,) if run_id else (),
             ).fetchall()
         return [self.decode(row) for row in rows]
