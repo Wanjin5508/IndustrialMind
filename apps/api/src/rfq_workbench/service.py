@@ -63,9 +63,16 @@ def run_snapshot(body: dict) -> dict:
 
 
 class Workflow:
-    def __init__(self, settings: Settings, repository: Repository):
+    def __init__(self, settings: Settings, repository: Repository, clock=None, systems=None):
+        from rfq_workbench.clock import SystemClock
+        from rfq_workbench.integrations.fakes import FakeSystems
+        from rfq_workbench.integrations.snapshots import SnapshotService
+
         self.settings = settings
         self.repo = repository
+        self.clock = clock or SystemClock()
+        self.systems = systems or FakeSystems(settings, self.clock)
+        self.snapshots = SnapshotService(repository, settings, self.systems, self.clock)
 
     def create_confirmed(self, inputs: ConfirmedInputs, actor: str) -> dict:
         ref, _ = load_reference(self.settings.reference_path)
@@ -103,6 +110,17 @@ class Workflow:
         return self.repo.update(run_id, version, actor, "inputs_changed", change)
 
     def cost(self, run_id: str, version: int, actor: str) -> dict:
+        before = self.repo.get(run_id)
+        if before["version"] != version:
+            raise DomainError("VERSION_CONFLICT", "任务已变化，请刷新。", 409)
+        require_intent(before, ("prepare_quote",))
+        if before["inputs"] is None or any(i["severity"] == "blocking" for i in before["issues"]):
+            raise DomainError("REVIEW_REQUIRED", "Resolve blocking issues before calculating.")
+        ref, _, _ = Knowledge(self.settings).resolve(
+            ConfirmedInputs.model_validate(before["inputs"]), actor
+        )
+        snapshots = self.snapshots.acquire(before, ref)
+
         def change(body: dict) -> dict:
             require_intent(body, ("prepare_quote",))
             if body["state"] == RunState.EXTRACTING:
@@ -119,12 +137,17 @@ class Workflow:
                         "REVIEW_REQUIRED", "Current template requires engineering review."
                     )
             ref, ref_hash, basis = Knowledge(self.settings).resolve(inputs, actor)
+            self.snapshots.validate(snapshots, body, ref)
             clear_results(body)
             body["draft_counter"] += 1
             quote = calculate(inputs, ref, ref_hash, input_hash(body), body["draft_counter"])
             quote.knowledge_basis = basis
             quote.routing = ref["routing"]
             body["quote"] = quote.model_dump(mode="json")
+            body["snapshot_refs"] = {
+                "ids": [s.id for s in snapshots],
+                "set_sha256": fingerprint([s.payload_sha256 for s in snapshots]),
+            }
             body["state"] = RunState.READY_FOR_APPROVAL
             return {
                 "draft_version": quote.draft_version,
@@ -133,11 +156,12 @@ class Workflow:
                 "input_version": body["version"],
                 "output_version": body["version"] + 1,
                 "output_hash": fingerprint(body["quote"]),
+                "snapshot_refs": body["snapshot_refs"],
             }
 
         return self.repo.update(run_id, version, actor, "costed", change)
 
-    def references_match(self, body: dict, actor: str) -> bool:
+    def references_match(self, body: dict, actor: str, *, probe: bool = False) -> bool:
         """Check a draft snapshot without invalidating it on a read-only request."""
         if body["quote"] is None:
             return False
@@ -149,11 +173,14 @@ class Workflow:
             _, ref_hash, _ = Knowledge(self.settings).resolve(
                 ConfirmedInputs.model_validate(body["inputs"]), actor
             )
-            return body["quote"]["reference_hash"] == ref_hash and body["quote"][
+            matches = body["quote"]["reference_hash"] == ref_hash and body["quote"][
                 "input_hash"
             ] == input_hash(body)
         except DomainError:
             return False
+        if matches and probe:
+            self.snapshots.probe(body)
+        return matches
 
     def quote_snapshot(self, run_id: str, version: int) -> dict:
         body = self.repo.get(run_id)
@@ -197,7 +224,8 @@ class Workflow:
         return body
 
     def approve(self, run_id: str, request: ApproveRequest, actor: str) -> dict:
-        self.check_fresh(run_id, request.expected_version, actor)
+        before = self.check_fresh(run_id, request.expected_version, actor)
+        self.references_match(before, actor, probe=True)
 
         def change(body: dict) -> dict:
             if body["state"] != RunState.READY_FOR_APPROVAL or any(

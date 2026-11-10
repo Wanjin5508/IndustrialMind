@@ -107,16 +107,52 @@ def preview_integrations(body: dict, actor: str, workflow: Workflow) -> Integrat
         or inputs.get("product_family", "mounting-bracket") != "mounting-bracket"
     ):
         raise DomainError("INTEGRATION_UNAVAILABLE", "当前零件没有可用的模拟系统记录。", 404)
+    from rfq_workbench.integrations.snapshots import COST_FIELDS
+
+    plm_raw = workflow.systems.plm.read_item_revision(part, plant)
+    workflow.snapshots.save(body["id"], plm_raw, ("part_number", "plant", "revisions"))
+    erp_raw = workflow.systems.erp.read_cost_reference(
+        inputs.get("material") or fact("drawing.material") or "", plant
+    )
+    workflow.snapshots.save(body["id"], erp_raw, COST_FIELDS)
+    mes_raw = workflow.systems.mes.read_feedback(part, plant)
+    workflow.snapshots.save(
+        body["id"],
+        mes_raw,
+        (
+            "part_number",
+            "plant",
+            "sample_id",
+            "revision",
+            "operation",
+            "planned_minutes_per_part",
+            "observed_minutes_per_part",
+        ),
+    )
+    from datetime import date
+
+    released = [
+        row["revision"]
+        for row in plm_raw.payload["revisions"]
+        if row["status"] == "RELEASED"
+        and date.fromisoformat(row["valid_from"])
+        <= workflow.clock.now().date()
+        <= date.fromisoformat(row["valid_until"])
+    ]
+    if len(released) != 1:
+        raise DomainError("SOURCE_CONFLICT", "PLM 当前发布版次无法唯一确定。")
     result = IntegrationPreview(
         run_version=body["version"],
         part_number=part,
         plant=plant,
-        plm=SimulatedPLM().read_revision(
-            inputs.get("required_revision") or fact("rfq.required_revision"),
-            inputs.get("drawing_revision") or fact("drawing.revision"),
+        plm=PLMRevision(
+            released_revision=released[0],
+            rfq_revision=inputs.get("required_revision") or fact("rfq.required_revision"),
+            drawing_revision=inputs.get("drawing_revision") or fact("drawing.revision"),
+            reference_id=plm_raw.ref.external_id,
         ),
         erp_status="NO_DRAFT",
-        mes=SimulatedMES().read_feedback(),
+        mes=MESFeedback(**{key: mes_raw.payload[key] for key in MESFeedback.model_fields}),
     )
     if body["quote"] is not None:
         if not workflow.references_match(body, actor):
