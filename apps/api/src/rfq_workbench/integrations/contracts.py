@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from rfq_workbench.contracts import Contract, Mutation
 
@@ -66,6 +66,7 @@ class ReconciliationResult(Contract):
 
 
 class OutboundIntent(Contract):
+    model_config = ConfigDict(validate_assignment=True)
     id: str
     run_id: str
     target: Literal["ERP"] = "ERP"

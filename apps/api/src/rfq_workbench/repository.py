@@ -168,6 +168,13 @@ class Repository:
         with self.connect() as conn:
             conn.execute("BEGIN IMMEDIATE")
             body = self._get(conn, run_id, project)
+            if (
+                actor != "system-dispatcher"
+                and conn.execute(
+                    "SELECT 1 FROM outbox WHERE run_id=? AND state='DISPATCHING'", (run_id,)
+                ).fetchone()
+            ):
+                raise DomainError("SYNC_BUSY", "同步正在派发，请完成对账后再修改任务。", 409)
             if body["version"] != expected_version:
                 raise DomainError(
                     "VERSION_CONFLICT", "Task changed. Refresh before retrying this action.", 409

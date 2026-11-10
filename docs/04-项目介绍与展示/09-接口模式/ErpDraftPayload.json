@@ -1,0 +1,93 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "business_key": {
+      "title": "Business Key",
+      "type": "string"
+    },
+    "plant": {
+      "title": "Plant",
+      "type": "string"
+    },
+    "part_number": {
+      "title": "Part Number",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "string"
+    },
+    "quantity": {
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "currency": {
+      "title": "Currency",
+      "type": "string"
+    },
+    "unit": {
+      "title": "Unit",
+      "type": "string"
+    },
+    "quantity_unit": {
+      "title": "Quantity Unit",
+      "type": "string"
+    },
+    "unit_price": {
+      "title": "Unit Price",
+      "type": "string"
+    },
+    "total_price": {
+      "title": "Total Price",
+      "type": "string"
+    },
+    "lines": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Lines",
+      "type": "array"
+    },
+    "x_run_id": {
+      "title": "X Run Id",
+      "type": "string"
+    },
+    "x_quote_hash": {
+      "title": "X Quote Hash",
+      "type": "string"
+    },
+    "x_idempotency_key": {
+      "title": "X Idempotency Key",
+      "type": "string"
+    },
+    "x_mapping_version": {
+      "title": "X Mapping Version",
+      "type": "string"
+    },
+    "x_draft_version": {
+      "title": "X Draft Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "business_key",
+    "plant",
+    "part_number",
+    "revision",
+    "quantity",
+    "currency",
+    "unit",
+    "quantity_unit",
+    "unit_price",
+    "total_price",
+    "lines",
+    "x_run_id",
+    "x_quote_hash",
+    "x_idempotency_key",
+    "x_mapping_version",
+    "x_draft_version"
+  ],
+  "title": "ErpDraftPayload",
+  "type": "object"
+}

@@ -22,16 +22,26 @@ from rfq_workbench.documents import MAX_FILE_BYTES, asset_path
 from rfq_workbench.errors import DomainError
 from rfq_workbench.file_workflow import FileWorkflow, fixture_catalog
 from rfq_workbench.integrations import IntegrationPreview, preview_integrations
+from rfq_workbench.integrations.contracts import (
+    DispatchDue,
+    OutboundIntent,
+    ResolveSync,
+    SyncRequest,
+)
 from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.orchestrator import Orchestrator, visible
 from rfq_workbench.repository import Repository
 from rfq_workbench.service import Workflow, run_snapshot
+from rfq_workbench.sync import SyncService
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None, *, clock=None, systems=None, failpoints=None
+) -> FastAPI:
     settings = settings or Settings.from_env()
     repository = Repository(settings.data_dir / "workbench.sqlite3")
-    workflow = Workflow(settings, repository)
+    workflow = Workflow(settings, repository, clock=clock, systems=systems)
+    sync = SyncService(workflow, failpoints=failpoints)
     file_workflow = FileWorkflow(settings, repository)
     orchestrator = Orchestrator(workflow, file_workflow)
     app = FastAPI(
@@ -42,6 +52,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.workflow = workflow
     app.state.settings = settings
     app.state.file_workflow = file_workflow
+    app.state.sync = sync
+    app.state.systems = workflow.systems
     knowledge = Knowledge(settings)
     app.add_middleware(
         CORSMiddleware,
@@ -167,6 +179,48 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/runs/{run_id}/integration-preview", response_model=IntegrationPreview)
     def integration_preview(run_id: str, who: Annotated[str, Depends(actor)]):
         return preview_integrations(orchestrator.get(run_id, who), who, workflow)
+
+    @app.post("/runs/{run_id}/sync", response_model=OutboundIntent)
+    def request_sync(
+        run_id: str,
+        request: SyncRequest,
+        who: Annotated[str, Depends(approver)],
+        idempotency_key: Annotated[str, Header()] = ...,
+    ):
+        return sync.request_sync(run_id, request.expected_version, who, request.note)
+
+    @app.get("/runs/{run_id}/sync")
+    def list_sync(run_id: str, who: Annotated[str, Depends(actor)]):
+        orchestrator.get(run_id, who)
+        return {
+            "mode": "SIMULATED",
+            "notice": "NO EXTERNAL WRITE",
+            "intents": sync.store.summary(run_id),
+        }
+
+    def sync_visible(identifier: str, who: str):
+        intent = sync.store.get(identifier)
+        orchestrator.get(intent.run_id, who)
+        return intent
+
+    @app.post("/sync/dispatch-due")
+    def dispatch_due(request: DispatchDue, who: Annotated[str, Depends(approver)]):
+        return sync.reconcile_sweep(request.limit, who)
+
+    @app.post("/sync/{intent_id}/dispatch")
+    def dispatch_sync(intent_id: str, who: Annotated[str, Depends(approver)]):
+        sync_visible(intent_id, who)
+        return sync.dispatch_once(intent_id, who)
+
+    @app.post("/sync/{intent_id}/reconcile")
+    def reconcile_sync(intent_id: str, who: Annotated[str, Depends(approver)]):
+        sync_visible(intent_id, who)
+        return sync.reconcile(intent_id, who)
+
+    @app.post("/sync/{intent_id}/resolve")
+    def resolve_sync(intent_id: str, request: ResolveSync, who: Annotated[str, Depends(approver)]):
+        sync_visible(intent_id, who)
+        return sync.resolve(intent_id, request.decision, request.note, who)
 
     @app.post("/runs/{run_id}/analyze")
     def analyze(run_id: str, request: AnalyzeRequest, who: Annotated[str, Depends(engineer)]):
