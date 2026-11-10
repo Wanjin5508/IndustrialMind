@@ -29,6 +29,7 @@ from rfq_workbench.integrations.contracts import (
     SyncIntentView,
     SyncRequest,
 )
+from rfq_workbench.integrations.ports import HttpError, TransportError
 from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.orchestrator import Orchestrator, visible
 from rfq_workbench.repository import Repository
@@ -40,7 +41,7 @@ def create_app(
     settings: Settings | None = None, *, clock=None, systems=None, failpoints=None
 ) -> FastAPI:
     settings = settings or Settings.from_env()
-    repository = Repository(settings.data_dir / "workbench.sqlite3")
+    repository = Repository(settings.data_dir / "workbench.sqlite3", clock=clock)
     workflow = Workflow(settings, repository, clock=clock, systems=systems)
     sync = SyncService(workflow, failpoints=failpoints)
     file_workflow = FileWorkflow(settings, repository)
@@ -181,7 +182,12 @@ def create_app(
 
     @app.get("/runs/{run_id}/integration-preview", response_model=IntegrationPreview)
     def integration_preview(run_id: str, who: Annotated[str, Depends(actor)]):
-        return preview_integrations(orchestrator.get(run_id, who), who, workflow)
+        try:
+            return preview_integrations(orchestrator.get(run_id, who), who, workflow)
+        except (HttpError, TransportError) as exc:
+            raise DomainError(
+                "SNAPSHOT_UNAVAILABLE", "模拟来源当前不可用，请稍后重试。", 409
+            ) from exc
 
     @app.post("/runs/{run_id}/sync", response_model=SyncIntentView)
     def request_sync(
@@ -194,11 +200,15 @@ def create_app(
 
     @app.get("/runs/{run_id}/sync")
     def list_sync(run_id: str, who: Annotated[str, Depends(actor)]):
-        orchestrator.get(run_id, who)
+        body = orchestrator.get(run_id, who)
         return {
             "mode": "SIMULATED",
             "notice": "NO EXTERNAL WRITE",
             "intents": sync.store.summary(run_id),
+            "snapshots": [
+                workflow.snapshots.get(identifier).model_dump(mode="json")
+                for identifier in body.get("snapshot_refs", {}).get("ids", [])
+            ],
         }
 
     def sync_visible(identifier: str, who: str):

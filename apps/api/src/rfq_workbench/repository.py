@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
+from rfq_workbench.clock import SystemClock
 from rfq_workbench.errors import DomainError
 
 
@@ -15,8 +16,9 @@ def utc_now() -> str:
 
 
 class Repository:
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, clock=None):
         self.path = path
+        self.clock = clock or SystemClock()
         path.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as conn:
             version = conn.execute("PRAGMA user_version").fetchone()[0]
@@ -128,7 +130,14 @@ class Repository:
             )
             conn.execute(
                 "INSERT INTO events VALUES (?,?,?,?,?,?)",
-                (body["id"], 1, utc_now(), actor, "created", json.dumps({"mode": body["mode"]})),
+                (
+                    body["id"],
+                    1,
+                    self.clock.now().isoformat(),
+                    actor,
+                    "created",
+                    json.dumps({"mode": body["mode"]}),
+                ),
             )
         return self.get(body["id"], body["project_id"])
 
@@ -153,7 +162,7 @@ class Repository:
         ).fetchone()[0]
         conn.execute(
             "INSERT INTO events VALUES (?,?,?,?,?,?)",
-            (run_id, sequence, utc_now(), actor, action, json.dumps(detail)),
+            (run_id, sequence, self.clock.now().isoformat(), actor, action, json.dumps(detail)),
         )
 
     def update_tx(

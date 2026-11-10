@@ -6,6 +6,8 @@ import re
 from datetime import timedelta
 
 from fastapi import Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from fastapi.routing import APIRoute
 from pydantic import ValidationError
@@ -13,6 +15,7 @@ from starlette.datastructures import UploadFile
 
 from rfq_workbench.canonical import canonical_hash
 from rfq_workbench.contracts import ApproveRequest, ConfirmedInputs, Mutation, TaskRequest
+from rfq_workbench.documents import MAX_FILE_BYTES
 from rfq_workbench.errors import DomainError
 from rfq_workbench.integrations.contracts import SyncRequest
 
@@ -112,9 +115,12 @@ class IdempotentRoute(APIRoute):
                 form = await request.form()
                 for name, value in form.multi_items():
                     if isinstance(value, UploadFile):
+                        data = await value.read(MAX_FILE_BYTES + 1)
+                        if len(data) > MAX_FILE_BYTES:
+                            raise DomainError("FILE_SIZE", "Upload a file no larger than 5 MiB.")
                         content[name] = {
                             "filename": value.filename,
-                            "sha256": hashlib.sha256(await value.read()).hexdigest(),
+                            "sha256": hashlib.sha256(data).hexdigest(),
                         }
                         await value.seek(0)
                     else:
@@ -136,6 +142,10 @@ class IdempotentRoute(APIRoute):
                 response = JSONResponse(
                     status_code=exc.status,
                     content={"error": {"code": exc.code, "message": exc.message}},
+                )
+            except RequestValidationError as exc:
+                response = JSONResponse(
+                    status_code=422, content={"detail": jsonable_encoder(exc.errors())}
                 )
             service.finish(scope, key, response)
             return response

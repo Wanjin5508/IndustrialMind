@@ -174,11 +174,13 @@ export default function Workbench() {
       path: string,
       method = "GET",
       body?: object | FormData,
+      extraHeaders?: Record<string, string>,
     ): Promise<T> => {
       const response = await fetch(`/api${path}`, {
         method,
         headers: {
           "X-Demo-Token": token,
+          ...extraHeaders,
           ...(body && !(body instanceof FormData)
             ? { "Content-Type": "application/json" }
             : {}),
@@ -1070,6 +1072,19 @@ export default function Workbench() {
                     key={`${run.id}:${run.version}:${token}`}
                     version={run.version}
                     load={() => request(`/runs/${run.id}/integration-preview`)}
+                    sync={{
+                      runId: run.id,
+                      version: run.version,
+                      approved: !!run.approval,
+                      approver: !engineer,
+                      request,
+                      onChanged: async () => {
+                        const updated = await request<Run>(`/runs/${run.id}`);
+                        if (activeRole.current !== token) return;
+                        setRun(updated);
+                        await refresh();
+                      },
+                    }}
                   />
                 )}
               {view === 3 && (

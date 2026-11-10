@@ -30,6 +30,24 @@ COST_FIELDS = (
 )
 
 
+KNOWN_COST_METADATA = {
+    "origin_type",
+    "notice",
+    "rules_version",
+    "catalog_version",
+    "rate_version",
+    "template_version",
+    "project_id",
+    "roles",
+    "approved_revisions",
+    "product_family",
+    "blank",
+    "applicability",
+    "routing",
+    "pending",
+}
+
+
 class SnapshotService:
     def __init__(self, repo, settings, systems, clock):
         self.repo, self.settings, self.systems, self.clock = repo, settings, systems, clock
@@ -53,7 +71,11 @@ class SnapshotService:
             payload_sha256=canonical_hash(payload),
             adapter_version="sqlite-fake-v1",
             mapping_version="source-v1",
-            unknown_fields=sorted(set(raw.payload) - set(required)),
+            unknown_fields=sorted(
+                set(raw.payload)
+                - set(required)
+                - (KNOWN_COST_METADATA if raw.ref.entity == "cost_reference" else set())
+            ),
         )
         value = snapshot.model_dump(mode="json")
         with self.repo.connect() as conn:
@@ -77,6 +99,18 @@ class SnapshotService:
                     canonical_json(value["unknown_fields"]),
                 ),
             )
+            if snapshot.unknown_fields:
+                self.repo.append_event(
+                    conn,
+                    run_id,
+                    "system-dispatcher",
+                    "source_schema_warning",
+                    {
+                        "snapshot_id": snapshot.id,
+                        "unknown_fields": snapshot.unknown_fields,
+                        "system": raw.ref.system,
+                    },
+                )
         return snapshot
 
     def get(self, snapshot_id: str) -> SourceSnapshot:

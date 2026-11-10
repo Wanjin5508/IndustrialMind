@@ -79,3 +79,13 @@ def test_in_progress_and_payload_reuse_and_key_validation(client):
     assert error.value.code == "IDEMPOTENCY_KEY_REUSED"
     response = client.post("/tasks", json={}, headers=ENGINEER | {"Idempotency-Key": "short"})
     assert response.status_code == 422
+
+
+def test_invalid_upload_replays_validation_response_instead_of_stalling(client):
+    headers = ENGINEER | {"Idempotency-Key": "invalid-upload-123456"}
+    files = {"rfq": ("request.txt", b"Part number: PM-BRKT-010")}
+    first = client.post("/runs/upload", headers=headers, files=files)
+    second = client.post("/runs/upload", headers=headers, files=files)
+    assert first.status_code == second.status_code == 422
+    assert first.json() == second.json()
+    assert client.get("/runs", headers=ENGINEER).json() == []

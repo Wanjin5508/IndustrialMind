@@ -8,7 +8,7 @@ from conftest import ROOT
 
 from rfq_workbench.canonical import canonical_json
 from rfq_workbench.errors import DomainError
-from rfq_workbench.integrations.faults import SimulatedCrash
+from rfq_workbench.integrations.faults import Failpoints, SimulatedCrash
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from m9_scenarios import Environment  # noqa: E402
@@ -28,6 +28,30 @@ def test_expired_snapshot_never_sends(env):
     env.clock.advance(env.settings.snapshot_ttl_seconds + 1)
     result = env.sync.dispatch_once(intent["id"])
     assert result["state"] == "HELD" and result["last_error_code"] == "SNAPSHOT_STALE"
+    assert env.systems.call_count("erp.put_draft") == 0
+
+
+def test_process_paused_after_claim_cannot_send_with_expired_lease(env):
+    intent = env.enqueue()
+    env.sync.failpoints = Failpoints(
+        lambda point: (
+            env.clock.advance(env.settings.sync_lease_seconds + 1)
+            if point == "after_claim"
+            else None
+        )
+    )
+    result = env.sync.dispatch_once(intent["id"])
+    assert result["state"] == "UNKNOWN_OUTCOME"
+    assert env.systems.call_count("erp.put_draft") == 0
+
+
+def test_source_change_between_claim_and_send_is_held(env):
+    intent = env.enqueue()
+    env.sync.failpoints = Failpoints(
+        lambda point: env.systems.plm.release_new_revision("C") if point == "after_claim" else None
+    )
+    result = env.sync.dispatch_once(intent["id"])
+    assert result["state"] == "HELD" and result["attempt_log"][0]["outcome"] == "NOT_SENT"
     assert env.systems.call_count("erp.put_draft") == 0
 
 

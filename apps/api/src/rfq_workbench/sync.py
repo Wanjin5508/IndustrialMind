@@ -246,6 +246,36 @@ class SyncService:
             self.store.event(conn, current, "sync_claimed", triggered_by)
             intent = current
         self.failpoints.hit("after_claim")
+        # A process may pause immediately after claim. Fence it again before any send.
+        owned = self.store.get(identifier)
+        if (
+            owned.state != "DISPATCHING"
+            or owned.lease_token != intent.lease_token
+            or owned.lease_until <= self.clock.now()
+        ):
+            self.recover(identifier, triggered_by)
+            return self.view(self.store.get(identifier))
+        try:
+            code = self.preflight(intent)
+        except Exception as exc:
+            code = exc.code if isinstance(exc, DomainError) else "SNAPSHOT_UNAVAILABLE"
+        if code:
+            with self.repo.connect() as conn:
+                conn.execute("BEGIN IMMEDIATE")
+                current = self.store.get(identifier, conn)
+                if current.state == "DISPATCHING" and current.lease_token == intent.lease_token:
+                    current.state = "DIVERGED" if code == "TARGET_DIVERGED" else "HELD"
+                    current.last_error_code = code
+                    current.lease_token = current.lease_until = None
+                    current.updated_at = self.clock.now()
+                    self.store.save(conn, current)
+                    conn.execute(
+                        "UPDATE outbox_attempts SET outcome='NOT_SENT',finished_at=?,error_code=? "
+                        "WHERE intent_id=? AND attempt=?",
+                        (self.clock.now().isoformat(), code, identifier, intent.attempts),
+                    )
+                    self.store.event(conn, current, "sync_send_cancelled", triggered_by, code=code)
+            return self.view(self.store.get(identifier))
         started = self.clock.now()
         try:
             raw = self.erp.put_draft(
@@ -475,9 +505,20 @@ class SyncService:
         self, limit: int = 20, triggered_by: str = "system-dispatcher"
     ) -> list[dict]:
         results = []
-        for intent in self.store.list():
+        priority = {
+            "PREPARED": 0,
+            "UNKNOWN_OUTCOME": 1,
+            "ACKED": 2,
+            "DISPATCHING": 3,
+            "RETRY_WAIT": 4,
+            "HELD": 5,
+            "VERIFIED": 6,
+        }
+        for intent in sorted(self.store.list(), key=lambda row: priority.get(row.state, 7)):
             if len(results) >= limit:
                 break
+            if intent.state == "RETRY_WAIT" and intent.next_attempt_at > self.clock.now():
+                continue
             if intent.state in {"DISPATCHING", "UNKNOWN_OUTCOME", "ACKED", "VERIFIED"}:
                 results.append(self.reconcile(intent.id, triggered_by))
             elif intent.state in ACTIVE_SEND:

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SyncPanel, { type SyncPanelProps } from "./sync-panel";
 
 type Preview = {
   run_version: number;
@@ -28,9 +29,11 @@ type Preview = {
 export default function IntegrationPreview({
   version,
   load,
+  sync,
 }: {
   version: number;
   load: () => Promise<Preview>;
+  sync: SyncPanelProps;
 }) {
   const [result, setResult] = useState<Preview | null>(null);
   const [error, setError] = useState("");
@@ -55,54 +58,57 @@ export default function IntegrationPreview({
   }
 
   return (
-    <section>
-      <div className="section-heading">
-        <h2>系统预览 · 模拟</h2>
-        <button disabled={busy} onClick={refresh}>
-          {busy ? "加载中…" : "加载预览"}
-        </button>
-      </div>
-      {error && <p role="alert">{error}</p>}
-      {result && (
-        <>
-          <table>
-            <tbody>
-              <tr>
-                <th scope="row">PLM 版次</th>
-                <td>
-                  发布 {result.plm.released_revision} · RFQ{" "}
-                  {result.plm.rfq_revision ?? "—"}
-                  {" · 图纸 "}
-                  {result.plm.drawing_revision ?? "—"}
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">ERP 报价</th>
-                <td>
-                  {result.erp
-                    ? `草案 v${result.erp.draft_version} · ${result.erp.quantity} 件 · ${result.erp.currency} ${result.erp.total_price} · ${result.erp.approval_status === "APPROVED" ? "已批准" : "待审批"}`
-                    : result.erp_status === "STALE_DRAFT"
-                      ? "草案已过期，请重新计算。"
-                      : "暂无报价草案"}
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">MES 工时</th>
-                <td>
-                  {result.mes.operation} · {result.mes.revision} 版 · 计划{" "}
-                  {result.mes.planned_minutes_per_part}
-                  {" / 样例 "}
-                  {result.mes.observed_minutes_per_part} 分钟/件
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <details>
-            <summary>载荷详情</summary>
-            <pre>{JSON.stringify(result, null, 2)}</pre>
-          </details>
-        </>
-      )}
-    </section>
+    <>
+      <section>
+        <div className="section-heading">
+          <h2>系统预览 · 模拟</h2>
+          <button disabled={busy} onClick={refresh}>
+            {busy ? "加载中…" : "加载预览"}
+          </button>
+        </div>
+        {error && <p role="alert">{error}</p>}
+        {result && (
+          <>
+            <table>
+              <tbody>
+                <tr>
+                  <th scope="row">PLM 版次</th>
+                  <td>
+                    发布 {result.plm.released_revision} · RFQ{" "}
+                    {result.plm.rfq_revision ?? "—"}
+                    {" · 图纸 "}
+                    {result.plm.drawing_revision ?? "—"}
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">ERP 报价</th>
+                  <td>
+                    {result.erp
+                      ? `草案 v${result.erp.draft_version} · ${result.erp.quantity} 件 · ${result.erp.currency} ${result.erp.total_price} · ${result.erp.approval_status === "APPROVED" ? "已批准" : "待审批"}`
+                      : result.erp_status === "STALE_DRAFT"
+                        ? "草案已过期，请重新计算。"
+                        : "暂无报价草案"}
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">MES 工时</th>
+                  <td>
+                    {result.mes.operation} · {result.mes.revision} 版 · 计划{" "}
+                    {result.mes.planned_minutes_per_part}
+                    {" / 样例 "}
+                    {result.mes.observed_minutes_per_part} 分钟/件
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <details>
+              <summary>载荷详情</summary>
+              <pre>{JSON.stringify(result, null, 2)}</pre>
+            </details>
+          </>
+        )}
+      </section>
+      <SyncPanel {...sync} />
+    </>
   );
 }

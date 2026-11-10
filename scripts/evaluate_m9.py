@@ -49,6 +49,11 @@ def main() -> None:
         "complete": False,
         "protocol": protocol,
         "git_commit": revision,
+        "source_sha256": {
+            file.relative_to(ROOT).as_posix(): digest(file)
+            for directory in (ROOT / "apps/api/src", ROOT / "scripts")
+            for file in sorted(directory.rglob("*.py"))
+        },
         "cases": [],
         "faults": {},
         "summary": {},

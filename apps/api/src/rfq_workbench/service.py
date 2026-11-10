@@ -225,7 +225,8 @@ class Workflow:
 
     def approve(self, run_id: str, request: ApproveRequest, actor: str) -> dict:
         before = self.check_fresh(run_id, request.expected_version, actor)
-        self.references_match(before, actor, probe=True)
+        if not self.references_match(before, actor, probe=True):
+            raise DomainError("STALE_DRAFT", "报价依据已变化，请重新计价和审批。", 409)
 
         def change(body: dict) -> dict:
             if body["state"] != RunState.READY_FOR_APPROVAL or any(
