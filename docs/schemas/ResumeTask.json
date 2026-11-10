@@ -101,7 +101,8 @@
       "default": "local_text",
       "enum": [
         "local_text",
-        "live"
+        "live",
+        "replay"
       ],
       "title": "Mode",
       "type": "string"

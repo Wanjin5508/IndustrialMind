@@ -21,6 +21,7 @@ from rfq_workbench.contracts import (
 from rfq_workbench.documents import MAX_FILE_BYTES, asset_path
 from rfq_workbench.errors import DomainError
 from rfq_workbench.file_workflow import FileWorkflow, fixture_catalog
+from rfq_workbench.integrations import IntegrationPreview, preview_integrations
 from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.orchestrator import Orchestrator, visible
 from rfq_workbench.repository import Repository
@@ -91,7 +92,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/capabilities")
     def capabilities(_who: Annotated[str, Depends(actor)]):
         return {
-            "live_available": bool(settings.model_key and settings.model_name),
+            "live_available": settings.simulate_model_timeout
+            or bool(settings.model_key and settings.model_name),
+            "simulate_model_timeout": settings.simulate_model_timeout,
             "model": settings.model_name or None,
             "local_mode": "LOCAL_TEXT",
             "scope": "PM-DEMO / DE-DEMO / PM-BRKT-010",
@@ -161,9 +164,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def get_run(run_id: str, who: Annotated[str, Depends(actor)]):
         return orchestrator.get(run_id, who)
 
+    @app.get("/runs/{run_id}/integration-preview", response_model=IntegrationPreview)
+    def integration_preview(run_id: str, who: Annotated[str, Depends(actor)]):
+        return preview_integrations(orchestrator.get(run_id, who), who, workflow)
+
     @app.post("/runs/{run_id}/analyze")
     def analyze(run_id: str, request: AnalyzeRequest, who: Annotated[str, Depends(engineer)]):
         return file_workflow.analyze(run_id, request.expected_version, request.mode, who)
+
+    @app.post("/runs/{run_id}/recover")
+    def recover(run_id: str, request: Mutation, who: Annotated[str, Depends(engineer)]):
+        return file_workflow.recover(run_id, request.expected_version, who)
 
     @app.patch("/runs/{run_id}/fields")
     def correct_fields(run_id: str, request: CorrectFields, who: Annotated[str, Depends(engineer)]):

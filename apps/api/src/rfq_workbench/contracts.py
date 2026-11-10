@@ -223,8 +223,11 @@ class CorrectFields(Mutation):
     reason: str = Field(min_length=3, max_length=1000)
 
 
+ExtractionMode = Literal["local_text", "live", "replay"]
+
+
 class AnalyzeRequest(Mutation):
-    mode: Literal["local_text", "live"] = "local_text"
+    mode: ExtractionMode = "local_text"
 
 
 Intent = Literal["prepare_quote", "review_drawing", "search_knowledge"]
@@ -242,4 +245,4 @@ class TaskRequest(Contract):
 class ResumeTask(Mutation):
     intent: Intent | None = None
     query: KnowledgeQuery | None = None
-    mode: Literal["local_text", "live"] = "local_text"
+    mode: ExtractionMode = "local_text"

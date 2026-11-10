@@ -29,3 +29,7 @@ M4 实现提交：`196feb7`。手册与演示文档另作 docs 提交，代码�
 ## M5 — 2026-11-10
 
 `codex/m5-orchestrator-hitl`：通过开发范围验收。基线 `84b3ae0`；95 项累计测试、Ruff、前端生产构建/TypeScript 与 Prettier 通过，三入口完成浏览器验证。详见 [[docs/acceptance-m5]]。后续 M6 聚焦有界重试、执行中断恢复与集成预览。
+
+## M6 — 2026-11-10
+
+`codex/m6-reliability-integration`：通过开发范围验收。101 项累计测试及浏览器场景通过。包括三次模拟超时、恢复、原始资料回放和三类只读模拟载荷。详见 [[docs/acceptance-m6]]。下一里程碑为 M7 独立评测。

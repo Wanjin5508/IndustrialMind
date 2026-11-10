@@ -2,6 +2,7 @@
 
 import json
 import re
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 from pydantic import ValidationError
@@ -14,13 +15,23 @@ from rfq_workbench.contracts import (
     Extraction,
     RunState,
 )
-from rfq_workbench.costing import load_reference, validate_inputs
+from rfq_workbench.costing import fingerprint, load_reference, validate_inputs
 from rfq_workbench.documents import ingest
 from rfq_workbench.errors import DomainError
 from rfq_workbench.evidence import verify
 from rfq_workbench.extraction import LABELS, LocalTextProvider, OpenAIProvider, Provider
+from rfq_workbench.replay import ReplayProvider
 from rfq_workbench.repository import Repository, utc_now
 from rfq_workbench.service import clear_results, new_run, require_intent
+
+MAX_ATTEMPTS = 3
+TRANSIENT_ERRORS = {
+    "MODEL_TIMEOUT",
+    "MODEL_CONNECTION_FAILED",
+    "MODEL_RATE_LIMIT",
+    "MODEL_REQUEST_FAILED",
+    "EXTRACTION_INTERRUPTED",
+}
 
 REQUIRED = {
     "rfq.part_number",
@@ -183,6 +194,7 @@ class FileWorkflow:
         self.providers: dict[str, Provider] = {
             "local_text": LocalTextProvider(),
             "live": OpenAIProvider(settings),
+            "replay": ReplayProvider(),
         }
 
     def create(
@@ -221,18 +233,126 @@ class FileWorkflow:
             orchestration,
         )
 
-    def analyze(self, run_id: str, version: int, mode: str, actor: str) -> dict:
-        if mode == "live" and (not self.settings.model_key or not self.settings.model_name):
+    def lease_seconds(self) -> float:
+        return 4 * self.settings.model_timeout + 30
+
+    @staticmethod
+    def document_hashes(body: dict) -> dict:
+        return {d["kind"]: d["sha256"] for d in body["documents"]}
+
+    def check_attempt(self, body: dict, mode: str) -> None:
+        require_intent(body, ("prepare_quote", "review_drawing"))
+        if body["state"] == RunState.EXTRACTING:
+            raise DomainError("TASK_BUSY", "识别正在进行。若任务中断，请使用恢复操作。", 409)
+        if not body["documents"]:
+            raise DomainError("NO_FILES", "请先上传资料。")
+        if (
+            mode == "live"
+            and not self.settings.simulate_model_timeout
+            and not (self.settings.model_key and self.settings.model_name)
+        ):
+            raise DomainError("MODEL_NOT_CONFIGURED", "在线识别未配置，请选择其他识别方式。")
+        if mode == "replay":
+            ReplayProvider().capture(body)
+        budget = body.get("extraction_budget", {})
+        if budget.get("input_hash") == fingerprint(self.document_hashes(body)) and (
+            budget["attempts"].get(mode, 0) >= MAX_ATTEMPTS
+        ):
             raise DomainError(
-                "MODEL_NOT_CONFIGURED", "Configure model credentials on the backend and restart."
+                "RETRY_LIMIT", "当前资料的识别重试已用完，请更换识别方式或更新资料。", 409
             )
 
-        def claim(body: dict) -> dict:
+    @staticmethod
+    def record_failure(body: dict, error: DomainError) -> dict:
+        attempt = body["extraction_attempt"]
+        retryable = error.code in TRANSIENT_ERRORS or (
+            error.code == "MODEL_HTTP_ERROR" and (error.metrics.get("provider_status") or 0) >= 500
+        )
+        final = not retryable or attempt["number"] >= MAX_ATTEMPTS
+        body["state"] = RunState.FAILED_FINAL if final else RunState.FAILED_RETRYABLE
+        if final:
+            body["extraction_budget"]["attempts"][attempt["mode"]] = MAX_ATTEMPTS
+        body["metrics"] = error.metrics
+        body["issues"] = [
+            {
+                "code": error.code,
+                "field": "extraction",
+                "message": error.message,
+                "severity": "blocking",
+            }
+        ]
+        return {
+            **attempt,
+            "code": error.code,
+            "metrics": error.metrics,
+            "output_version": body["version"] + 1,
+            "retryable": not final,
+        }
+
+    def recover(self, run_id: str, version: int, actor: str) -> dict:
+        before = self.repo.get(run_id)
+        last_start = next(
+            (
+                e["occurred_at"]
+                for e in reversed(before["events"])
+                if e["action"] == "extraction_started"
+            ),
+            before["created_at"],
+        )
+
+        def recover_expired(body: dict) -> dict:
             require_intent(body, ("prepare_quote", "review_drawing"))
-            if body["state"] == RunState.EXTRACTING:
-                raise DomainError("TASK_BUSY", "Extraction is already running.", 409)
-            if not body["documents"]:
-                raise DomainError("NO_FILES", "Upload RFQ and drawing before extraction.")
+            if body["state"] != RunState.EXTRACTING:
+                raise DomainError("NOT_EXTRACTING", "当前任务没有待恢复的识别操作。", 409)
+            attempt = body.get("extraction_attempt")
+            deadline = (
+                datetime.fromisoformat(attempt["lease_until"])
+                if attempt
+                else datetime.fromisoformat(last_start) + timedelta(seconds=self.lease_seconds())
+            )
+            if datetime.now(UTC) < deadline:
+                raise DomainError("TASK_BUSY", "识别尚在等待期限内，请稍后刷新。", 409)
+            if attempt is None:
+                # Pre-M6 tasks have an audit timestamp but no stored lease or budget.
+                mode = body["mode"].lower()
+                digest = fingerprint(self.document_hashes(body))
+                body["extraction_attempt"] = {
+                    "number": 1,
+                    "mode": mode,
+                    "input_hash": digest,
+                    "input_version": body["version"] - 1,
+                    "lease_until": deadline.isoformat(),
+                }
+                body["extraction_budget"] = {"input_hash": digest, "attempts": {mode: 1}}
+            return self.record_failure(
+                body,
+                DomainError("EXTRACTION_INTERRUPTED", "识别已中断，请重新处理。"),
+            )
+
+        return self.repo.update(run_id, version, actor, "extraction_recovered", recover_expired)
+
+    def analyze(self, run_id: str, version: int, mode: str, actor: str) -> dict:
+        def claim(body: dict) -> dict:
+            self.check_attempt(body, mode)
+            documents = self.document_hashes(body)
+            digest = fingerprint(documents)
+            budget = body.get("extraction_budget", {})
+            if budget.get("input_hash") != digest:
+                budget = {"input_hash": digest, "attempts": {}}
+            number = budget["attempts"].get(mode, 0) + 1
+            budget["attempts"][mode] = number
+            attempt = {
+                "mode": mode,
+                "number": number,
+                "limit": MAX_ATTEMPTS,
+                "input_version": body["version"],
+                "input_hash": digest,
+                "documents": documents,
+                "pipeline_version": "extraction-v2",
+                "lease_until": (
+                    datetime.now(UTC) + timedelta(seconds=self.lease_seconds())
+                ).isoformat(),
+            }
             clear_results(body)
             body.update(
                 state=RunState.EXTRACTING,
@@ -241,11 +361,16 @@ class FileWorkflow:
                 inputs=None,
                 mode=mode.upper(),
                 metrics={},
+                extraction_budget=budget,
+                extraction_attempt=attempt,
             )
-            return {"mode": mode}
+            return attempt
 
         claimed = self.repo.update(run_id, version, actor, "extraction_started", claim)
+        claimed_version = version + 1
         try:
+            if claimed["version"] != claimed_version:
+                raise DomainError("VERSION_CONFLICT", "任务已更新，请刷新。", 409)
             result = self.providers[mode].extract(claimed)
 
             def complete(body: dict) -> dict:
@@ -257,32 +382,31 @@ class FileWorkflow:
                         )
                 body["metrics"] = result.metrics
                 check_fields(body, self.settings)
-                return {"metrics": result.metrics, "blocking_issues": len(body["issues"])}
+                body["extraction_budget"]["attempts"].pop(mode)
+                return {
+                    **body["extraction_attempt"],
+                    "output_version": body["version"] + 1,
+                    "output_hash": fingerprint(validated.model_dump(mode="json")),
+                    "metrics": result.metrics,
+                    "blocking_issues": len(body["issues"]),
+                }
 
-            return self.repo.update(run_id, claimed["version"], actor, "extracted", complete)
+            return self.repo.update(run_id, claimed_version, actor, "extracted", complete)
         except Exception as exc:
+            if isinstance(exc, DomainError) and exc.code == "VERSION_CONFLICT":
+                raise
             error = (
                 exc
                 if isinstance(exc, DomainError)
-                else DomainError(
-                    "EXTRACTION_FAILED", "Extraction failed. Review input and retry.", 502
-                )
+                else DomainError("EXTRACTION_FAILED", "识别失败，请检查资料。", 502)
             )
-
-            def failed(body: dict) -> dict:
-                body["state"] = RunState.FAILED_RETRYABLE
-                body["metrics"] = error.metrics
-                body["issues"] = [
-                    {
-                        "code": error.code,
-                        "field": "extraction",
-                        "message": error.message,
-                        "severity": "blocking",
-                    }
-                ]
-                return {"code": error.code, "metrics": error.metrics}
-
-            self.repo.update(run_id, claimed["version"], actor, "extraction_failed", failed)
+            self.repo.update(
+                run_id,
+                claimed_version,
+                actor,
+                "extraction_failed",
+                lambda body: self.record_failure(body, error),
+            )
             raise error from exc
 
     def correct(self, run_id: str, request: CorrectFields, actor: str) -> dict:

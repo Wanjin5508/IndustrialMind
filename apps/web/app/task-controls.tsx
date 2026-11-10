@@ -137,6 +137,8 @@ export function TaskControls({
   engineer,
   busy,
   live,
+  onlineLabel,
+  retryBlocked,
   mode,
   setMode,
   resume,
@@ -148,6 +150,8 @@ export function TaskControls({
   engineer: boolean;
   busy: boolean;
   live: boolean;
+  onlineLabel: string;
+  retryBlocked: boolean;
   mode: string;
   setMode: (mode: string) => void;
   resume: (payload: object) => void;
@@ -238,15 +242,19 @@ export function TaskControls({
           >
             <option value="local_text">本地文本识别</option>
             <option value="live" disabled={!live}>
-              在线图文识别
+              {onlineLabel}
             </option>
+            <option value="replay">回放（REPLAY）</option>
           </select>
         </label>
       )}
       <button
         className="primary"
         disabled={
-          busy || state === "EXTRACTING" || !selected || (fileTask && !engineer)
+          busy ||
+          state === "EXTRACTING" ||
+          !selected ||
+          (fileTask && (!engineer || retryBlocked))
         }
         onClick={() =>
           resume({

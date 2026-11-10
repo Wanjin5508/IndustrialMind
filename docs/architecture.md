@@ -1,8 +1,8 @@
 ---
 owner: Engineering
-status: as-built-M5
+status: as-built-M6
 updated: 2026-11-10
-code_baseline: codex/m5-orchestrator-hitl
+code_baseline: codex/m6-reliability-integration
 ---
 # 当前架构入口
 
@@ -17,3 +17,5 @@ code_baseline: codex/m5-orchestrator-hitl
 - [[docs/adr/003-controlled-knowledge|ADR 003：受控知识与执行选择]]。
 
 M5 新增显式三入口 Orchestrator、澄清、补件与人工恢复；决策见 [[docs/adr/004-bounded-orchestrator]]。当前没有自动自然语言分类、企业连接器、队列自动恢复或生产身份；对应后续里程碑。该边界同时约束演示话术与未来架构图。
+
+M6 在任务快照中持久化识别次数和执行期限，沿用版本比较交换保护恢复后的任务。PLM、ERP、MES 使用有类型的模拟适配器。详见 [[docs/acceptance-m6]]。

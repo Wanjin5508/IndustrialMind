@@ -3,9 +3,9 @@ title: IndustrialMindAI RFQ 工作台项目手册
 aliases:
   - RFQ 工作台项目手册
 owner: Engineering
-status: as-built-M5
+status: as-built-M6
 updated: 2026-11-10
-code_baseline: codex/m5-orchestrator-hitl
+code_baseline: codex/m6-reliability-integration
 tags:
   - IndustrialMind
   - FDE
@@ -15,7 +15,7 @@ tags:
 # IndustrialMindAI RFQ 工作台项目手册
 
 > [!abstract] 本手册的用途
-> 说明当前项目怎样运行、为什么这样设计、如何复现验证，以及怎样向面试官解释。当前版本为 **M5 / `codex/m5-orchestrator-hitl`**，基于 M4 手册提交 `84b3ae0`；M0–M5 已完成开发范围验收。招聘题目、规划、当前实现与未来生产方案分别标识。
+> 说明当前项目怎样运行、为什么这样设计、如何复现验证，以及怎样向面试官解释。当前版本为 **M6 / `codex/m6-reliability-integration`**。M0–M6 已完成开发范围验收。招聘题目、规划、当前实现与未来生产方案分别标识。
 
 > [!important] 产品边界
 > 这是 Option B 的本地原型：将 RFQ 和图纸转为**可复核的内部预算草案**。全部内置数据为原创合成资料；没有连接客户 ERP、PLM、MES，没有正式报价发布、制造认证或企业 SSO。工艺工时和费用是演示假设。
@@ -311,7 +311,7 @@ stateDiagram-v2
   APPROVED_DRAFT --> VALIDATING: 修改输入或依赖失效
 ```
 
-图为主要路径，非所有允许动作的穷举。重新抽取会清除旧结果；人工修改仍可留下复核问题；参考资料失效后重算可能再次被拒。`FAILED_FINAL` 是预留枚举，不代表已实现完整终止策略。
+图为主要路径，非所有允许动作的穷举。重新抽取会清除旧结果；人工修改仍可留下复核问题；参考资料失效后重算可能再次被拒。重试用尽或遇到不可重试错误时进入 `FAILED_FINAL`。
 
 SQLite `runs` 存当前 JSON 快照与项目、版本；`events` 存按任务递增序号的审计。更新执行 `BEGIN IMMEDIATE`，核对 expected_version，在同一事务中更新快照并追加事件；失败则回滚。两个客户端使用同一旧版本时只有一个成功，另一方得到 409，而不是覆盖数据。
 
@@ -352,7 +352,9 @@ flowchart TD
 
 未定目的和知识任务按创建角色隔离，避免审批人专属知识通过列表/审计泄漏给工程师；文件任务允许两角色读取，工程师修改、审批人批准。这里是本地角色演示，不代表生产用户身份体系。旧任务没有 orchestration 时仍按原分步报价流程操作。
 
-人工等待期间重启可以恢复。模型执行中崩溃的 EXTRACTING 任务自动回收、后台调度、重试上限仍在 M6 范围；M5 没有将该限制包装成可靠队列。设计详见 [[docs/adr/004-bounded-orchestrator]]，验收见 [[docs/acceptance-m5]]。
+人工等待期间重启可以继续。M6 识别中断后可以在执行期限结束时由工程师恢复。重试次数、输入指纹、执行期限和输出版本均写入 SQLite；回收后旧执行结果无法提交。M5 调度设计见 [[docs/adr/004-bounded-orchestrator]]，M6 验收见 [[docs/acceptance-m6]]。
+
+M6 的 `REPLAY` 使用 DEV-001 在 M3 保存的模型输出。文件 SHA-256 必须完全一致，回放仍执行来源核对、工程校验、计价和审批。成本页的 PLM、ERP、MES 预览使用合成适配器，范围限于德国演示工厂和当前零件。ERP 预览依赖草案有效性，MES 样例工时不进入成本公式。
 
 ## 10. 接口与扩展接点
 
@@ -376,7 +378,7 @@ flowchart TD
 
 ## 11. 测试、实测与发布纪律
 
-截至 2026-11-10，本机累计 **95 项测试通过**，生产构建包含 TypeScript 校验且通过。Ruff 与格式化检查已完成；CI 文件存在但未在远端运行。
+截至 2026-11-10，本机累计 **101 项测试通过**，生产构建包含 TypeScript 校验且通过。Ruff 与格式化检查已完成；CI 文件存在但未在远端运行。
 
 | 范围 | 证据 | 能得出的结论 |
 |---|---|---|
@@ -386,6 +388,7 @@ flowchart TD
 | M3 稳健性 | 60 项累计测试，3 个真实开发案例 | 受测正常/冲突/缺失行为正确；不是总体准确率 |
 | M4 知识治理 | [[docs/acceptance-m4]]，77 项累计测试 | 受测权限、期限、适用性与执行选择通过 |
 | M5 三入口与 HITL | [[docs/acceptance-m5]]，95 项累计测试 | 澄清、补件、跨重启恢复、意图边界及四类依赖失效通过 |
+| M6 可靠性与集成预览 | [[docs/acceptance-m6]]，101 项累计测试 | 超时停止、中断恢复、回放与模拟预览通过 |
 
 后续维护命令：
 
@@ -429,7 +432,8 @@ flowchart TD
 | codex/m2-rfq-workbench | 4a58648 | 文件与界面闭环，真实调用验收 |
 | codex/m3-extraction-evidence | 9699b76 | 证据与用量 |
 | codex/m4-controlled-knowledge | 196feb7；手册 84b3ae0 | 有限审查与受控知识 |
-| codex/m5-orchestrator-hitl | 当前本地分支，提交见 Git log | 三入口、人工暂停恢复与权限边界 |
+| codex/m5-orchestrator-hitl | `5ef2ed5` | 三入口、人工暂停恢复与权限边界 |
+| codex/m6-reliability-integration | 当前本地分支，提交见 Git log | 有界重试、中断恢复与模拟预览 |
 
 后一个分支累计包含前一个阶段。只提交明确相关路径；用户原有未提交材料不混入功能提交。本次无 push、无自动合并 main。保持 Conventional Commits；修改契约同时生成 schema，修改功能同步更新设计、运行手册和验收记录。
 
@@ -441,7 +445,6 @@ Mermaid 图直接维护在 Markdown 中，可在 Obsidian 阅读模式渲染，�
 
 | 阶段 | 后续工作，当前不宣称已完成 |
 |---|---|
-| M6 | 有界重试、中断恢复、版本日志与 PLM/ERP/MES 适配器预览 |
 | M7 | 冻结输入及人工答案、独立指标、失败分析与异常评测 |
 | M8 | 用实际数据补齐商业论证、ROI 与分阶段客户实施 |
 | M9 | 最终交付排练、备用录屏、他人复现和提交核查 |

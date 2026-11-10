@@ -1,6 +1,6 @@
 # HTTP API
 
-Owner: Engineering · Status: M2 implemented · Updated: 2026-11-09
+Owner: Engineering · Status: M6 implemented · Updated: 2026-11-10
 
 Base URL: `http://127.0.0.1:8000`。交互文档 `/docs`；机器契约 [OpenAPI](schemas/openapi.json)。
 
@@ -51,3 +51,9 @@ Base URL: `http://127.0.0.1:8000`。交互文档 `/docs`；机器契约 [OpenAPI
 旧任务继续使用 /runs 分步接口；没有 orchestration 的任务调用任务恢复/补件返回 LEGACY_TASK。旧 cost/approve/export 接口拒绝非报价意图（INTENT_BOUNDARY），不能靠切换前端页签升级权限。目的转换返回 INTENT_IMMUTABLE/409；旧版本恢复返回 VERSION_CONFLICT/409。缺件和工程暂停是正常任务响应，分别保留 CLARIFICATION_REQUIRED/NEEDS_ENGINEERING_REVIEW 与结构化 pause；模型调用错误仍采用现有稳定错误响应。
 
 示例：POST /tasks 传 {"intent":"prepare_quote","fixture_id":"DEV-001"}，使用返回版本 POST /tasks/{id}/resume。不要硬编码 version；读取响应中的最新值。生成的 OpenAPI 与 TaskRequest/ResumeTask schema 是机器契约。
+
+## M6 恢复与系统预览
+
+- `POST /runs/{id}/recover` 接收 `expected_version`，仅工程师可调用。仅允许回收超过执行期限的 `EXTRACTING`。返回新的任务版本与失败状态，随后用原分析或任务继续接口重试。
+- `POST /runs/{id}/analyze` 与 `POST /tasks/{id}/resume` 接受 `mode: "replay"`。匹配原始文件才执行回放。次数用尽返回 `RETRY_LIMIT`（409），资料不匹配返回 `REPLAY_UNAVAILABLE`（422）。
+- `GET /runs/{id}/integration-preview` 返回 `IntegrationPreview`，含 `mode: "SIMULATED"`、任务版本和 PLM、ERP、MES 三段。沿用任务的角色可见性和零件范围。ERP 只在草案依赖仍匹配时返回。此读取不改变任务版本或审批状态。载荷契约见 `docs/schemas/openapi.json`。

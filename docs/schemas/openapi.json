@@ -655,6 +655,61 @@
         }
       }
     },
+    "/runs/{run_id}/integration-preview": {
+      "get": {
+        "summary": "Integration Preview",
+        "operationId": "integration_preview_runs__run_id__integration_preview_get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "x-demo-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationPreview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/runs/{run_id}/analyze": {
       "post": {
         "summary": "Analyze",
@@ -692,6 +747,69 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/AnalyzeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{run_id}/recover": {
+      "post": {
+        "summary": "Recover",
+        "operationId": "recover_runs__run_id__recover_post",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          },
+          {
+            "name": "x-demo-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Mutation"
               }
             }
           }
@@ -1181,7 +1299,8 @@
             "type": "string",
             "enum": [
               "local_text",
-              "live"
+              "live",
+              "replay"
             ],
             "title": "Mode",
             "default": "local_text"
@@ -1434,6 +1553,69 @@
         ],
         "title": "CorrectFields"
       },
+      "ERPDraft": {
+        "properties": {
+          "preview_id": {
+            "type": "string",
+            "title": "Preview Id"
+          },
+          "draft_version": {
+            "type": "integer",
+            "title": "Draft Version"
+          },
+          "approval_status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED"
+            ],
+            "title": "Approval Status"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "unit_cost": {
+            "type": "string",
+            "title": "Unit Cost"
+          },
+          "unit_price": {
+            "type": "string",
+            "title": "Unit Price"
+          },
+          "total_price": {
+            "type": "string",
+            "title": "Total Price"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash"
+          },
+          "reference_hash": {
+            "type": "string",
+            "title": "Reference Hash"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "preview_id",
+          "draft_version",
+          "approval_status",
+          "quantity",
+          "currency",
+          "unit_cost",
+          "unit_price",
+          "total_price",
+          "input_hash",
+          "reference_hash"
+        ],
+        "title": "ERPDraft"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1446,6 +1628,64 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "IntegrationPreview": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "SIMULATED",
+            "title": "Mode",
+            "default": "SIMULATED"
+          },
+          "run_version": {
+            "type": "integer",
+            "title": "Run Version"
+          },
+          "part_number": {
+            "type": "string",
+            "title": "Part Number"
+          },
+          "plant": {
+            "type": "string",
+            "title": "Plant"
+          },
+          "plm": {
+            "$ref": "#/components/schemas/PLMRevision"
+          },
+          "erp": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ERPDraft"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "erp_status": {
+            "type": "string",
+            "enum": [
+              "NO_DRAFT",
+              "STALE_DRAFT",
+              "AVAILABLE"
+            ],
+            "title": "Erp Status"
+          },
+          "mes": {
+            "$ref": "#/components/schemas/MESFeedback"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "run_version",
+          "part_number",
+          "plant",
+          "plm",
+          "erp_status",
+          "mes"
+        ],
+        "title": "IntegrationPreview"
       },
       "KnowledgeQuery": {
         "properties": {
@@ -1507,6 +1747,40 @@
         "type": "object",
         "title": "KnowledgeQuery"
       },
+      "MESFeedback": {
+        "properties": {
+          "sample_id": {
+            "type": "string",
+            "title": "Sample Id"
+          },
+          "revision": {
+            "type": "string",
+            "title": "Revision"
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "planned_minutes_per_part": {
+            "type": "string",
+            "title": "Planned Minutes Per Part"
+          },
+          "observed_minutes_per_part": {
+            "type": "string",
+            "title": "Observed Minutes Per Part"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "sample_id",
+          "revision",
+          "operation",
+          "planned_minutes_per_part",
+          "observed_minutes_per_part"
+        ],
+        "title": "MESFeedback"
+      },
       "Mutation": {
         "properties": {
           "expected_version": {
@@ -1521,6 +1795,49 @@
           "expected_version"
         ],
         "title": "Mutation"
+      },
+      "PLMRevision": {
+        "properties": {
+          "released_revision": {
+            "type": "string",
+            "title": "Released Revision"
+          },
+          "rfq_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rfq Revision"
+          },
+          "drawing_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing Revision"
+          },
+          "reference_id": {
+            "type": "string",
+            "title": "Reference Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "released_revision",
+          "rfq_revision",
+          "drawing_revision",
+          "reference_id"
+        ],
+        "title": "PLMRevision"
       },
       "ResumeTask": {
         "properties": {
@@ -1559,7 +1876,8 @@
             "type": "string",
             "enum": [
               "local_text",
-              "live"
+              "live",
+              "replay"
             ],
             "title": "Mode",
             "default": "local_text"

@@ -23,6 +23,7 @@ class Settings:
     model_name: str = ""
     model_base_url: str = "https://api.openai.com/v1"
     model_timeout: float = 60.0
+    simulate_model_timeout: bool = False
     model_pricing_path: Path = ROOT / "config/model-pricing.json"
 
     def __post_init__(self):
@@ -62,6 +63,7 @@ class Settings:
             model_name=os.environ.get("OPENAI_MODEL", ""),
             model_base_url=os.environ.get("OPENAI_BASE_URL") or "https://api.openai.com/v1",
             model_timeout=float(os.environ.get("RFQ_MODEL_TIMEOUT_SECONDS", "60")),
+            simulate_model_timeout=os.environ.get("RFQ_SIMULATE_MODEL_TIMEOUT") == "1",
             model_pricing_path=Path(
                 os.environ.get("RFQ_MODEL_PRICING_FILE", str(ROOT / "config/model-pricing.json"))
             ),

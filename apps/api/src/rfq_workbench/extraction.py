@@ -131,6 +131,17 @@ class OpenAIProvider:
 
     def extract(self, body: dict) -> ExtractionResult:
         settings = self.settings
+        if settings.simulate_model_timeout:
+            raise DomainError(
+                "MODEL_TIMEOUT",
+                "模拟识别超时，请重试或更换识别方式。",
+                504,
+                metrics={
+                    "provider": "TIMEOUT_SIMULATION",
+                    "real_model_call": False,
+                    "error_code": "MODEL_TIMEOUT",
+                },
+            )
         if not settings.model_key or not settings.model_name:
             raise DomainError(
                 "MODEL_NOT_CONFIGURED", "Configure OPENAI_API_KEY and OPENAI_MODEL in .env.local."
@@ -185,6 +196,7 @@ class OpenAIProvider:
                     "attempted_live": True,
                     "elapsed_ms": round((time.monotonic() - started) * 1000),
                     "error_code": code,
+                    "provider_status": exc.status_code if isinstance(exc, APIStatusError) else None,
                     "estimated_cost": None,
                     "cost_note": "Failed call; billable usage unknown.",
                 },

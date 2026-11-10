@@ -158,7 +158,9 @@ class Orchestrator:
                     raise DomainError("INTENT_BOUNDARY", "Queries belong to knowledge tasks.")
                 current["query"] = request.query.model_dump(mode="json")
             current["result"] = None
-            self.clarify(body)
+            missing = self.clarify(body)
+            if not missing and intent in INTENTS[:2] and not body["fields"]:
+                self.files.check_attempt(body, request.mode)
             return {"intent": intent, "mode": request.mode, "pause": current["pause"]}
 
         body = self.repo.update(run_id, request.expected_version, actor, "task_resumed", clarify)

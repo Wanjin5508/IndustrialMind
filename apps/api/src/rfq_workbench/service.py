@@ -122,9 +122,26 @@ class Workflow:
                 "draft_version": quote.draft_version,
                 "input_hash": quote.input_hash,
                 "reference_hash": ref_hash,
+                "input_version": body["version"],
+                "output_version": body["version"] + 1,
+                "output_hash": fingerprint(body["quote"]),
             }
 
         return self.repo.update(run_id, version, actor, "costed", change)
+
+    def references_match(self, body: dict, actor: str) -> bool:
+        """Check a draft snapshot without invalidating it on a read-only request."""
+        if body["quote"] is None:
+            return False
+        try:
+            _, ref_hash, _ = Knowledge(self.settings).resolve(
+                ConfirmedInputs.model_validate(body["inputs"]), actor
+            )
+            return body["quote"]["reference_hash"] == ref_hash and body["quote"][
+                "input_hash"
+            ] == input_hash(body)
+        except DomainError:
+            return False
 
     def check_fresh(self, run_id: str, version: int, actor: str) -> dict:
         body = self.repo.get(run_id)
@@ -133,16 +150,7 @@ class Workflow:
             raise DomainError("VERSION_CONFLICT", "Task changed. Refresh before retrying.", 409)
         if body["quote"] is None:
             raise DomainError("NO_QUOTE", "Calculate a valid draft first.")
-        try:
-            _, ref_hash, _ = Knowledge(self.settings).resolve(
-                ConfirmedInputs.model_validate(body["inputs"]), actor
-            )
-            fresh = body["quote"]["reference_hash"] == ref_hash and body["quote"][
-                "input_hash"
-            ] == input_hash(body)
-        except DomainError:
-            fresh = False
-        if not fresh:
+        if not self.references_match(body, actor):
 
             def invalidate(current: dict) -> dict:
                 clear_results(current)
@@ -224,6 +232,9 @@ class Workflow:
                     k["source_id"] + "@" + k["version"] for k in quote.get("knowledge_basis", [])
                 ),
             ]
+            replay_source = body["metrics"].get("replay_source")
+            if body["mode"] == "REPLAY" and replay_source:
+                lines.append(f"Extraction source: REPLAY / {replay_source['id']}")
             body["export"] = {
                 "filename": f"internal-draft-{run_id[:8]}-v{quote['draft_version']}.md",
                 "markdown": "\n".join(lines) + "\n",

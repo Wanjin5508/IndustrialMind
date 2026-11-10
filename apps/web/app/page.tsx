@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import KnowledgePanel, { type KnowledgeItem } from "./knowledge-panel";
 import { CreateTask, TaskControls, type TaskContext } from "./task-controls";
+import IntegrationPreview from "./integration-preview";
 
 type Evidence = {
   id: string;
@@ -52,6 +53,8 @@ type Run = {
   version: number;
   state: string;
   mode: string;
+  extraction_attempt?: { number: number; limit?: number };
+  inputs: object | null;
   fields: Record<string, Fact>;
   sources: Evidence[];
   documents: { id: string; name: string; kind: string; suffix: string }[];
@@ -73,6 +76,7 @@ type Run = {
     endpoint_host?: string;
     elapsed_ms?: number;
     response_id?: string;
+    replay_source?: { id: string; model: string; recorded_on: string };
     error_code?: string;
     estimated_cost?: string | null;
     cost_currency?: string;
@@ -81,7 +85,11 @@ type Run = {
     pricing?: { version: string; source: string };
   };
 };
-type Capability = { live_available: boolean; model: string | null };
+type Capability = {
+  live_available: boolean;
+  model: string | null;
+  simulate_model_timeout?: boolean;
+};
 const views = ["任务总览", "资料与证据", "成本草案", "审批与审计", "受控知识"];
 const evidenceNames: Record<string, string> = {
   MISSING: "未知 · 需补充",
@@ -109,6 +117,7 @@ const names: Record<string, string> = {
 const modeNames: Record<string, string> = {
   LOCAL_TEXT: "本地文本识别",
   LIVE: "在线图文识别",
+  REPLAY: "回放（REPLAY）",
   FILES: "待识别",
   TASK: "待处理",
   MANUAL_CONFIRMED: "人工录入",
@@ -124,6 +133,7 @@ const states: Record<string, string> = {
   APPROVED_DRAFT: "已批准内部草案",
   EXPORTED_DRAFT: "已导出",
   FAILED_RETRYABLE: "失败 · 可重试",
+  FAILED_FINAL: "识别已停止",
   EXTRACTING: "抽取中",
 };
 
@@ -199,7 +209,13 @@ export default function Workbench() {
     setConfirmed(false);
   }, [run?.id, run?.version]);
   useEffect(() => {
-    setMode(run?.mode === "LIVE" ? "live" : "local_text");
+    setMode(
+      run?.mode === "LIVE"
+        ? "live"
+        : run?.mode === "REPLAY"
+          ? "replay"
+          : "local_text",
+    );
   }, [run?.id, run?.mode]);
   useEffect(() => {
     let cancelled = false,
@@ -276,6 +292,11 @@ export default function Workbench() {
   const engineer = token !== "demo-approver";
   const quoteTask =
     !run?.orchestration || run.orchestration.intent === "prepare_quote";
+  const retryBlocked =
+    run?.state === "FAILED_FINAL" && run.mode === mode.toUpperCase();
+  const onlineLabel = cap?.simulate_model_timeout
+    ? "在线识别 · 模拟超时"
+    : "在线图文识别";
   return (
     <div className="shell">
       <aside>
@@ -530,6 +551,14 @@ export default function Workbench() {
                 >
                   刷新
                 </button>
+                {engineer && run.state === "EXTRACTING" && (
+                  <button
+                    disabled={busy}
+                    onClick={() => act(() => mutate("recover"))}
+                  >
+                    恢复中断任务
+                  </button>
+                )}
               </div>
               {run.orchestration && (
                 <TaskControls
@@ -540,6 +569,8 @@ export default function Workbench() {
                   engineer={engineer}
                   busy={busy}
                   live={!!cap?.live_available}
+                  onlineLabel={onlineLabel}
+                  retryBlocked={retryBlocked}
                   mode={mode}
                   setMode={setMode}
                   resume={(payload) =>
@@ -560,6 +591,16 @@ export default function Workbench() {
               {run.issues.length > 0 && (
                 <section className="issues">
                   <h2>需要处理的工程问题 · {run.issues.length}</h2>
+                  {run.extraction_attempt?.limit &&
+                    ["FAILED_RETRYABLE", "FAILED_FINAL"].includes(
+                      run.state,
+                    ) && (
+                      <p>
+                        识别尝试 {run.extraction_attempt.number} /{" "}
+                        {run.extraction_attempt.limit}
+                      </p>
+                    )}
+                  {retryBlocked && <p>请选择其他识别方式或更新资料。</p>}
                   {run.issues.map((i, n) => (
                     <div key={n}>
                       <strong>{i.code}</strong>
@@ -589,17 +630,32 @@ export default function Workbench() {
                       >
                         <option value="local_text">本地文本识别</option>
                         <option value="live" disabled={!cap?.live_available}>
-                          在线图文识别
+                          {onlineLabel}
                         </option>
+                        <option value="replay">回放（REPLAY）</option>
                       </select>
                       <button
                         className="primary"
-                        disabled={busy || !engineer}
+                        disabled={
+                          busy ||
+                          !engineer ||
+                          retryBlocked ||
+                          run.state === "EXTRACTING"
+                        }
                         onClick={() => act(() => mutate("analyze", { mode }))}
                       >
-                        开始抽取
+                        {run.state === "FAILED_RETRYABLE"
+                          ? "重新识别"
+                          : "开始抽取"}
                       </button>
                     </section>
+                    {run.metrics.replay_source && (
+                      <p className="muted">
+                        回放来源：{run.metrics.replay_source.id} ·{" "}
+                        {run.metrics.replay_source.model} ·{" "}
+                        {run.metrics.replay_source.recorded_on}
+                      </p>
+                    )}
                     <div className="evidence-grid">
                       <section>
                         <h2>结构化字段</h2>
@@ -950,6 +1006,14 @@ export default function Workbench() {
                   )}
                 </section>
               )}
+              {view === 2 &&
+                (run.inputs || Object.keys(run.fields).length > 0) && (
+                  <IntegrationPreview
+                    key={`${run.id}:${run.version}:${token}`}
+                    version={run.version}
+                    load={() => request(`/runs/${run.id}/integration-preview`)}
+                  />
+                )}
               {view === 3 && (
                 <>
                   <section>

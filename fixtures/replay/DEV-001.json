@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "documents": {
+    "rfq": "8afc523214520fc72aa953ff946c30609bf31e0d296a8ef5e08ee0a693974b4a",
+    "drawing": "12f31334b4f24db8cce2b4c030ce464a7ac4c182cb4b3d2f576746b164d8cfd1"
+  },
+  "source": {
+    "id": "DEV-001-M3-LIVE",
+    "recorded_on": "2026-11-09",
+    "model": "deepseek-flash",
+    "prompt_version": "rfq-extraction-v1"
+  },
+  "fields": {
+    "rfq": {
+      "part_number": {
+        "value": "PM-BRKT-010",
+        "locator": "p1:l5"
+      },
+      "required_revision": {
+        "value": "B",
+        "locator": "p1:l6"
+      },
+      "quantity": {
+        "value": "100",
+        "locator": "p1:l7"
+      },
+      "currency": {
+        "value": "EUR",
+        "locator": "p1:l8"
+      }
+    },
+    "drawing": {
+      "part_number": {
+        "value": "PM-BRKT-010",
+        "locator": "p1:l8"
+      },
+      "revision": {
+        "value": "B",
+        "locator": "p1:l9"
+      },
+      "material": {
+        "value": "Al-6061-T6",
+        "locator": "p1:l10"
+      },
+      "unit": {
+        "value": "mm",
+        "locator": "p1:l11"
+      },
+      "width_mm": {
+        "value": "80.00",
+        "locator": "p1:l12"
+      },
+      "height_mm": {
+        "value": "50.00",
+        "locator": "p1:l13"
+      },
+      "thickness_mm": {
+        "value": "12.00",
+        "locator": "p1:l14"
+      },
+      "hole_diameter_mm": {
+        "value": "6.50",
+        "locator": "p1:l15"
+      },
+      "surface_finish": {
+        "value": "Anodize",
+        "locator": "p1:l17"
+      }
+    }
+  }
+}
