@@ -1,8 +1,8 @@
 ---
 owner: Engineering
-status: as-built-M4
+status: as-built-M5
 updated: 2026-11-10
-code_baseline: 196feb7
+code_baseline: codex/m5-orchestrator-hitl
 ---
 # 当前架构入口
 
@@ -16,4 +16,4 @@ code_baseline: 196feb7
 - [[docs/adr/002-evidence-and-model-accounting|ADR 002：证据强度与模型用量]]。
 - [[docs/adr/003-controlled-knowledge|ADR 003：受控知识与执行选择]]。
 
-当前没有统一自然语言 Orchestrator、企业连接器、队列自动恢复或生产身份；对应 roadmap M5 及以后阶段。该边界同时约束演示话术与未来架构图。
+M5 新增显式三入口 Orchestrator、澄清、补件与人工恢复；决策见 [[docs/adr/004-bounded-orchestrator]]。当前没有自动自然语言分类、企业连接器、队列自动恢复或生产身份；对应后续里程碑。该边界同时约束演示话术与未来架构图。

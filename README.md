@@ -1,6 +1,6 @@
 # PrecisionMotion RFQ Workbench
 
-当前已实现 **M0–M4**。先读 [完整项目手册](IndustrialMindAI-项目手册.md)，面试排练使用 [模块、架构与演示讲解](docs/面试与演示讲解.md)。两份文档支持 Obsidian 双向链接、嵌入与 Mermaid 图表。
+当前已实现 **M0–M5**。先读 [完整项目手册](IndustrialMindAI-项目手册.md)，面试排练使用 [模块、架构与演示讲解](docs/面试与演示讲解.md)。两份文档支持 Obsidian 双向链接、嵌入与 Mermaid 图表。
 
 面向 IndustrialMind Option B 的本地全栈原型：RFQ/图纸 → 来源与问题 → 确定性预算 → 人工审核 → 内部草案导出。
 

@@ -3,9 +3,9 @@ title: IndustrialMindAI RFQ 工作台项目手册
 aliases:
   - RFQ 工作台项目手册
 owner: Engineering
-status: as-built-M4
+status: as-built-M5
 updated: 2026-11-10
-code_baseline: 196feb7
+code_baseline: codex/m5-orchestrator-hitl
 tags:
   - IndustrialMind
   - FDE
@@ -15,7 +15,7 @@ tags:
 # IndustrialMindAI RFQ 工作台项目手册
 
 > [!abstract] 本手册的用途
-> 说明当前项目怎样运行、为什么这样设计、如何复现验证，以及怎样向面试官解释。当前代码基线为 **M4 / `196feb7`**；M0–M4 已完成开发范围验收。招聘题目、规划、当前实现与未来生产方案分别标识。
+> 说明当前项目怎样运行、为什么这样设计、如何复现验证，以及怎样向面试官解释。当前版本为 **M5 / `codex/m5-orchestrator-hitl`**，基于 M4 手册提交 `84b3ae0`；M0–M5 已完成开发范围验收。招聘题目、规划、当前实现与未来生产方案分别标识。
 
 > [!important] 产品边界
 > 这是 Option B 的本地原型：将 RFQ 和图纸转为**可复核的内部预算草案**。全部内置数据为原创合成资料；没有连接客户 ERP、PLM、MES，没有正式报价发布、制造认证或企业 SSO。工艺工时和费用是演示假设。
@@ -37,7 +37,7 @@ tags:
 | 输入 | UTF-8 RFQ 文本/PDF + PDF 图纸 | 原生 DWG/STEP、复杂扫描文件集 |
 | 存储 | 本机 SQLite + 文件目录 | 多租户、分布式锁、生产备份与容灾 |
 
-当前有五个视图：任务总览、资料与证据、成本草案、审批与审计、受控知识。知识查询是独立确定性接口；统一自然语言任务调度尚属于 M5。
+当前有五个视图：任务总览、资料与证据、成本草案、审批与审计、受控知识。M5 在任务总览中提供三个显式入口和统一恢复控制；文本目标不明确时要求人选择，不做自动自然语言分类。独立知识视图仍用于交互检索。
 
 工厂和产品族目前来自固定部署上下文，不是模型从任意 RFQ 中动态识别的字段。真实试点需要补充输入范围识别，并与服务端授权上下文交叉校验。
 
@@ -83,7 +83,7 @@ npm ci
 | RFQ_ENGINEER_TOKEN / RFQ_APPROVER_TOKEN | 本地角色令牌 | 留空使用公开演示值；自定义后 UI 角色切换尚不支持输入新令牌，可经 API 使用 |
 | RFQ_MODEL_PRICING_FILE | 模型费用快照 | 可指定绝对路径；默认 `config/model-pricing.json` |
 
-更改环境配置后重启后端。干净演示使用新的 `RFQ_DATA_DIR`，例如 `var/demo-m4-fresh`，保留旧任务而非删除数据库。细节见 [[docs/runbook|运行手册]]。
+更改环境配置后重启后端。干净演示使用新的 `RFQ_DATA_DIR`，例如 `var/demo-m5-fresh`，保留旧任务而非删除数据库。细节见 [[docs/runbook|运行手册]]。
 
 ## 3. 系统架构与职责边界
 
@@ -94,7 +94,11 @@ flowchart LR
   U[工程师与审批人] --> UI[Next.js 工作台]
   UI --> P[同源 /api 代理]
   P --> API[FastAPI 身份与契约校验]
-  API --> F[FileWorkflow 文件与字段流程]
+  API --> O[Orchestrator 显式路由与人工暂停]
+  O --> F[FileWorkflow 文件与字段流程]
+  O --> W
+  O --> K
+  O --> DB
   API --> W[Workflow 计价审批流程]
   API --> K[Knowledge 受控查询]
   F --> D[文档解析与页图]
@@ -115,6 +119,8 @@ flowchart LR
 |---|---|---|
 | `apps/web/app/page.tsx` | 任务、证据、成本、审批视图及操作状态 | 用户看到输入、依据、问题、结果的连续流程 |
 | `apps/web/app/knowledge-panel.tsx` | 查询条件、适用/参考标识、角色切换取消请求 | 防止旧角色查询结果回填；服务端仍独立鉴权 |
+| `apps/web/app/task-controls.tsx` | 三入口、补件、恢复和结果快照 | 让任务目标和暂停原因可见 |
+| `orchestrator.py` | 显式目的、有界执行、澄清、恢复与角色可见性 | 一套持久化状态；审图和检索不能升级为报价 |
 | `main.py` | 应用工厂、HTTP 路由、演示角色、错误响应 | 传输层与业务职责分开，测试能注入配置 |
 | `documents.py` | 限制文件类型/大小/页数，提取文本，生成页图 | 文件输入是实际字节，不是预填答案 |
 | `extraction.py` | LOCAL_TEXT 和 LIVE Provider，结构化模型调用 | 抽取实现可替换，流程不依赖某一模型 |
@@ -130,6 +136,8 @@ flowchart LR
 以上后端文件均位于 `apps/api/src/rfq_workbench/`。完整接口见 [[docs/api|API 文档]] 与生成的 `docs/schemas/openapi.json`。
 
 ## 4. 一次 RFQ 的实际执行链路
+
+推荐路径：任务总览选择“准备内部报价”并附 DEV-001，创建后选择 LOCAL_TEXT 或 LIVE，点击“执行 / 恢复任务”。Orchestrator 检查输入，调用下面的抽取链路，遇到问题暂停；通过后继续受控依据选择和计价，停在待审批。下图展示可独立调用的抽取子流程，原有分步按钮继续保留。
 
 ```mermaid
 sequenceDiagram
@@ -178,6 +186,8 @@ var/                            运行数据库、上传页图、真实调用记
 
 | 对象 | 关键字段 | 作用 |
 |---|---|---|
+| TaskRequest / ResumeTask | intent、request、query、fixture_id；恢复携带 expected_version 和 mode | 创建不触发模型；明确选择后才执行有限路径 |
+| orchestration | intent、owner、pause、query、result | 存在原 runs JSON 中，顶层 state 是唯一状态 |
 | Document | id、kind、sha256、pages | 区分 RFQ/图纸，保存输入身份与页内容 |
 | Source | id、document_id、page、text、locator、bbox | 解析器签发来源；模型只能引用 |
 | Extraction | rfq + drawing 的 value/source_id | 13 个候选字段；未知值为 null |
@@ -282,7 +292,11 @@ flowchart TD
 
 ```mermaid
 stateDiagram-v2
+  [*] --> CLARIFICATION_REQUIRED: 目标或输入缺失
+  CLARIFICATION_REQUIRED --> RECEIVED: 选择目标并补件
   [*] --> RECEIVED
+  RECEIVED --> KNOWLEDGE_COMPLETED: 已授权知识查询
+  VALIDATING --> REVIEW_COMPLETED: 仅图纸审查通过
   RECEIVED --> EXTRACTING: 开始抽取
   EXTRACTING --> VALIDATING: 字段与规则通过
   EXTRACTING --> NEEDS_ENGINEERING_REVIEW: 资料缺失或冲突
@@ -303,10 +317,49 @@ SQLite `runs` 存当前 JSON 快照与项目、版本；`events` 存按任务递
 
 这不是完整 event sourcing：当前快照是读取入口，没有实现从全部事件重建状态。也不是防篡改审计账本；本机文件权限仍是基础。未知数据库 schema 版本拒绝启动，不自动丢数据。
 
+### 9.1 M5 三入口与人工恢复
+
+![[docs/assets/m5-task-entry.jpg]]
+
+```mermaid
+flowchart TD
+  IN[创建任务与明确目标] --> NEED{目标和输入齐全}
+  NEED -->|否| ASK[持久化澄清或缺件清单]
+  ASK --> HUMAN[工程师补资料或选择目标]
+  HUMAN --> RESUME[显式恢复与版本检查]
+  NEED -->|是| RESUME
+  RESUME --> ROUTE{已确定的意图}
+  ROUTE -->|prepare_quote| EX[一次抽取或复用人工修正]
+  ROUTE -->|review_drawing| EX
+  EX --> GATE{证据与工程规则}
+  GATE -->|问题| PAUSE[暂停并保留证据]
+  PAUSE --> HUMAN
+  GATE -->|仅审图通过| REVIEW[问题与审查结果 无价格]
+  GATE -->|报价通过| COST[唯一依据与确定性计价]
+  COST --> APPROVAL[等待审批人确认]
+  ROUTE -->|search_knowledge| SEARCH[角色过滤与检索快照]
+```
+
+| 入口 | 最小输入 | 输出与边界 |
+|---|---|---|
+| prepare_quote | RFQ + PDF 图纸 | 通过检查后生成内部草案；存在问题则暂停；不会自动审批或导出 |
+| review_drawing | PDF 图纸 | 九字段证据、范围/版次/几何问题；无 RFQ 数量、价格或工程批准 |
+| search_knowledge | 显式查询对象；空关键词表示浏览 | 受控来源与适用性快照；默认 PM-BRKT-010/B/铝件条件；不计价 |
+
+未确定目的时输入原始文字会获得澄清提示，不猜意图。已确定目的不可改为另一种操作。创建和上传本身不调用模型，用户点击恢复才开始执行。每次最多一次抽取，已有字段则沿用人工修正并校验当前规则。修正使用原有“资料与证据”表单，补件可以分次上传，保持同一任务 ID。
+
+任务暂停和结果保存在 `orchestration` 字段；`task_routed`、`task_resumed`、`task_paused`、`task_documents_attached`、`task_validated` 等事件展示实际路径。知识/审图完成是一次检查快照，重复恢复不自动重查；重新检索新建任务，重新审图可更新图纸或重新抽取。已有报价恢复只检验依赖，不重新计价或撤销审批。
+
+未定目的和知识任务按创建角色隔离，避免审批人专属知识通过列表/审计泄漏给工程师；文件任务允许两角色读取，工程师修改、审批人批准。这里是本地角色演示，不代表生产用户身份体系。旧任务没有 orchestration 时仍按原分步报价流程操作。
+
+人工等待期间重启可以恢复。模型执行中崩溃的 EXTRACTING 任务自动回收、后台调度、重试上限仍在 M6 范围；M5 没有将该限制包装成可靠队列。设计详见 [[docs/adr/004-bounded-orchestrator]]，验收见 [[docs/acceptance-m5]]。
+
 ## 10. 接口与扩展接点
 
 | 能力 | 路径 | 角色 / 关键输入 |
 |---|---|---|
+| 统一任务 | POST /tasks、/tasks/{id}/resume | 任一角色创建知识/未定目标任务；文件意图仅工程师执行；恢复带版本 |
+| 任务补件 | POST /tasks/{id}/documents | 工程师；可选 rfq/drawing + expected_version；清除旧有效结果 |
 | 健康 / 能力 | GET /health、/capabilities | health 公开，其余需角色 |
 | 创建任务 | POST /runs/upload、/runs/from-fixture/{case_id} | 工程师；实际文件或白名单样例 |
 | 已确认输入 | POST /runs/confirmed | M1 验证入口，仍受材料/零件/版次规则限制 |
@@ -323,7 +376,7 @@ SQLite `runs` 存当前 JSON 快照与项目、版本；`events` 存按任务递
 
 ## 11. 测试、实测与发布纪律
 
-截至 2026-11-10，本机累计 **77 项测试通过**，生产构建包含 TypeScript 校验且通过。Ruff 与格式化检查已完成；CI 文件存在但未在远端运行。
+截至 2026-11-10，本机累计 **95 项测试通过**，生产构建包含 TypeScript 校验且通过。Ruff 与格式化检查已完成；CI 文件存在但未在远端运行。
 
 | 范围 | 证据 | 能得出的结论 |
 |---|---|---|
@@ -332,6 +385,7 @@ SQLite `runs` 存当前 JSON 快照与项目、版本；`events` 存按任务递
 | M2 真实调用 | [[docs/m2-live-result]] | 一次图文输入完成抽取与同任务审批导出 |
 | M3 稳健性 | 60 项累计测试，3 个真实开发案例 | 受测正常/冲突/缺失行为正确；不是总体准确率 |
 | M4 知识治理 | [[docs/acceptance-m4]]，77 项累计测试 | 受测权限、期限、适用性与执行选择通过 |
+| M5 三入口与 HITL | [[docs/acceptance-m5]]，95 项累计测试 | 澄清、补件、跨重启恢复、意图边界及四类依赖失效通过 |
 
 后续维护命令：
 
@@ -374,7 +428,8 @@ SQLite `runs` 存当前 JSON 快照与项目、版本；`events` 存按任务递
 | codex/m1-deterministic-core | caa8fc5 | 确定性后端 |
 | codex/m2-rfq-workbench | 4a58648 | 文件与界面闭环，真实调用验收 |
 | codex/m3-extraction-evidence | 9699b76 | 证据与用量 |
-| codex/m4-controlled-knowledge | 196feb7 | 有限审查与受控知识 |
+| codex/m4-controlled-knowledge | 196feb7；手册 84b3ae0 | 有限审查与受控知识 |
+| codex/m5-orchestrator-hitl | 当前本地分支，提交见 Git log | 三入口、人工暂停恢复与权限边界 |
 
 后一个分支累计包含前一个阶段。只提交明确相关路径；用户原有未提交材料不混入功能提交。本次无 push、无自动合并 main。保持 Conventional Commits；修改契约同时生成 schema，修改功能同步更新设计、运行手册和验收记录。
 
@@ -386,12 +441,11 @@ Mermaid 图直接维护在 Markdown 中，可在 Obsidian 阅读模式渲染，�
 
 | 阶段 | 后续工作，当前不宣称已完成 |
 |---|---|
-| M5 | prepare_quote / review_drawing / search_knowledge 三入口调度，澄清与统一暂停恢复 |
 | M6 | 有界重试、中断恢复、版本日志与 PLM/ERP/MES 适配器预览 |
 | M7 | 冻结输入及人工答案、独立指标、失败分析与异常评测 |
 | M8 | 用实际数据补齐商业论证、ROI 与分阶段客户实施 |
 | M9 | 最终交付排练、备用录屏、他人复现和提交核查 |
 
-下面嵌入面试专用文档。它是当前 M4 的讲解脚本，可独立打开用于排练；准备了 12 分钟和 3 分钟两种版本，不代表 M8/M9 全部交付已通过。
+下面嵌入面试专用文档。它是当前 M5 的讲解脚本，可独立打开用于排练；准备了 12 分钟和 3 分钟两种版本，不代表 M8/M9 全部交付已通过。
 
 ![[docs/面试与演示讲解]]

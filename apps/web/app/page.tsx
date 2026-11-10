@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import KnowledgePanel, { type KnowledgeItem } from "./knowledge-panel";
+import { CreateTask, TaskControls, type TaskContext } from "./task-controls";
 
 type Evidence = {
   id: string;
@@ -45,6 +46,7 @@ type Quote = {
   pending: string[];
 };
 type Run = {
+  orchestration?: TaskContext;
   id: string;
   title: string;
   version: number;
@@ -105,6 +107,9 @@ const names: Record<string, string> = {
   "drawing.surface_finish": "表面处理",
 };
 const states: Record<string, string> = {
+  CLARIFICATION_REQUIRED: "待澄清 / 补件",
+  REVIEW_COMPLETED: "图纸审查完成",
+  KNOWLEDGE_COMPLETED: "知识查询完成",
   RECEIVED: "待抽取",
   VALIDATING: "可计算",
   NEEDS_ENGINEERING_REVIEW: "待工程复核",
@@ -120,6 +125,8 @@ export default function Workbench() {
     [run, setRun] = useState<Run | null>(null);
   const [view, setView] = useState(0),
     [token, setToken] = useState("demo-engineer");
+  const activeRole = useRef(token);
+  activeRole.current = token;
   const [fixtures, setFixtures] = useState<{ id: string; label: string }[]>([]);
   const [cap, setCap] = useState<Capability | null>(null),
     [mode, setMode] = useState("local_text");
@@ -171,10 +178,12 @@ export default function Workbench() {
       request<{ id: string; label: string }[]>("/fixtures"),
       request<Capability>("/capabilities"),
     ]);
+    // A response from the previous role must not restore its private task list.
+    if (activeRole.current !== token) return;
     setRuns(items);
     setFixtures(catalog);
     setCap(capabilities);
-  }, [request]);
+  }, [request, token]);
   useEffect(() => {
     refresh().catch((e) => setError(e.message));
   }, [refresh]);
@@ -258,6 +267,8 @@ export default function Workbench() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   const engineer = token !== "demo-approver";
+  const quoteTask =
+    !run?.orchestration || run.orchestration.intent === "prepare_quote";
   return (
     <div className="shell">
       <aside>
@@ -296,7 +307,20 @@ export default function Workbench() {
             <select
               aria-label="演示角色"
               value={token}
-              onChange={(e) => setToken(e.target.value)}
+              disabled={busy}
+              onChange={(e) => {
+                const next = e.target.value;
+                setToken(next);
+                setRuns([]);
+                if (
+                  run?.orchestration &&
+                  [null, "search_knowledge"].includes(
+                    run.orchestration.intent,
+                  ) &&
+                  run.orchestration.owner !== next
+                )
+                  setRun(null);
+              }}
             >
               <option value="demo-engineer">工程师</option>
               <option value="demo-approver">审批人</option>
@@ -350,9 +374,18 @@ export default function Workbench() {
                   </strong>
                 </article>
               </div>
+              <CreateTask
+                key={token}
+                engineer={engineer}
+                busy={busy}
+                fixtures={fixtures}
+                create={(payload) =>
+                  act(() => request<Run>("/tasks", "POST", payload), 1)
+                }
+              />
               <section>
                 <div className="section-heading">
-                  <h2>开始一个 RFQ</h2>
+                  <h2>快捷打开 RFQ 资料</h2>
                   <span>01 / 选择合成样例或上传文件</span>
                 </div>
                 <div className="fixture-grid">
@@ -364,7 +397,10 @@ export default function Workbench() {
                       onClick={() =>
                         act(
                           () =>
-                            request<Run>(`/runs/from-fixture/${f.id}`, "POST"),
+                            request<Run>("/tasks", "POST", {
+                              intent: "prepare_quote",
+                              fixture_id: f.id,
+                            }),
                           1,
                         )
                       }
@@ -496,6 +532,32 @@ export default function Workbench() {
                   刷新
                 </button>
               </div>
+              {run.orchestration && (
+                <TaskControls
+                  key={`${run.id}-${run.orchestration.intent}`}
+                  task={run.orchestration}
+                  version={run.version}
+                  state={run.state}
+                  engineer={engineer}
+                  busy={busy}
+                  live={!!cap?.live_available}
+                  mode={mode}
+                  setMode={setMode}
+                  resume={(payload) =>
+                    act(() =>
+                      request<Run>(`/tasks/${run.id}/resume`, "POST", {
+                        expected_version: run.version,
+                        ...payload,
+                      }),
+                    )
+                  }
+                  attach={(data) =>
+                    act(() =>
+                      request<Run>(`/tasks/${run.id}/documents`, "POST", data),
+                    )
+                  }
+                />
+              )}
               {run.issues.length > 0 && (
                 <section className="issues">
                   <h2>需要处理的工程问题 · {run.issues.length}</h2>
@@ -508,277 +570,299 @@ export default function Workbench() {
                   ))}
                 </section>
               )}
-              {view === 1 && (
-                <>
-                  <section className="toolbar">
-                    <div>
-                      <h2>文件抽取</h2>
-                      <p className="muted">
-                        {run.documents.map((d) => d.name).join(" + ")}
-                      </p>
-                    </div>
-                    <select
-                      aria-label="抽取模式"
-                      value={mode}
-                      onChange={(e) => setMode(e.target.value)}
-                    >
-                      <option value="local_text">
-                        LOCAL_TEXT · 本地标签解析
-                      </option>
-                      <option value="live" disabled={!cap?.live_available}>
-                        LIVE · 真实多模态调用
-                      </option>
-                    </select>
-                    <button
-                      className="primary"
-                      disabled={busy || !engineer}
-                      onClick={() => act(() => mutate("analyze", { mode }))}
-                    >
-                      开始抽取
-                    </button>
-                    <p className="full muted">
-                      本地模式不调用模型。Live
-                      将发送所选资料的文本与页图至后端配置的模型服务；模型无法审批或决定价格。
-                    </p>
-                  </section>
-                  <div className="evidence-grid">
-                    <section>
-                      <h2>结构化字段</h2>
-                      {!Object.keys(run.fields).length && (
-                        <p className="empty">
-                          点击开始抽取，查看字段及其原文依据。
+              {view === 1 &&
+                (!run.orchestration ||
+                  ["prepare_quote", "review_drawing"].includes(
+                    run.orchestration.intent || "",
+                  )) && (
+                  <>
+                    <section className="toolbar">
+                      <div>
+                        <h2>文件抽取</h2>
+                        <p className="muted">
+                          {run.documents.map((d) => d.name).join(" + ")}
                         </p>
-                      )}
-                      {Object.entries(run.fields).map(([key, fact]) => (
-                        <div className="fact" key={key}>
-                          <div>
-                            <small>{names[key] || key}</small>
-                            <strong>{fact.value ?? "未知 / 待补充"}</strong>
-                            <small>
-                              {fact.evidence
-                                ? evidenceNames[fact.evidence.status] ||
-                                  fact.evidence.status
-                                : "历史记录 · 未执行 M3 证据校验"}
-                            </small>
-                            {fact.human_confirmed && (
-                              <small className="human">
-                                人工确认 · 原值 {fact.original_value ?? "未知"}
-                              </small>
-                            )}
-                          </div>
-                          <button
-                            disabled={
-                              !fact.source_id ||
-                              (fact.evidence && !fact.evidence.source_exists)
-                            }
-                            onClick={() =>
-                              setSource(
-                                run.sources.find(
-                                  (s) => s.id === fact.source_id,
-                                ) || null,
-                              )
-                            }
-                          >
-                            依据 ↗
-                          </button>
-                        </div>
-                      ))}
-                    </section>
-                    <section className="evidence">
-                      <h2>来源回查</h2>
-                      {source ? (
-                        <>
-                          <span className="badge">
-                            第 {source.page} 页 ·{" "}
-                            {source.locator === "page"
-                              ? "页级定位"
-                              : "文本定位"}
-                          </span>
-                          <pre>{source.text}</pre>
-                          {preview && (
-                            <a
-                              href={preview}
-                              target="_blank"
-                              rel="noreferrer"
-                              aria-label="打开原尺寸图纸页图"
-                            >
-                              <img
-                                src={preview}
-                                alt={`来源图纸第 ${source.page} 页`}
-                              />
-                              <small>打开原尺寸页图 ↗</small>
-                            </a>
-                          )}
-                          <p className="muted">
-                            页级定位未宣称区域框选。人工修正值与原始依据分别保留。
-                          </p>
-                        </>
-                      ) : (
-                        <div className="empty">
-                          点击字段右侧「依据」，核对原文或图纸页图。
-                        </div>
-                      )}
-                    </section>
-                  </div>
-                  {run.metrics.model && (
-                    <section>
-                      <h2>模型调用记录</h2>
-                      <p>
-                        {run.metrics.model} ·{" "}
-                        {run.metrics.endpoint_host || "历史记录未保存服务地址"}{" "}
-                        ·{" "}
-                        {run.metrics.real_model_call
-                          ? "真实响应"
-                          : "调用未完成"}
-                      </p>
-                      <div className="stats">
-                        <article>
-                          <small>耗时 / ms</small>
-                          <strong>{run.metrics.elapsed_ms ?? "未知"}</strong>
-                        </article>
-                        <article>
-                          <small>输入 tokens</small>
-                          <strong>
-                            {run.metrics.usage?.input_tokens ?? "未知"}
-                          </strong>
-                        </article>
-                        <article>
-                          <small>输出 tokens</small>
-                          <strong>
-                            {run.metrics.usage?.output_tokens ?? "未知"}
-                          </strong>
-                        </article>
-                        <article>
-                          <small>
-                            估算费用 / {run.metrics.cost_currency || "未配置"}
-                          </small>
-                          <strong className="text-stat">
-                            {run.metrics.estimated_cost ?? "未知"}
-                          </strong>
-                        </article>
                       </div>
-                      <p className="muted">
-                        {run.metrics.cost_note}{" "}
-                        {run.metrics.pricing &&
-                          `费率版本：${run.metrics.pricing.version}`}
-                      </p>
-                      <small>
-                        响应 ID：{run.metrics.response_id || "无可用响应"}{" "}
-                        {run.metrics.error_code}
-                      </small>
-                    </section>
-                  )}
-                  <section>
-                    <h2>工程确认与补充依据</h2>
-                    <form
-                      className="correction"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        act(() =>
-                          request<Run>(`/runs/${run.id}/fields`, "PATCH", {
-                            expected_version: run.version,
-                            values: { [fieldKey]: value },
-                            reason,
-                          }),
-                        );
-                      }}
-                    >
-                      <label>
-                        字段
-                        <select
-                          value={fieldKey}
-                          onChange={(e) => setFieldKey(e.target.value)}
-                        >
-                          {Object.entries(names).map(([k, n]) => (
-                            <option value={k} key={k}>
-                              {n}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        确认值
-                        <input
-                          value={value}
-                          onChange={(e) => setValue(e.target.value)}
-                          required
-                          maxLength={200}
-                        />
-                      </label>
-                      <label>
-                        依据 / 修改原因
-                        <input
-                          value={reason}
-                          onChange={(e) => setReason(e.target.value)}
-                          minLength={3}
-                          required
-                          placeholder="说明客户澄清或复核依据"
-                        />
-                      </label>
-                      <button
-                        disabled={
-                          busy || !engineer || !Object.keys(run.fields).length
-                        }
+                      <select
+                        aria-label="抽取模式"
+                        value={mode}
+                        onChange={(e) => setMode(e.target.value)}
                       >
-                        保存并重新校验
-                      </button>
-                    </form>
-                    <div className="upload">
-                      <label>
-                        补充正确版次图纸
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={(e) =>
-                            setReplacement(e.target.files?.[0] || null)
-                          }
-                        />
-                      </label>
+                        <option value="local_text">
+                          LOCAL_TEXT · 本地标签解析
+                        </option>
+                        <option value="live" disabled={!cap?.live_available}>
+                          LIVE · 真实多模态调用
+                        </option>
+                      </select>
                       <button
-                        disabled={
-                          busy || !engineer || !replacement || reason.length < 3
-                        }
-                        onClick={() => {
-                          const data = new FormData();
-                          data.append("drawing", replacement!);
-                          data.append("expected_version", String(run.version));
-                          data.append("reason", reason);
+                        className="primary"
+                        disabled={busy || !engineer}
+                        onClick={() => act(() => mutate("analyze", { mode }))}
+                      >
+                        开始抽取
+                      </button>
+                      <p className="full muted">
+                        本地模式不调用模型。Live
+                        将发送所选资料的文本与页图至后端配置的模型服务；模型无法审批或决定价格。
+                      </p>
+                    </section>
+                    <div className="evidence-grid">
+                      <section>
+                        <h2>结构化字段</h2>
+                        {!Object.keys(run.fields).length && (
+                          <p className="empty">
+                            点击开始抽取，查看字段及其原文依据。
+                          </p>
+                        )}
+                        {Object.entries(run.fields)
+                          .filter(
+                            ([key]) =>
+                              run.orchestration?.intent !== "review_drawing" ||
+                              key.startsWith("drawing."),
+                          )
+                          .map(([key, fact]) => (
+                            <div className="fact" key={key}>
+                              <div>
+                                <small>{names[key] || key}</small>
+                                <strong>{fact.value ?? "未知 / 待补充"}</strong>
+                                <small>
+                                  {fact.evidence
+                                    ? evidenceNames[fact.evidence.status] ||
+                                      fact.evidence.status
+                                    : "历史记录 · 未执行 M3 证据校验"}
+                                </small>
+                                {fact.human_confirmed && (
+                                  <small className="human">
+                                    人工确认 · 原值{" "}
+                                    {fact.original_value ?? "未知"}
+                                  </small>
+                                )}
+                              </div>
+                              <button
+                                disabled={
+                                  !fact.source_id ||
+                                  (fact.evidence &&
+                                    !fact.evidence.source_exists)
+                                }
+                                onClick={() =>
+                                  setSource(
+                                    run.sources.find(
+                                      (s) => s.id === fact.source_id,
+                                    ) || null,
+                                  )
+                                }
+                              >
+                                依据 ↗
+                              </button>
+                            </div>
+                          ))}
+                      </section>
+                      <section className="evidence">
+                        <h2>来源回查</h2>
+                        {source ? (
+                          <>
+                            <span className="badge">
+                              第 {source.page} 页 ·{" "}
+                              {source.locator === "page"
+                                ? "页级定位"
+                                : "文本定位"}
+                            </span>
+                            <pre>{source.text}</pre>
+                            {preview && (
+                              <a
+                                href={preview}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="打开原尺寸图纸页图"
+                              >
+                                <img
+                                  src={preview}
+                                  alt={`来源图纸第 ${source.page} 页`}
+                                />
+                                <small>打开原尺寸页图 ↗</small>
+                              </a>
+                            )}
+                            <p className="muted">
+                              页级定位未宣称区域框选。人工修正值与原始依据分别保留。
+                            </p>
+                          </>
+                        ) : (
+                          <div className="empty">
+                            点击字段右侧「依据」，核对原文或图纸页图。
+                          </div>
+                        )}
+                      </section>
+                    </div>
+                    {run.metrics.model && (
+                      <section>
+                        <h2>模型调用记录</h2>
+                        <p>
+                          {run.metrics.model} ·{" "}
+                          {run.metrics.endpoint_host ||
+                            "历史记录未保存服务地址"}{" "}
+                          ·{" "}
+                          {run.metrics.real_model_call
+                            ? "真实响应"
+                            : "调用未完成"}
+                        </p>
+                        <div className="stats">
+                          <article>
+                            <small>耗时 / ms</small>
+                            <strong>{run.metrics.elapsed_ms ?? "未知"}</strong>
+                          </article>
+                          <article>
+                            <small>输入 tokens</small>
+                            <strong>
+                              {run.metrics.usage?.input_tokens ?? "未知"}
+                            </strong>
+                          </article>
+                          <article>
+                            <small>输出 tokens</small>
+                            <strong>
+                              {run.metrics.usage?.output_tokens ?? "未知"}
+                            </strong>
+                          </article>
+                          <article>
+                            <small>
+                              估算费用 / {run.metrics.cost_currency || "未配置"}
+                            </small>
+                            <strong className="text-stat">
+                              {run.metrics.estimated_cost ?? "未知"}
+                            </strong>
+                          </article>
+                        </div>
+                        <p className="muted">
+                          {run.metrics.cost_note}{" "}
+                          {run.metrics.pricing &&
+                            `费率版本：${run.metrics.pricing.version}`}
+                        </p>
+                        <small>
+                          响应 ID：{run.metrics.response_id || "无可用响应"}{" "}
+                          {run.metrics.error_code}
+                        </small>
+                      </section>
+                    )}
+                    <section>
+                      <h2>工程确认与补充依据</h2>
+                      <form
+                        className="correction"
+                        onSubmit={(e) => {
+                          e.preventDefault();
                           act(() =>
-                            request<Run>(
-                              `/runs/${run.id}/drawing`,
-                              "POST",
-                              data,
-                            ),
+                            request<Run>(`/runs/${run.id}/fields`, "PATCH", {
+                              expected_version: run.version,
+                              values: { [fieldKey]: value },
+                              reason,
+                            }),
                           );
                         }}
                       >
-                        替换图纸并使旧结果失效
+                        <label>
+                          字段
+                          <select
+                            value={fieldKey}
+                            onChange={(e) => setFieldKey(e.target.value)}
+                          >
+                            {Object.entries(names).map(([k, n]) => (
+                              <option value={k} key={k}>
+                                {n}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          确认值
+                          <input
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            required
+                            maxLength={200}
+                          />
+                        </label>
+                        <label>
+                          依据 / 修改原因
+                          <input
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                            minLength={3}
+                            required
+                            placeholder="说明客户澄清或复核依据"
+                          />
+                        </label>
+                        <button
+                          disabled={
+                            busy || !engineer || !Object.keys(run.fields).length
+                          }
+                        >
+                          保存并重新校验
+                        </button>
+                      </form>
+                      <div className="upload">
+                        <label>
+                          补充正确版次图纸
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={(e) =>
+                              setReplacement(e.target.files?.[0] || null)
+                            }
+                          />
+                        </label>
+                        <button
+                          disabled={
+                            busy ||
+                            !engineer ||
+                            !replacement ||
+                            reason.length < 3
+                          }
+                          onClick={() => {
+                            const data = new FormData();
+                            data.append("drawing", replacement!);
+                            data.append(
+                              "expected_version",
+                              String(run.version),
+                            );
+                            data.append("reason", reason);
+                            act(() =>
+                              request<Run>(
+                                `/runs/${run.id}/drawing`,
+                                "POST",
+                                data,
+                              ),
+                            );
+                          }}
+                        >
+                          替换图纸并使旧结果失效
+                        </button>
+                      </div>
+                      <p className="muted">
+                        替换图纸沿用上方原因，随后需要重新抽取。版次冲突请补充有效图纸或有依据的工程确认。
+                      </p>
+                      <button
+                        className="primary"
+                        disabled={
+                          busy ||
+                          !quoteTask ||
+                          !engineer ||
+                          run.issues.length > 0 ||
+                          !Object.keys(run.fields).length
+                        }
+                        onClick={() => act(() => mutate("cost"), 2)}
+                      >
+                        计算内部预算 →
                       </button>
-                    </div>
-                    <p className="muted">
-                      替换图纸沿用上方原因，随后需要重新抽取。版次冲突请补充有效图纸或有依据的工程确认。
-                    </p>
-                    <button
-                      className="primary"
-                      disabled={
-                        busy ||
-                        !engineer ||
-                        run.issues.length > 0 ||
-                        !Object.keys(run.fields).length
-                      }
-                      onClick={() => act(() => mutate("cost"), 2)}
-                    >
-                      计算内部预算 →
-                    </button>
-                  </section>
-                </>
-              )}
+                    </section>
+                  </>
+                )}
               {view === 2 && (
                 <section>
                   <div className="section-heading">
                     <h2>确定性成本明细</h2>
                     <button
-                      disabled={busy || !engineer || run.issues.length > 0}
+                      disabled={
+                        busy || !engineer || !quoteTask || run.issues.length > 0
+                      }
                       onClick={() => act(() => mutate("cost"))}
                     >
                       重新计算

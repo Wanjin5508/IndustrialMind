@@ -20,7 +20,7 @@ from rfq_workbench.errors import DomainError
 from rfq_workbench.evidence import verify
 from rfq_workbench.extraction import LABELS, LocalTextProvider, OpenAIProvider, Provider
 from rfq_workbench.repository import Repository, utc_now
-from rfq_workbench.service import clear_results, new_run
+from rfq_workbench.service import clear_results, new_run, require_intent
 
 REQUIRED = {
     "rfq.part_number",
@@ -51,7 +51,9 @@ def check_fields(body: dict, settings: Settings) -> None:
         issues.append({"code": code, "field": field, "message": message, "severity": "blocking"})
 
     fields = body["fields"]
-    for key in sorted(REQUIRED):
+    review_only = body.get("orchestration", {}).get("intent") == "review_drawing"
+    required = {key for key in REQUIRED if key.startswith("drawing.")} if review_only else REQUIRED
+    for key in sorted(required):
         field = fields.get(key, {})
         if not field.get("value"):
             issue(
@@ -69,6 +71,44 @@ def check_fields(body: dict, settings: Settings) -> None:
         elif field.get("needs_visual_review") and not field.get("human_confirmed"):
             issue("VISUAL_REVIEW", key, "Page-level visual fact requires engineering confirmation.")
     body["inputs"] = None
+    if review_only:
+        # Drawing review never fabricates RFQ quantity, currency or customer revision.
+        if not issues:
+            ref, _ = load_reference(settings.reference_path)
+            expected_fields = {
+                "part_number": ref["applicability"]["part_number"],
+                "material": ref["material"],
+                "unit": ref["unit"],
+                "surface_finish": ref["applicability"]["surface_finish"],
+            }
+            for key, expected in expected_fields.items():
+                if fields[f"drawing.{key}"]["value"].casefold() != expected.casefold():
+                    issue(
+                        "DRAWING_SCOPE",
+                        f"drawing.{key}",
+                        "Drawing is outside the approved template scope.",
+                    )
+            if fields["drawing.revision"]["value"] not in ref["approved_revisions"]:
+                issue(
+                    "REVISION_UNAPPROVED",
+                    "drawing.revision",
+                    "Drawing revision has no approved template.",
+                )
+            for key, expected in ref["applicability"]["dimensions"].items():
+                try:
+                    actual = Decimal(fields[f"drawing.{key}"]["value"])
+                    matches = actual.is_finite() and actual == Decimal(expected)
+                except InvalidOperation:
+                    matches = False
+                if not matches:
+                    issue(
+                        "TEMPLATE_GEOMETRY",
+                        f"drawing.{key}",
+                        "Geometry is outside the approved template.",
+                    )
+        body["issues"] = issues
+        body["state"] = RunState.NEEDS_ENGINEERING_REVIEW if issues else RunState.VALIDATING
+        return
     if not issues:
 
         def value(key: str) -> str:
@@ -146,9 +186,17 @@ class FileWorkflow:
         }
 
     def create(
-        self, rfq_name: str, rfq_data: bytes, drawing_name: str, drawing_data: bytes, actor: str
+        self,
+        rfq_name: str,
+        rfq_data: bytes,
+        drawing_name: str,
+        drawing_data: bytes,
+        actor: str,
+        orchestration: dict | None = None,
     ) -> dict:
         body = new_run(rfq_name, "FILES")
+        if orchestration is not None:
+            body["orchestration"] = orchestration
         for kind, name, data in [
             ("rfq", rfq_name, rfq_data),
             ("drawing", drawing_name, drawing_data),
@@ -158,14 +206,19 @@ class FileWorkflow:
             body["sources"].extend(sources)
         return self.repo.create(body, actor)
 
-    def from_fixture(self, case_id: str, actor: str) -> dict:
+    def from_fixture(self, case_id: str, actor: str, orchestration: dict | None = None) -> dict:
         case = next((c for c in fixture_catalog() if c["id"] == case_id), None)
         if not case:
             raise DomainError("NOT_FOUND", "Unknown development fixture.", 404)
         rfq, drawing = ROOT / case["rfq"], ROOT / case["drawing"]
         # Only server-owned catalog paths are read; no client path or expected answer is accepted.
         return self.create(
-            f"{case_id}-{rfq.name}", rfq.read_bytes(), drawing.name, drawing.read_bytes(), actor
+            f"{case_id}-{rfq.name}",
+            rfq.read_bytes(),
+            drawing.name,
+            drawing.read_bytes(),
+            actor,
+            orchestration,
         )
 
     def analyze(self, run_id: str, version: int, mode: str, actor: str) -> dict:
@@ -175,6 +228,7 @@ class FileWorkflow:
             )
 
         def claim(body: dict) -> dict:
+            require_intent(body, ("prepare_quote", "review_drawing"))
             if body["state"] == RunState.EXTRACTING:
                 raise DomainError("TASK_BUSY", "Extraction is already running.", 409)
             if not body["documents"]:
@@ -237,6 +291,7 @@ class FileWorkflow:
             raise DomainError("INVALID_FIELDS", "Provide supported extraction fields only.")
 
         def change(body: dict) -> dict:
+            require_intent(body, ("prepare_quote", "review_drawing"))
             if body["state"] == RunState.EXTRACTING:
                 raise DomainError("TASK_BUSY", "Wait for extraction before editing.", 409)
             if not body["fields"]:
@@ -264,6 +319,7 @@ class FileWorkflow:
         self, run_id: str, version: int, name: str, data: bytes, reason: str, actor: str
     ) -> dict:
         previous = self.repo.get(run_id)
+        require_intent(previous, ("prepare_quote", "review_drawing"))
         if previous["version"] != version:
             raise DomainError("VERSION_CONFLICT", "Refresh task before replacing a drawing.", 409)
         if previous["state"] == RunState.EXTRACTING:

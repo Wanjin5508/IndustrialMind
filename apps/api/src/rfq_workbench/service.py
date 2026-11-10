@@ -34,6 +34,14 @@ def new_run(title: str, mode: str) -> dict:
 
 def clear_results(body: dict) -> None:
     body.update(quote=None, approval=None, export=None)
+    if "orchestration" in body:
+        body["orchestration"].update(result=None, pause=None)
+
+
+def require_intent(body: dict, allowed: tuple[str, ...]) -> None:
+    """Legacy runs are quote tasks; explicit review/search tasks cannot escalate."""
+    if body.get("orchestration", {}).get("intent", "prepare_quote") not in allowed:
+        raise DomainError("INTENT_BOUNDARY", "This operation is outside the selected task.", 403)
 
 
 def input_hash(body: dict) -> str:
@@ -63,6 +71,7 @@ class Workflow:
         self, run_id: str, version: int, inputs: ConfirmedInputs, reason: str, actor: str
     ) -> dict:
         def change(body: dict) -> dict:
+            require_intent(body, ("prepare_quote",))
             if body["documents"]:
                 raise DomainError(
                     "USE_FIELD_CORRECTION",
@@ -87,6 +96,7 @@ class Workflow:
 
     def cost(self, run_id: str, version: int, actor: str) -> dict:
         def change(body: dict) -> dict:
+            require_intent(body, ("prepare_quote",))
             if body["state"] == RunState.EXTRACTING:
                 raise DomainError("TASK_BUSY", "Wait for extraction to complete.", 409)
             if body["inputs"] is None or any(i["severity"] == "blocking" for i in body["issues"]):
@@ -118,6 +128,7 @@ class Workflow:
 
     def check_fresh(self, run_id: str, version: int, actor: str) -> dict:
         body = self.repo.get(run_id)
+        require_intent(body, ("prepare_quote",))
         if body["version"] != version:
             raise DomainError("VERSION_CONFLICT", "Task changed. Refresh before retrying.", 409)
         if body["quote"] is None:

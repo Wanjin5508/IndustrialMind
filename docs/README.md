@@ -8,7 +8,7 @@ updated: 2026-11-10
 # RFQ 工作台技术文档
 
 > [!tip] 从这里开始
-> [[IndustrialMindAI-项目手册|完整项目手册]] 解释当前 M0–M4 的实现与维护；[[docs/面试与演示讲解|面试与演示讲解]] 提供模块讲解、架构图和可排练脚本。
+> [[IndustrialMindAI-项目手册|完整项目手册]] 解释当前 M0–M5 的实现与维护；[[docs/面试与演示讲解|面试与演示讲解]] 提供模块讲解、架构图和可排练脚本。
 
 权威实施范围见 [[IndustrialMindAI-OptionB-RFQ工作台-roadmap]]；数据策略见 [[IndustrialMindAI-OptionB-输入数据准备计划]]。本目录管理可追溯的设计、契约、运行与验收证据，不能把计划状态写成已通过。
 
@@ -20,7 +20,7 @@ updated: 2026-11-10
 | [API](api.md) | 接口、角色、错误与并发约定 |
 | [运行手册](runbook.md) | 启动、配置、故障处理、演示重置 |
 | [测试策略](testing.md) | 风险、测试层级、验收命令与模型边界 |
-| [里程碑记录](milestones.md) | M0–M4 状态、分支、证据和未解决项 |
+| [里程碑记录](milestones.md) | M0–M5 状态、分支、证据和未解决项 |
 | [ADR 索引](adr/README.md) | 重要技术决策与变更原因 |
 | [变更日志](../CHANGELOG.md) | 面向使用者的版本行为变化 |
 
@@ -40,3 +40,5 @@ updated: 2026-11-10
 - [证据与费用 ADR](adr/002-evidence-and-model-accounting.md)：验证强度和计费口径。
 
 - [M4 验收](acceptance-m4.md)：受控检索、执行依据与变更失效。
+
+- [M5 验收](acceptance-m5.md)：三入口、澄清、跨重启人工恢复与审批边界。

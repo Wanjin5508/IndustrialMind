@@ -17,6 +17,9 @@ class Contract(BaseModel):
 
 
 class RunState(StrEnum):
+    CLARIFICATION_REQUIRED = "CLARIFICATION_REQUIRED"
+    REVIEW_COMPLETED = "REVIEW_COMPLETED"
+    KNOWLEDGE_COMPLETED = "KNOWLEDGE_COMPLETED"
     RECEIVED = "RECEIVED"
     EXTRACTING = "EXTRACTING"
     VALIDATING = "VALIDATING"
@@ -221,4 +224,22 @@ class CorrectFields(Mutation):
 
 
 class AnalyzeRequest(Mutation):
+    mode: Literal["local_text", "live"] = "local_text"
+
+
+Intent = Literal["prepare_quote", "review_drawing", "search_knowledge"]
+
+
+class TaskRequest(Contract):
+    """Explicit routing only: free text is retained for human clarification."""
+
+    intent: Intent | None = None
+    request: str = Field(default="", max_length=1000)
+    query: KnowledgeQuery | None = None
+    fixture_id: str | None = Field(default=None, max_length=80)
+
+
+class ResumeTask(Mutation):
+    intent: Intent | None = None
+    query: KnowledgeQuery | None = None
     mode: Literal["local_text", "live"] = "local_text"

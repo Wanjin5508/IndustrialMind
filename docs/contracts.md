@@ -27,3 +27,11 @@ Owner: Engineering · Status: M0 baseline · Updated: 2026-11-08
 ## M4 知识契约
 
 新增 KnowledgeRecord、KnowledgeQuery；Quote 增加 knowledge_basis 与 routing。reference_hash 从单文件 hash 升级为制造载荷与选中知识快照的组合指纹。旧草案在下一批准/导出时可能触发 STALE_DRAFT，须重新计价审批。
+
+## M5 任务契约
+
+新增 TaskRequest、ResumeTask（累计 12 份领域 schema）。意图枚举固定为 prepare_quote / review_drawing / search_knowledge；自由文字最多 1000 字符，仅保存上下文。ResumeTask 继承 Mutation 的版本要求，不接受审批或外部写入参数。
+
+runs JSON 可选 orchestration 含 intent、owner、request、query、pause、result；旧记录省略该字段时仍是分步报价任务。新增状态 CLARIFICATION_REQUIRED、REVIEW_COMPLETED、KNOWLEDGE_COMPLETED。pause 描述 code/message/missing/options，顶层 state 仍是唯一权威状态。
+
+图纸独立审查仍使用相同 Extraction 契约；RFQ 不存在时其字段为 null，不能替代为默认数量。仅九个 drawing 字段参与该入口的检查，不生成 ConfirmedInputs 或 Quote。

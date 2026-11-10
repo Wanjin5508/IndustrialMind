@@ -15,11 +15,14 @@ from rfq_workbench.contracts import (
     CorrectFields,
     KnowledgeQuery,
     Mutation,
+    ResumeTask,
+    TaskRequest,
 )
 from rfq_workbench.documents import MAX_FILE_BYTES, asset_path
 from rfq_workbench.errors import DomainError
 from rfq_workbench.file_workflow import FileWorkflow, fixture_catalog
 from rfq_workbench.knowledge import Knowledge
+from rfq_workbench.orchestrator import Orchestrator, visible
 from rfq_workbench.repository import Repository
 from rfq_workbench.service import Workflow
 
@@ -29,6 +32,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     repository = Repository(settings.data_dir / "workbench.sqlite3")
     workflow = Workflow(settings, repository)
     file_workflow = FileWorkflow(settings, repository)
+    orchestrator = Orchestrator(workflow, file_workflow)
     app = FastAPI(
         title="PrecisionMotion RFQ Workbench",
         version="0.1.0",
@@ -73,8 +77,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok", "version": "0.1.0", "scope": "LOCAL_SYNTHETIC_DEMO"}
 
     @app.get("/runs")
-    def list_runs(_who: Annotated[str, Depends(actor)]):
-        return repository.list()
+    def list_runs(who: Annotated[str, Depends(actor)]):
+        return [body for body in repository.list() if visible(body, who)]
+
+    @app.post("/tasks", status_code=201)
+    def create_task(request: TaskRequest, who: Annotated[str, Depends(actor)]):
+        return orchestrator.create(request, who)
+
+    @app.post("/tasks/{run_id}/resume")
+    def resume_task(run_id: str, request: ResumeTask, who: Annotated[str, Depends(actor)]):
+        return orchestrator.resume(run_id, request, who)
 
     @app.get("/capabilities")
     def capabilities(_who: Annotated[str, Depends(actor)]):
@@ -112,6 +124,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             upload.file.close()
 
+    @app.post("/tasks/{run_id}/documents")
+    def attach_task_documents(
+        run_id: str,
+        who: Annotated[str, Depends(engineer)],
+        expected_version: Annotated[int, Form(ge=1)],
+        rfq: Annotated[UploadFile | None, File()] = None,
+        drawing: Annotated[UploadFile | None, File()] = None,
+    ):
+        uploads = [
+            (kind, upload.filename or kind, read_upload(upload))
+            for kind, upload in [("rfq", rfq), ("drawing", drawing)]
+            if upload
+        ]
+        return orchestrator.attach(run_id, expected_version, uploads, who)
+
     @app.post("/runs/upload", status_code=201)
     def upload(
         who: Annotated[str, Depends(engineer)],
@@ -131,8 +158,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return workflow.create_confirmed(inputs, who)
 
     @app.get("/runs/{run_id}")
-    def get_run(run_id: str, _who: Annotated[str, Depends(actor)]):
-        return repository.get(run_id)
+    def get_run(run_id: str, who: Annotated[str, Depends(actor)]):
+        return orchestrator.get(run_id, who)
 
     @app.post("/runs/{run_id}/analyze")
     def analyze(run_id: str, request: AnalyzeRequest, who: Annotated[str, Depends(engineer)]):

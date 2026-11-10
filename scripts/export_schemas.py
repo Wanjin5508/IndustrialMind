@@ -18,7 +18,11 @@ for name in [
     "ReviewedField",
     "KnowledgeRecord",
     "KnowledgeQuery",
+    "TaskRequest",
+    "ResumeTask",
 ]:
     schema = getattr(contracts, name).model_json_schema()
-    (root / f"{name}.json").write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
-print("Exported 10 domain schemas.")
+    (root / f"{name}.json").write_text(
+        json.dumps(schema, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+print("Exported 12 domain schemas.")

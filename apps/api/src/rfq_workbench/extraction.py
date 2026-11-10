@@ -58,9 +58,12 @@ class LocalTextProvider:
         started = time.monotonic()
         output = {}
         for kind, labels in LABELS.items():
-            doc = next(d for d in body["documents"] if d["kind"] == kind)
+            # A drawing-only task has no RFQ; absent documents produce null facts.
+            doc = next((d for d in body["documents"] if d["kind"] == kind), None)
             lines = [
-                s for s in body["sources"] if s["document_id"] == doc["id"] and ":l" in s["id"]
+                s
+                for s in body["sources"]
+                if doc and s["document_id"] == doc["id"] and ":l" in s["id"]
             ]
             output[kind] = {}
             for field, label in labels.items():

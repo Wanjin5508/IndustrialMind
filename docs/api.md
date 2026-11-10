@@ -37,3 +37,17 @@ Base URL: `http://127.0.0.1:8000`。交互文档 `/docs`；机器契约 [OpenAPI
 ## M4 受控知识 API
 
 `POST /knowledge/search` 需要任一演示角色；接收 KnowledgeQuery，默认空 query 查全部。权限范围由服务端固定，不接受 project_id、plant 或角色覆盖。`GET /knowledge/{record_id}` 使用默认 B 版铝件条件判断适用性；未知/越权均 404。返回 eligible_for_cost、reasons、usage、source_id、record_hash。价格路径通过服务器唯一选用三类依据，无法由客户端提交 ID 覆盖。
+
+## M5 统一任务 API
+
+| 接口 | 角色与契约 |
+|---|---|
+| POST `/tasks` | TaskRequest：intent 可空，request 为上下文文字，query 可空，fixture_id 可选；返回 201，仅创建，不调用模型 |
+| POST `/tasks/{id}/resume` | ResumeTask：expected_version、可选 intent/query、mode 默认 local_text；每次最多一次抽取和一次计算或查询 |
+| POST `/tasks/{id}/documents` | 工程师；multipart expected_version、rfq/drawing 至少一份；支持分次补件；清除旧字段、报价、审批及结果 |
+
+意图为 prepare_quote / review_drawing / search_knowledge。前两类仅工程师创建和执行；知识任务任一角色可创建，但列表、详情、恢复仅同一创建角色可访问。无意图任务也按创建角色隔离。确定目的后不能更改；未知文本保持澄清。知识查询允许 query={} 显式浏览默认条件下的获准资料。
+
+旧任务继续使用 /runs 分步接口；没有 orchestration 的任务调用任务恢复/补件返回 LEGACY_TASK。旧 cost/approve/export 接口拒绝非报价意图（INTENT_BOUNDARY），不能靠切换前端页签升级权限。目的转换返回 INTENT_IMMUTABLE/409；旧版本恢复返回 VERSION_CONFLICT/409。缺件和工程暂停是正常任务响应，分别保留 CLARIFICATION_REQUIRED/NEEDS_ENGINEERING_REVIEW 与结构化 pause；模型调用错误仍采用现有稳定错误响应。
+
+示例：POST /tasks 传 {"intent":"prepare_quote","fixture_id":"DEV-001"}，使用返回版本 POST /tasks/{id}/resume。不要硬编码 version；读取响应中的最新值。生成的 OpenAPI 与 TaskRequest/ResumeTask schema 是机器契约。

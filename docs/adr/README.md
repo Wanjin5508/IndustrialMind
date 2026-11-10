@@ -11,3 +11,5 @@ Owner: Engineering · Updated: 2026-11-08
 - [ADR 002](002-evidence-and-model-accounting.md)：证据强度、页级回查与模型费用记录（M3）。
 
 - [ADR 003](003-controlled-knowledge.md)：权限先于检索，执行与参考资料分离（M4）。
+
+- [ADR 004](004-bounded-orchestrator.md)：显式路由、单一权威快照、有界执行和人工恢复（M5）。
