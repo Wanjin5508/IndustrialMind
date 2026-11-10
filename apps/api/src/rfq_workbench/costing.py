@@ -6,7 +6,7 @@ from datetime import date
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 
-from rfq_workbench.contracts import ConfirmedInputs, CostLine, Issue, Quote
+from rfq_workbench.contracts import BlankSpec, ConfirmedInputs, CostLine, Issue, MaterialLine, Quote
 from rfq_workbench.errors import DomainError
 
 
@@ -40,6 +40,7 @@ def load_reference(path: Path, today: date | None = None) -> tuple[dict, str]:
             not row["operation"] or not row["basis"] for row in ref["routing"]
         ):
             raise ValueError("Missing routing")
+        BlankSpec.model_validate(ref["blank"])
         if ref["approved"] is not True or not date.fromisoformat(
             ref["valid_from"]
         ) <= now <= date.fromisoformat(ref["valid_until"]):
@@ -181,4 +182,13 @@ def calculate(
         rate_version=ref["rate_version"],
         template_version=ref["template_version"],
         pending=ref["pending"],
+        material_lines=[
+            MaterialLine(
+                **ref["blank"],
+                material=ref["material"],
+                batch_quantity=ref["blank"]["quantity_per_part"] * inputs.quantity,
+                template_version=ref["template_version"],
+                catalog_version=ref["catalog_version"],
+            )
+        ],
     )

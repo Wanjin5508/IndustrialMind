@@ -27,6 +27,15 @@ type Fact = {
   correction?: { reason: string };
 };
 type Quote = {
+  material_lines?: {
+    code: string;
+    material: string;
+    specification: string;
+    quantity_per_part: number;
+    batch_quantity: number;
+    template_version: string;
+    catalog_version: string;
+  }[];
   knowledge_basis?: KnowledgeItem[];
   routing?: { step: number; operation: string; basis: string }[];
   draft_version: number;
@@ -61,7 +70,7 @@ type Run = {
   issues: { code: string; field: string; message: string }[];
   quote: Quote | null;
   approval: { actor: string; note: string } | null;
-  export: { filename: string; markdown: string } | null;
+  export: { filename: string } | null;
   events?: {
     sequence: number;
     occurred_at: string;
@@ -278,16 +287,30 @@ export default function Workbench() {
       ...extra,
     });
   }
-  function download() {
+  async function download(format: "md" | "json") {
     if (!run?.export) return;
-    const url = URL.createObjectURL(
-      new Blob([run.export.markdown], { type: "text/markdown;charset=utf-8" }),
-    );
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = run.export.filename;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setBusy(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `/api/runs/${run.id}/export/download?expected_version=${run.version}&format=${format}`,
+        { headers: { "X-Demo-Token": token }, cache: "no-store" },
+      );
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error?.message || "下载失败，请刷新任务后重试。");
+      }
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = run.export.filename.replace(/\.md$/, `.${format}`);
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "下载失败");
+    } finally {
+      setBusy(false);
+    }
   }
   const engineer = token !== "demo-approver";
   const quoteTask =
@@ -957,6 +980,41 @@ export default function Workbench() {
                           </ol>
                         </details>
                       ) : null}
+                      {!!run.quote.material_lines?.length && (
+                        <>
+                          <h3>毛坯需求</h3>
+                          <div className="table-wrap">
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>物料</th>
+                                  <th>规格</th>
+                                  <th>单件用量</th>
+                                  <th>批次用量</th>
+                                  <th>来源</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {run.quote.material_lines.map((line) => (
+                                  <tr key={line.code}>
+                                    <td>
+                                      {line.material}
+                                      <small>{line.code}</small>
+                                    </td>
+                                    <td>{line.specification}</td>
+                                    <td>{line.quantity_per_part} 件</td>
+                                    <td>{line.batch_quantity} 件</td>
+                                    <td>
+                                      {line.template_version}
+                                      <small>{line.catalog_version}</small>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </>
+                      )}
                       <table>
                         <thead>
                           <tr>
@@ -1070,8 +1128,17 @@ export default function Workbench() {
                       >
                         生成导出文件
                       </button>
-                      <button disabled={!run.export} onClick={download}>
-                        下载草案
+                      <button
+                        disabled={busy || engineer || !run.export}
+                        onClick={() => download("md")}
+                      >
+                        下载草案（Markdown）
+                      </button>
+                      <button
+                        disabled={busy || engineer || !run.export}
+                        onClick={() => download("json")}
+                      >
+                        下载草案（JSON）
                       </button>
                     </div>
                   </section>

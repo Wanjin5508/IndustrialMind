@@ -144,6 +144,20 @@ class CostLine(Contract):
     basis: str
 
 
+class BlankSpec(Contract):
+    code: str = Field(min_length=1)
+    specification: str = Field(min_length=1)
+    quantity_per_part: int = Field(strict=True, gt=0)
+    unit: Literal["piece"]
+
+
+class MaterialLine(BlankSpec):
+    material: str
+    batch_quantity: int = Field(gt=0)
+    template_version: str
+    catalog_version: str
+
+
 class Quote(Contract):
     draft_version: int
     quantity: int
@@ -161,6 +175,7 @@ class Quote(Contract):
     pending: list[str]
     knowledge_basis: list[dict] = Field(default_factory=list)
     routing: list[dict] = Field(default_factory=list)
+    material_lines: list[MaterialLine] = Field(default_factory=list)
 
 
 class KnowledgeRecord(Contract):

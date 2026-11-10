@@ -6,6 +6,7 @@ from rfq_workbench.config import Settings
 from rfq_workbench.contracts import ApproveRequest, ConfirmedInputs, RunState
 from rfq_workbench.costing import calculate, fingerprint, load_reference, validate_inputs
 from rfq_workbench.errors import DomainError
+from rfq_workbench.evidence import REVISION_FIELDS, revision_issue
 from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.repository import Repository, utc_now
 
@@ -52,6 +53,13 @@ def input_hash(body: dict) -> str:
             "documents": [{"id": d["id"], "sha256": d["sha256"]} for d in body["documents"]],
         }
     )
+
+
+def run_snapshot(body: dict) -> dict:
+    """Keep generated document bytes behind the authenticated download route."""
+    if body["export"]:
+        return {**body, "export": {"filename": body["export"]["filename"]}}
+    return body
 
 
 class Workflow:
@@ -133,6 +141,10 @@ class Workflow:
         """Check a draft snapshot without invalidating it on a read-only request."""
         if body["quote"] is None:
             return False
+        if body["documents"] and any(
+            revision_issue(key, body["fields"].get(key, {})) for key in REVISION_FIELDS
+        ):
+            return False
         try:
             _, ref_hash, _ = Knowledge(self.settings).resolve(
                 ConfirmedInputs.model_validate(body["inputs"]), actor
@@ -143,13 +155,17 @@ class Workflow:
         except DomainError:
             return False
 
-    def check_fresh(self, run_id: str, version: int, actor: str) -> dict:
+    def quote_snapshot(self, run_id: str, version: int) -> dict:
         body = self.repo.get(run_id)
         require_intent(body, ("prepare_quote",))
         if body["version"] != version:
             raise DomainError("VERSION_CONFLICT", "Task changed. Refresh before retrying.", 409)
         if body["quote"] is None:
             raise DomainError("NO_QUOTE", "Calculate a valid draft first.")
+        return body
+
+    def check_fresh(self, run_id: str, version: int, actor: str) -> dict:
+        body = self.quote_snapshot(run_id, version)
         if not self.references_match(body, actor):
 
             def invalidate(current: dict) -> dict:
@@ -161,6 +177,23 @@ class Workflow:
             raise DomainError(
                 "STALE_DRAFT", "Input or reference changed. Recalculate and approve again.", 409
             )
+        return body
+
+    def download_snapshot(self, run_id: str, version: int, actor: str) -> dict:
+        body = self.quote_snapshot(run_id, version)
+        if not self.references_match(body, actor):
+            raise DomainError("STALE_DRAFT", "草案依据已变更，请重新计价并审批。", 409)
+        export = body["export"]
+        approval = body["approval"]
+        if (
+            body["state"] != RunState.EXPORTED_DRAFT
+            or not export
+            or not approval
+            or approval.get("quote_hash") != fingerprint(body["quote"])
+            or export.get("quote") != body["quote"]
+            or export.get("approval") != approval
+        ):
+            raise DomainError("NO_EXPORT", "请先审批并生成当前版本的导出文件。", 409)
         return body
 
     def approve(self, run_id: str, request: ApproveRequest, actor: str) -> dict:
@@ -213,6 +246,17 @@ class Workflow:
                 f"Quantity: {quote['quantity']}",
                 f"Unit price: EUR {quote['unit_price']}",
                 f"Total: EUR {quote['total_price']}",
+                "",
+                "## Material requirements (synthetic)",
+            ]
+            lines += [
+                f"- {row['code']} / {row['material']} / {row['specification']}: "
+                f"{row['quantity_per_part']} {row['unit']}/part, "
+                f"{row['batch_quantity']} {row['unit']}/batch "
+                f"({row['template_version']}, {row['catalog_version']})"
+                for row in quote.get("material_lines", [])
+            ]
+            lines += [
                 "",
                 "## Cost basis",
             ]

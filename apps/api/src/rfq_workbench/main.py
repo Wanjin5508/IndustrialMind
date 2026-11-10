@@ -1,10 +1,10 @@
 """HTTP application factory, demo authorization, and stable error responses."""
 
-from typing import Annotated
+from typing import Annotated, Literal
 
-from fastapi import Depends, FastAPI, File, Form, Header, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 
 from rfq_workbench.config import Settings
 from rfq_workbench.contracts import (
@@ -25,7 +25,7 @@ from rfq_workbench.integrations import IntegrationPreview, preview_integrations
 from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.orchestrator import Orchestrator, visible
 from rfq_workbench.repository import Repository
-from rfq_workbench.service import Workflow
+from rfq_workbench.service import Workflow, run_snapshot
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -79,7 +79,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/runs")
     def list_runs(who: Annotated[str, Depends(actor)]):
-        return [body for body in repository.list() if visible(body, who)]
+        return [run_snapshot(body) for body in repository.list() if visible(body, who)]
 
     @app.post("/tasks", status_code=201)
     def create_task(request: TaskRequest, who: Annotated[str, Depends(actor)]):
@@ -87,7 +87,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.post("/tasks/{run_id}/resume")
     def resume_task(run_id: str, request: ResumeTask, who: Annotated[str, Depends(actor)]):
-        return orchestrator.resume(run_id, request, who)
+        return run_snapshot(orchestrator.resume(run_id, request, who))
 
     @app.get("/capabilities")
     def capabilities(_who: Annotated[str, Depends(actor)]):
@@ -162,7 +162,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/runs/{run_id}")
     def get_run(run_id: str, who: Annotated[str, Depends(actor)]):
-        return orchestrator.get(run_id, who)
+        return run_snapshot(orchestrator.get(run_id, who))
 
     @app.get("/runs/{run_id}/integration-preview", response_model=IntegrationPreview)
     def integration_preview(run_id: str, who: Annotated[str, Depends(actor)]):
@@ -221,6 +221,39 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.post("/runs/{run_id}/export")
     def export(run_id: str, request: Mutation, who: Annotated[str, Depends(approver)]):
-        return workflow.export(run_id, request.expected_version, who)
+        return run_snapshot(workflow.export(run_id, request.expected_version, who))
+
+    @app.get(
+        "/runs/{run_id}/export/download",
+        response_class=Response,
+        responses={200: {"content": {"text/markdown": {}, "application/json": {}}}},
+    )
+    def download_export(
+        run_id: str,
+        expected_version: Annotated[int, Query(ge=1)],
+        who: Annotated[str, Depends(approver)],
+        format: Literal["md", "json"] = "md",
+    ):
+        body = workflow.download_snapshot(run_id, expected_version, who)
+        export = body["export"]
+        filename = export["filename"].removesuffix(".md") + f".{format}"
+        headers = {
+            "Cache-Control": "private, no-store",
+            "Content-Disposition": f'attachment; filename="{filename}"',
+        }
+        if format == "md":
+            return Response(export["markdown"], media_type="text/markdown", headers=headers)
+        return JSONResponse(
+            {
+                "kind": "INTERNAL_DRAFT",
+                "run_id": run_id,
+                "inputs": body["inputs"],
+                "quote": export["quote"],
+                "approval": export["approval"],
+                "extraction_mode": body["mode"],
+                "replay_source": body["metrics"].get("replay_source"),
+            },
+            headers=headers,
+        )
 
     return app

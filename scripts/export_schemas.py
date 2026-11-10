@@ -13,6 +13,7 @@ for name in [
     "Extraction",
     "Issue",
     "Quote",
+    "MaterialLine",
     "AuditEvent",
     "EvidenceCheck",
     "ReviewedField",
@@ -25,4 +26,4 @@ for name in [
     (root / f"{name}.json").write_text(
         json.dumps(schema, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
-print("Exported 12 domain schemas.")
+print("Exported 13 domain schemas.")

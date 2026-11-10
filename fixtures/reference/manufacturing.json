@@ -1,10 +1,10 @@
 {
   "origin_type": "synthetic",
   "notice": "SYNTHETIC DEMO DATA - not a manufacturing instruction or customer price",
-  "rules_version": "rules-demo-1",
+  "rules_version": "rules-demo-2",
   "catalog_version": "catalog-demo-1",
   "rate_version": "rates-eur-demo-1",
-  "template_version": "bracket-routing-demo-1",
+  "template_version": "bracket-routing-demo-2",
   "approved": true,
   "project_id": "PM-DEMO",
   "roles": ["demo-engineer", "demo-approver"],
@@ -24,6 +24,12 @@
   "inspection_hourly": "50.00",
   "inspection_hours": "0.02",
   "target_margin": "0.25",
+  "blank": {
+    "code": "BLANK-PM-BRKT-010",
+    "specification": "82 × 52 × 13 mm",
+    "quantity_per_part": 1,
+    "unit": "piece"
+  },
   "applicability": {
     "part_number": "PM-BRKT-010",
     "dimensions": {"width_mm": "80", "height_mm": "50", "thickness_mm": "12", "hole_diameter_mm": "6.5"},

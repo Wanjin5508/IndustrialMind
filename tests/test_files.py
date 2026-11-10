@@ -4,7 +4,7 @@ import json
 from dataclasses import replace
 
 import pytest
-from conftest import APPROVER, ENGINEER, ROOT, approve
+from conftest import APPROVER, ENGINEER, ROOT, approve, download_draft
 from fastapi.testclient import TestClient
 
 from rfq_workbench.errors import DomainError
@@ -53,7 +53,7 @@ def test_real_files_to_internal_export_and_evidence(client):
         f"/runs/{run['id']}/export", headers=APPROVER, json={"expected_version": run["version"]}
     )
     assert response.json()["state"] == "EXPORTED_DRAFT"
-    assert "NOT A CUSTOMER OFFER" in response.json()["export"]["markdown"]
+    assert "NOT A CUSTOMER OFFER" in download_draft(client, response.json()).text
 
 
 @pytest.mark.parametrize(
@@ -114,6 +114,7 @@ def test_human_quantity_change_preserves_evidence_and_invalidates_approval(clien
     )
     changed = cost(client, changed).json()
     assert changed["quote"]["total_price"] == "12255.00"
+    assert changed["quote"]["material_lines"][0]["batch_quantity"] == 500
     assert (
         client.post(
             f"/runs/{run['id']}/export",

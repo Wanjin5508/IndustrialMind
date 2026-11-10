@@ -47,7 +47,7 @@
     "payload_source": "manufacturing",
     "id": "KB-TEMPLATE",
     "kind": "template",
-    "version": "bracket-routing-demo-1",
+    "version": "bracket-routing-demo-2",
     "title": "批准工艺模板 / Routing",
     "content": "SYNTHETIC. Blank preparation, milling/drilling, anodize, inspection. 工艺模板"
   },

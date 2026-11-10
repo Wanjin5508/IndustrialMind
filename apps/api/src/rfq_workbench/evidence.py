@@ -7,9 +7,29 @@ label and a matching value; only a whole PDF page can request visual review.
 import re
 from decimal import Decimal
 
-from rfq_workbench.contracts import EvidenceCheck, ExtractedValue, ReviewedField, Source
+from rfq_workbench.contracts import EvidenceCheck, ExtractedValue, Issue, ReviewedField, Source
 
 NUMERIC_FIELDS = {"quantity", "width_mm", "height_mm", "thickness_mm", "hole_diameter_mm"}
+REVISION_FIELDS = {"rfq.required_revision", "drawing.revision"}
+
+
+def revision_issue(key: str, field: dict) -> Issue | None:
+    """A confirmed reading may stand, but the document's revision cannot be overwritten."""
+    status = field.get("evidence", {}).get("status")
+    if (
+        field.get("value")
+        and field["value"] == field.get("original_value")
+        and field.get("source_valid")
+        and (
+            status == "TEXT_VERIFIED" or status == "VISUAL_REVIEW" and field.get("human_confirmed")
+        )
+    ):
+        return None
+    return Issue(
+        code="REVISION_EVIDENCE_REQUIRED",
+        field=key,
+        message="请核对原文件版次。版次不同或无法确认时，请补充有效文件。",
+    )
 
 
 def equivalent(key: str, left: str, right: str) -> bool:
@@ -60,7 +80,7 @@ def verify(body: dict, kind: str, key: str, label: str, extracted: ExtractedValu
         elif (
             document["suffix"] == ".pdf"
             and source["id"] == f"{document['id']}:p{source['page']}"
-            and not cited_values
+            and not all_values
         ):
             status, message = (
                 "VISUAL_REVIEW",

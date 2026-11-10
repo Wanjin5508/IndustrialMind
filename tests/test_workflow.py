@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from decimal import Decimal
 
 import pytest
-from conftest import APPROVER, ENGINEER, approve, create_and_cost
+from conftest import APPROVER, ENGINEER, approve, create_and_cost, download_draft
 from fastapi.testclient import TestClient
 
 from rfq_workbench.errors import DomainError
@@ -135,7 +135,8 @@ def test_export_is_persisted_and_repeat_does_not_duplicate_events(client, settin
     exported = client.post(
         f"/runs/{run['id']}/export", json={"expected_version": run["version"]}, headers=APPROVER
     ).json()
-    assert "INTERNAL BUDGET DRAFT" in exported["export"]["markdown"]
+    first = download_draft(client, exported)
+    assert "INTERNAL BUDGET DRAFT" in first.text
     with TestClient(create_app(settings)) as restarted:
         loaded = restarted.get(f"/runs/{run['id']}", headers=ENGINEER).json()
         assert loaded["export"] == exported["export"]
@@ -146,6 +147,7 @@ def test_export_is_persisted_and_repeat_does_not_duplicate_events(client, settin
         ).json()
         assert repeated["version"] == loaded["version"]
         assert len(repeated["events"]) == len(loaded["events"])
+        assert download_draft(restarted, repeated).content == first.content
 
 
 def test_stale_and_concurrent_updates_do_not_overwrite(client, settings, inputs):

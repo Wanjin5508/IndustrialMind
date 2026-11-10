@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 from threading import Event
 
 import pytest
-from conftest import APPROVER, ENGINEER, approve, create_and_cost
+from conftest import APPROVER, ENGINEER, approve, create_and_cost, download_draft
 from fastapi.testclient import TestClient
 
 from rfq_workbench import file_workflow
@@ -184,7 +184,7 @@ def test_retry_and_replay_cannot_duplicate_approval_or_export(client):
     path = f"/runs/{run['id']}/export"
     exported = client.post(path, headers=APPROVER, json={"expected_version": run["version"]}).json()
     assert exported["state"] == "EXPORTED_DRAFT"
-    assert "REPLAY / DEV-001-M3-LIVE" in exported["export"]["markdown"]
+    assert "REPLAY / DEV-001-M3-LIVE" in download_draft(client, exported).text
     assert (
         client.post(path, headers=APPROVER, json={"expected_version": run["version"]}).status_code
         == 409

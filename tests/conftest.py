@@ -68,3 +68,11 @@ def approve(client, run):
     )
     assert response.status_code == 200, response.text
     return response.json()
+
+
+def download_draft(client, run, format="md", headers=APPROVER):
+    return client.get(
+        f"/runs/{run['id']}/export/download",
+        headers=headers,
+        params={"expected_version": run["version"], "format": format},
+    )

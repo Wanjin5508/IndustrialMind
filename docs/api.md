@@ -14,11 +14,12 @@ Base URL: `http://127.0.0.1:8000`。交互文档 `/docs`；机器契约 [OpenAPI
 | PATCH `/runs/{id}/inputs` | engineer | 带 reason 与 expected_version 修改，旧结果失效 |
 | POST `/runs/{id}/cost` | engineer | 受控模板与 Decimal 计算 |
 | POST `/runs/{id}/approve` | approver | 确认技术字段和 internal_only，批准准确快照 |
-| POST `/runs/{id}/export` | approver | 返回带 DRAFT 标识的 Markdown、JSON 报价与审批记录 |
+| POST `/runs/{id}/export` | approver | 生成已批准内部草案并返回任务与导出文件名 |
+| GET `/runs/{id}/export/download` | approver | 带 `expected_version` 和 `format=md` 或 `format=json` 下载当前已批准文件 |
 
 变更操作携带 `expected_version`；冲突返回 409。业务错误格式 `{"error":{"code":"...","message":"..."}}`；请求 schema 错误遵循 FastAPI 422。不存在或不属于当前项目的任务返回 404。
 
-参考费率过期或 hash 改变时，旧报价和审批在批准/导出检查中失效，并追加 `dependency_invalidated` 事件。该检查在使用边界发生，不宣称后台持续监控文件。
+参考费率过期或 hash 改变时，旧报价和审批在批准/生成导出检查中失效，并追加 `dependency_invalidated` 事件。下载独立检查任务版本、原文件版次证据、参考指纹及批准快照，过期时返回 `409 STALE_DRAFT`。普通任务响应的 `export` 只返回文件名。下载响应设置 `Cache-Control: private, no-store`，不会重新生成文件或增加审计事件。
 
 ## M2 文件接口
 
@@ -30,7 +31,7 @@ Base URL: `http://127.0.0.1:8000`。交互文档 `/docs`；机器契约 [OpenAPI
 | POST `/runs/from-fixture/{case_id}` | 读取实际文件创建任务，不读答案 |
 | POST `/runs/upload` | multipart：rfq、drawing |
 | POST `/runs/{id}/analyze` | expected_version、mode（local_text 或 live） |
-| PATCH `/runs/{id}/fields` | expected_version、values 字典、reason；保留原值及来源 |
+| PATCH `/runs/{id}/fields` | expected_version、values 字典、reason；保留原值及来源。修改 RFQ 或图纸原始版次返回 `409 REVISION_OVERRIDE`；确认同值须有文件证据 |
 | POST `/runs/{id}/drawing` | multipart：drawing、expected_version、reason；需重新抽取 |
 | GET `/runs/{id}/documents/{document_id}/pages/{page}` | 任务内 PDF 页图 PNG；页号从 1 开始 |
 

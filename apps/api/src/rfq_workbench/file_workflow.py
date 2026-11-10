@@ -18,7 +18,7 @@ from rfq_workbench.contracts import (
 from rfq_workbench.costing import fingerprint, load_reference, validate_inputs
 from rfq_workbench.documents import ingest
 from rfq_workbench.errors import DomainError
-from rfq_workbench.evidence import verify
+from rfq_workbench.evidence import REVISION_FIELDS, revision_issue, verify
 from rfq_workbench.extraction import LABELS, LocalTextProvider, OpenAIProvider, Provider
 from rfq_workbench.replay import ReplayProvider
 from rfq_workbench.repository import Repository, utc_now
@@ -81,6 +81,8 @@ def check_fields(body: dict, settings: Settings) -> None:
             issue(field["evidence"]["status"], key, field["evidence"]["message"])
         elif field.get("needs_visual_review") and not field.get("human_confirmed"):
             issue("VISUAL_REVIEW", key, "Page-level visual fact requires engineering confirmation.")
+        elif key in REVISION_FIELDS and (problem := revision_issue(key, field)):
+            issues.append(problem.model_dump())
     body["inputs"] = None
     if review_only:
         # Drawing review never fabricates RFQ quantity, currency or customer revision.
@@ -427,9 +429,16 @@ class FileWorkflow:
                         "INVALID_FIELDS", "Field values must be at most 200 characters."
                     )
                 field = body["fields"][key]
-                changes[key] = {"before": field["value"], "after": value.strip() or None}
+                normalized = ExtractedValue(value=value, source_id=None).value
+                if key in REVISION_FIELDS and normalized != field.get("original_value"):
+                    raise DomainError(
+                        "REVISION_OVERRIDE",
+                        "不能修改文件版次。请上传正确版本的 RFQ 或图纸后重新识别。",
+                        409,
+                    )
+                changes[key] = {"before": field["value"], "after": normalized}
                 field.update(
-                    value=ExtractedValue(value=value, source_id=None).value,
+                    value=normalized,
                     human_confirmed=True,
                     correction={"actor": actor, "reason": request.reason, "at": utc_now()},
                 )

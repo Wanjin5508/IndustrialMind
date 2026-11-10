@@ -1,6 +1,8 @@
 # Demo rule register
 
-SYNTHETIC DEMO DATA. Owner: RFQ engineering. Version: rules-demo-1.
+SYNTHETIC DEMO DATA. Owner: RFQ engineering. Version: rules-demo-2.
+
+Replace conflicting revision documents before costing. Human confirmation may confirm an unchanged reading, but cannot change the document revision. The approved template supplies the synthetic blank specification and quantity per finished part.
 
 | Rule | Condition | Result |
 |---|---|---|

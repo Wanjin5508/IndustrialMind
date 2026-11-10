@@ -44,3 +44,4 @@ updated: 2026-11-10
 - [M5 验收](acceptance-m5.md)：三入口、澄清、跨重启人工恢复与审批边界。
 
 - [M6 验收](acceptance-m6.md)：超时、中断恢复、回放和模拟系统预览。
+- [M6 需求覆盖审计](m6-requirements-gap-analysis.md) · [M7 前置修复验收](pre-m7-fixes.md)。

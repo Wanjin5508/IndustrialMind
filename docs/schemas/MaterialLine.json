@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "minLength": 1,
+      "title": "Code",
+      "type": "string"
+    },
+    "specification": {
+      "minLength": 1,
+      "title": "Specification",
+      "type": "string"
+    },
+    "quantity_per_part": {
+      "exclusiveMinimum": 0,
+      "title": "Quantity Per Part",
+      "type": "integer"
+    },
+    "unit": {
+      "const": "piece",
+      "title": "Unit",
+      "type": "string"
+    },
+    "material": {
+      "title": "Material",
+      "type": "string"
+    },
+    "batch_quantity": {
+      "exclusiveMinimum": 0,
+      "title": "Batch Quantity",
+      "type": "integer"
+    },
+    "template_version": {
+      "title": "Template Version",
+      "type": "string"
+    },
+    "catalog_version": {
+      "title": "Catalog Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "specification",
+    "quantity_per_part",
+    "unit",
+    "material",
+    "batch_quantity",
+    "template_version",
+    "catalog_version"
+  ],
+  "title": "MaterialLine",
+  "type": "object"
+}
