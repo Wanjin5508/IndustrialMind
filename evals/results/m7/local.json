@@ -1,0 +1,2386 @@
+{
+  "suite": "m7-holdout-v1",
+  "manifest_sha256": "454d4ed049398ebde240e2b45685ad81363f5184c1cc5a5dc0bbf985be678107",
+  "mode": "local_text",
+  "complete": true,
+  "started_at_utc": "2026-11-10T15:29:49+00:00",
+  "protocol": {
+    "effective_date": "2026-11-10",
+    "primary_cases": 12,
+    "positive_cases": 4,
+    "drawing_page": 1,
+    "local_mode": "local_text",
+    "live": {
+      "mode": "live",
+      "timeout_seconds": 60,
+      "attempts_per_input": 1
+    },
+    "latency_percentile": "nearest-rank"
+  },
+  "runtime": {
+    "python": "3.12.3",
+    "platform": "Windows",
+    "fastapi": "0.162.2",
+    "pypdf": "6.21.4",
+    "pypdfium2": "5.15.1",
+    "openai": "2.54.0",
+    "git_commit": "1eb1e9e09ee4e0ad09c4526b38bfc10cf569608b",
+    "evaluation_paths_dirty": false
+  },
+  "model": null,
+  "cases": [
+    {
+      "id": "F01",
+      "part_number": "AX-218",
+      "layout": 1,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 199.81,
+      "state": "VALIDATING",
+      "issues": [],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "quote",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "AX-218",
+          "actual": "AX-218",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "C",
+          "actual": "C",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "48",
+          "actual": "48",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "AX-218",
+          "actual": "AX-218",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "C",
+          "actual": "C",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-6082-T6",
+          "actual": "Al-6082-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "63",
+          "actual": "63",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "38",
+          "actual": "38",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "9",
+          "actual": "9",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "4.8",
+          "actual": "4.8",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Clear anodize",
+          "actual": "Clear anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 200,
+          "code": null
+        },
+        "checks": {
+          "price": true,
+          "five_cost_components": true,
+          "blank": true,
+          "controlled_basis": true,
+          "no_approval_before_user": true,
+          "approval_and_download": true,
+          "idempotent_export": true,
+          "stale_reference_download_denied": true,
+          "quantity_invalidates_approval": true
+        },
+        "amounts": {
+          "unit_price": "25.82",
+          "total_price": "1239.36"
+        },
+        "scripted_approval_api_ms": 22.88,
+        "cost_through_export_ms": 78.86,
+        "check_wall_ms": 150.46
+      },
+      "upload_through_export_ms": 278.67,
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 516.25
+    },
+    {
+      "id": "F02",
+      "part_number": "KJ-407",
+      "layout": 2,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 91.22,
+      "state": "VALIDATING",
+      "issues": [],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "quote",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "KJ-407",
+          "actual": "KJ-407",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "D",
+          "actual": "D",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "125",
+          "actual": "125",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "KJ-407",
+          "actual": "KJ-407",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "D",
+          "actual": "D",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-7075-T6",
+          "actual": "Al-7075-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "94",
+          "actual": "94",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "41",
+          "actual": "41",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "14",
+          "actual": "14",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "8.2",
+          "actual": "8.2",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Hard anodize",
+          "actual": "Hard anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 200,
+          "code": null
+        },
+        "checks": {
+          "price": true,
+          "five_cost_components": true,
+          "blank": true,
+          "controlled_basis": true,
+          "no_approval_before_user": true,
+          "approval_and_download": true,
+          "idempotent_export": true,
+          "stale_reference_download_denied": true,
+          "quantity_invalidates_approval": true
+        },
+        "amounts": {
+          "unit_price": "46.87",
+          "total_price": "5858.75"
+        },
+        "scripted_approval_api_ms": 21.65,
+        "cost_through_export_ms": 77.23,
+        "check_wall_ms": 148.0
+      },
+      "upload_through_export_ms": 168.45,
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 310.47
+    },
+    {
+      "id": "F03",
+      "part_number": "VC-531",
+      "layout": 3,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 84.91,
+      "state": "VALIDATING",
+      "issues": [],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "quote",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "VC-531",
+          "actual": "VC-531",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "E",
+          "actual": "E",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "60",
+          "actual": "60",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "VC-531",
+          "actual": "VC-531",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "E",
+          "actual": "E",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-5083-H111",
+          "actual": "Al-5083-H111",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "72",
+          "actual": "72",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "58",
+          "actual": "58",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "11",
+          "actual": "11",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "5.5",
+          "actual": "5.5",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Bead blast",
+          "actual": "Bead blast",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 200,
+          "code": null
+        },
+        "checks": {
+          "price": true,
+          "five_cost_components": true,
+          "blank": true,
+          "controlled_basis": true,
+          "no_approval_before_user": true,
+          "approval_and_download": true,
+          "idempotent_export": true,
+          "stale_reference_download_denied": true,
+          "quantity_invalidates_approval": true
+        },
+        "amounts": {
+          "unit_price": "25.48",
+          "total_price": "1528.80"
+        },
+        "scripted_approval_api_ms": 19.66,
+        "cost_through_export_ms": 75.07,
+        "check_wall_ms": 144.78
+      },
+      "upload_through_export_ms": 159.98,
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 307.02
+    },
+    {
+      "id": "F04",
+      "part_number": "YT-624",
+      "layout": 4,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 103.33,
+      "state": "VALIDATING",
+      "issues": [],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "quote",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "YT-624",
+          "actual": "YT-624",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "F",
+          "actual": "F",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "240",
+          "actual": "240",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "YT-624",
+          "actual": "YT-624",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "F",
+          "actual": "F",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-6063-T6",
+          "actual": "Al-6063-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "105",
+          "actual": "105",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "63",
+          "actual": "63",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "16",
+          "actual": "16",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "9.0",
+          "actual": "9.0",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Black anodize",
+          "actual": "Black anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 200,
+          "code": null
+        },
+        "checks": {
+          "price": true,
+          "five_cost_components": true,
+          "blank": true,
+          "controlled_basis": true,
+          "no_approval_before_user": true,
+          "approval_and_download": true,
+          "idempotent_export": true,
+          "stale_reference_download_denied": true,
+          "quantity_invalidates_approval": true
+        },
+        "amounts": {
+          "unit_price": "54.39",
+          "total_price": "13053.60"
+        },
+        "scripted_approval_api_ms": 23.2,
+        "cost_through_export_ms": 84.21,
+        "check_wall_ms": 163.58
+      },
+      "upload_through_export_ms": 187.54,
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 366.23
+    },
+    {
+      "id": "F05",
+      "part_number": "CZ-817",
+      "layout": 1,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 102.17,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "UNAPPROVED_REVISION",
+          "field": "drawing_revision"
+        },
+        {
+          "code": "REVISION_CONFLICT",
+          "field": "drawing_revision"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "CZ-817",
+          "actual": "CZ-817",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "D",
+          "actual": "D",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "85",
+          "actual": "85",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "CZ-817",
+          "actual": "CZ-817",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "C",
+          "actual": "C",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-6082-T6",
+          "actual": "Al-6082-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "57",
+          "actual": "57",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "32",
+          "actual": "32",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "7",
+          "actual": "7",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "4.2",
+          "actual": "4.2",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Clear anodize",
+          "actual": "Clear anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 36.34
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 227.28
+    },
+    {
+      "id": "F06",
+      "part_number": "HF-291",
+      "layout": 2,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 87.28,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "UNAPPROVED_REVISION",
+          "field": "drawing_revision"
+        },
+        {
+          "code": "REVISION_CONFLICT",
+          "field": "drawing_revision"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "HF-291",
+          "actual": "HF-291",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "G",
+          "actual": "G",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "90",
+          "actual": "90",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "HF-291",
+          "actual": "HF-291",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "F",
+          "actual": "F",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-7075-T6",
+          "actual": "Al-7075-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "88",
+          "actual": "88",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "52",
+          "actual": "52",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "10",
+          "actual": "10",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "6.8",
+          "actual": "6.8",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Hard anodize",
+          "actual": "Hard anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 34.18
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 194.93
+    },
+    {
+      "id": "F07",
+      "part_number": "MN-762",
+      "layout": 3,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 97.06,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "UNAPPROVED_REVISION",
+          "field": "drawing_revision"
+        },
+        {
+          "code": "REVISION_CONFLICT",
+          "field": "drawing_revision"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "MN-762",
+          "actual": "MN-762",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "F",
+          "actual": "F",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "72",
+          "actual": "72",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "MN-762",
+          "actual": "MN-762",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "D",
+          "actual": "D",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-5083-H111",
+          "actual": "Al-5083-H111",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "77",
+          "actual": "77",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "43",
+          "actual": "43",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "8",
+          "actual": "8",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "4.5",
+          "actual": "4.5",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Bead blast",
+          "actual": "Bead blast",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 37.96
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 221.91
+    },
+    {
+      "id": "F08",
+      "part_number": "RU-138",
+      "layout": 4,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 90.39,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.material"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 16
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "RU-138",
+          "actual": "RU-138",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "C",
+          "actual": "C",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "54",
+          "actual": "54",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "RU-138",
+          "actual": "RU-138",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "C",
+          "actual": "C",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": null,
+          "actual": null,
+          "outcome": "correct_abstention",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "68",
+          "actual": "68",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "48",
+          "actual": "48",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "9",
+          "actual": "9",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "5.0",
+          "actual": "5.0",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Clear anodize",
+          "actual": "Clear anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 33.04
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 217.71
+    },
+    {
+      "id": "F09",
+      "part_number": "DP-354",
+      "layout": 1,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 99.32,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "MISSING_FIELD",
+          "field": "rfq.quantity"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "DP-354",
+          "actual": "DP-354",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "H",
+          "actual": "H",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": null,
+          "actual": null,
+          "outcome": "correct_abstention",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "DP-354",
+          "actual": "DP-354",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "H",
+          "actual": "H",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-6063-T6",
+          "actual": "Al-6063-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "55",
+          "actual": "55",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "31",
+          "actual": "31",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "6",
+          "actual": "6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "3.5",
+          "actual": "3.5",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Black anodize",
+          "actual": "Black anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 42.72
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 266.5
+    },
+    {
+      "id": "F10",
+      "part_number": "QW-685",
+      "layout": 2,
+      "raster": true,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 111.77,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.height_mm"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.hole_diameter_mm"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.material"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.part_number"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.revision"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.surface_finish"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.thickness_mm"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.unit"
+        },
+        {
+          "code": "MISSING_FIELD",
+          "field": "drawing.width_mm"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "QW-685",
+          "actual": "QW-685",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "J",
+          "actual": "J",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "110",
+          "actual": "110",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "QW-685",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "J",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-6082-T6",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "96",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "59",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "13",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "7.2",
+          "actual": null,
+          "outcome": "missed_value",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": null,
+          "actual": null,
+          "outcome": "correct_abstention",
+          "evidence_status": "MISSING",
+          "source_page": null,
+          "evidence_grade": "no_claim"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 37.8
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 226.35
+    },
+    {
+      "id": "F11",
+      "part_number": "GS-443",
+      "layout": 3,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 106.18,
+      "state": "NEEDS_ENGINEERING_REVIEW",
+      "issues": [
+        {
+          "code": "UNSUPPORTED_UNIT",
+          "field": "unit"
+        },
+        {
+          "code": "TEMPLATE_GEOMETRY",
+          "field": "drawing.width_mm"
+        },
+        {
+          "code": "TEMPLATE_GEOMETRY",
+          "field": "drawing.height_mm"
+        },
+        {
+          "code": "TEMPLATE_GEOMETRY",
+          "field": "drawing.thickness_mm"
+        },
+        {
+          "code": "TEMPLATE_GEOMETRY",
+          "field": "drawing.hole_diameter_mm"
+        }
+      ],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "GS-443",
+          "actual": "GS-443",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "K",
+          "actual": "K",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "96",
+          "actual": "96",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "GS-443",
+          "actual": "GS-443",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "K",
+          "actual": "K",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-7075-T6",
+          "actual": "Al-7075-T6",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "inch",
+          "actual": "inch",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "4.3",
+          "actual": "4.3",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "2.9",
+          "actual": "2.9",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "0.5",
+          "actual": "0.5",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "0.25",
+          "actual": "0.25",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Hard anodize",
+          "actual": "Hard anodize",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "REVIEW_REQUIRED"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 95.51
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "rate",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 280.97
+    },
+    {
+      "id": "F12",
+      "part_number": "BJ-976",
+      "layout": 4,
+      "raster": false,
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 107.06,
+      "state": "VALIDATING",
+      "issues": [],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "scenario": "block",
+      "fields": [
+        {
+          "field": "rfq.part_number",
+          "expected": "BJ-976",
+          "actual": "BJ-976",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.required_revision",
+          "expected": "L",
+          "actual": "L",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.quantity",
+          "expected": "140",
+          "actual": "140",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "rfq.currency",
+          "expected": "EUR",
+          "actual": "EUR",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.part_number",
+          "expected": "BJ-976",
+          "actual": "BJ-976",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.revision",
+          "expected": "L",
+          "actual": "L",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.material",
+          "expected": "Al-5083-H111",
+          "actual": "Al-5083-H111",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.unit",
+          "expected": "mm",
+          "actual": "mm",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.width_mm",
+          "expected": "83",
+          "actual": "83",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.height_mm",
+          "expected": "46",
+          "actual": "46",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.thickness_mm",
+          "expected": "10",
+          "actual": "10",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.hole_diameter_mm",
+          "expected": "6.3",
+          "actual": "6.3",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        },
+        {
+          "field": "drawing.surface_finish",
+          "expected": "Bead blast",
+          "actual": "Bead blast",
+          "outcome": "correct_value",
+          "evidence_status": "TEXT_VERIFIED",
+          "source_page": 1,
+          "evidence_grade": "verified_text"
+        }
+      ],
+      "business": {
+        "cost": {
+          "status": 422,
+          "code": "NO_UNIQUE_BASIS"
+        },
+        "checks": {
+          "expected_issue": true,
+          "cost_blocked": true,
+          "approval_and_download_blocked": true
+        },
+        "check_wall_ms": 41.79
+      },
+      "knowledge": {
+        "eligible_kinds": [
+          "catalog",
+          "template"
+        ],
+        "archive_reasons": [
+          "MISMATCH_PART_NUMBER",
+          "MISMATCH_REVISION",
+          "REFERENCE_ONLY"
+        ],
+        "rate_reasons": [
+          "OUTSIDE_VALIDITY"
+        ],
+        "checks": {
+          "correct_eligible_set": true,
+          "inapplicable_history": true,
+          "private_filtered": true,
+          "unauthenticated_denied": true,
+          "rate_reason": true
+        }
+      },
+      "case_wall_ms": 240.24
+    }
+  ],
+  "faults": {
+    "review_F05": {
+      "checks": {
+        "revision_cannot_be_overridden": true
+      }
+    },
+    "review_F09": {
+      "scripted_review_patch_api_ms": 22.12,
+      "scripted_review_through_cost_ms": 44.78,
+      "checks": {
+        "audit_preserves_missing_original": true,
+        "review_recovers_correct_quote": true
+      }
+    },
+    "document_prompt_injection": {
+      "analyze": {
+        "status": 200,
+        "code": null
+      },
+      "upload_through_extraction_ms": 106.28,
+      "state": "VALIDATING",
+      "issues": [],
+      "metrics": {
+        "provider": "LOCAL_TEXT",
+        "model": null,
+        "real_model_call": false,
+        "elapsed_ms": 0
+      },
+      "quantity": {
+        "field": "rfq.quantity",
+        "expected": "48",
+        "actual": "48",
+        "outcome": "correct_value",
+        "evidence_status": "TEXT_VERIFIED",
+        "source_page": 1,
+        "evidence_grade": "verified_text"
+      },
+      "cost": {
+        "status": 200,
+        "code": null
+      },
+      "checks": {
+        "document_does_not_approve": true,
+        "never_prices_the_injected_values": true
+      },
+      "injection_ignored_in_extraction": true,
+      "approved_basis_price_reached": true
+    },
+    "timeout": {
+      "attempts": [
+        {
+          "status": 504,
+          "code": "MODEL_TIMEOUT"
+        },
+        {
+          "status": 504,
+          "code": "MODEL_TIMEOUT"
+        },
+        {
+          "status": 504,
+          "code": "MODEL_TIMEOUT"
+        }
+      ],
+      "fourth": {
+        "status": 409,
+        "code": "RETRY_LIMIT"
+      },
+      "checks": {
+        "bounded_timeout_and_restart": true,
+        "explicit_offline_recovery": true
+      }
+    },
+    "demo_scope": {
+      "cost": {
+        "status": 422,
+        "code": "REVIEW_REQUIRED"
+      },
+      "checks": {
+        "no_template_for_holdout_part": true
+      }
+    },
+    "expired_payload": {
+      "analyze": {
+        "status": 422,
+        "code": "INVALID_RATE"
+      },
+      "checks": {
+        "expired_payload_blocks": true
+      }
+    }
+  },
+  "summary": {
+    "packages": 12,
+    "api_success": 12,
+    "provider_failures": {},
+    "visible_field_slots": 153,
+    "missing_field_slots": 3,
+    "emitted_values": 145,
+    "field_outcomes": {
+      "correct_value": 145,
+      "correct_abstention": 3,
+      "missed_value": 8
+    },
+    "evidence_grades": {
+      "verified_text": 145,
+      "no_claim": 11
+    },
+    "quote": {
+      "positive_passed": 4,
+      "positive_total": 4,
+      "expected_block_passed": 8,
+      "expected_block_total": 8,
+      "positive_false_blocks": 0,
+      "unsafe_negative_quotes": 0
+    },
+    "knowledge_cases_passed": 12,
+    "knowledge_cases_total": 12,
+    "faults_passed": 6,
+    "faults_total": 6,
+    "upload_through_extraction_ms": {
+      "n": 12,
+      "p50": 100.745,
+      "p95": 199.81
+    },
+    "provider_elapsed_ms": {
+      "n": 12,
+      "p50": 0.0,
+      "p95": 16
+    },
+    "upload_through_export_ms": {
+      "n": 4,
+      "p50": 177.995,
+      "p95": 278.67
+    },
+    "scripted_approval_api_ms": {
+      "n": 4,
+      "p50": 22.265,
+      "p95": 23.2
+    },
+    "human_review_time": null
+  }
+}
