@@ -1,23 +1,19 @@
-# 架构
+---
+owner: Engineering
+status: as-built-M4
+updated: 2026-11-10
+code_baseline: 196feb7
+---
+# 当前架构入口
 
-Owner: Engineering · Status: implementation baseline · Updated: 2026-11-08
+完整架构与基本原理集中维护在 [[IndustrialMindAI-项目手册]]：第 3 节模块职责，第 4 节调用时序，第 6–9 节证据、知识、计价审批与状态机。面试展示用 [[docs/面试与演示讲解]]，避免此处重复维护同一张主图。
 
-```mermaid
-flowchart LR
-  UI[Next.js workbench] --> API[FastAPI]
-  API --> FLOW[Workflow service]
-  FLOW --> PARSE[PDF/text evidence]
-  PARSE --> EXTRACT[Local text or explicit live model]
-  EXTRACT --> RULES[Validation]
-  RULES --> COST[Decimal costing]
-  COST --> REVIEW[Authorized approval]
-  REVIEW --> EXPORT[Internal draft export]
-  FLOW --> DB[(SQLite snapshots + audit)]
-  FLOW --> REF[Versioned reference data]
-```
+当前结构是 Next.js + FastAPI 模块化单体，SQLite 保存任务快照和审计，文件目录保存原始资料与页图；模型为抽取 Provider，知识查询和成本判断由后端确定性规则控制。
 
-M0 定义契约与合成资料，M1 实现可独立验证的后端核心，M2 接文件抽取和用户界面。抽取不能产生审批；前端不能决定权限。运行目录不包含评测真值。
+已接受的决策：
 
-业务变更持久化为版本化快照并追加审计记录。报价依赖输入和参考文件 hash；变更后必须重新计价与审批。SQLite 本地事务保证同一版本的并发修改不会覆盖。
+- [[docs/adr/001-local-modular-monolith|ADR 001：本地模块化单体]]。
+- [[docs/adr/002-evidence-and-model-accounting|ADR 002：证据强度与模型用量]]。
+- [[docs/adr/003-controlled-knowledge|ADR 003：受控知识与执行选择]]。
 
-边界：单工厂、单产品族、EUR/mm；没有客户 ERP/PLM/MES 连接、企业 SSO、正式对客发布或制造认证。
+当前没有统一自然语言 Orchestrator、企业连接器、队列自动恢复或生产身份；对应 roadmap M5 及以后阶段。该边界同时约束演示话术与未来架构图。

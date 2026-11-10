@@ -2,10 +2,13 @@
 title: RFQ 工作台技术文档入口
 status: active
 owner: engineering
-updated: 2026-11-08
+updated: 2026-11-10
 ---
 
 # RFQ 工作台技术文档
+
+> [!tip] 从这里开始
+> [[IndustrialMindAI-项目手册|完整项目手册]] 解释当前 M0–M4 的实现与维护；[[docs/面试与演示讲解|面试与演示讲解]] 提供模块讲解、架构图和可排练脚本。
 
 权威实施范围见 [[IndustrialMindAI-OptionB-RFQ工作台-roadmap]]；数据策略见 [[IndustrialMindAI-OptionB-输入数据准备计划]]。本目录管理可追溯的设计、契约、运行与验收证据，不能把计划状态写成已通过。
 
@@ -17,7 +20,7 @@ updated: 2026-11-08
 | [API](api.md) | 接口、角色、错误与并发约定 |
 | [运行手册](runbook.md) | 启动、配置、故障处理、演示重置 |
 | [测试策略](testing.md) | 风险、测试层级、验收命令与模型边界 |
-| [里程碑记录](milestones.md) | M0–M2 状态、分支、证据和未解决项 |
+| [里程碑记录](milestones.md) | M0–M4 状态、分支、证据和未解决项 |
 | [ADR 索引](adr/README.md) | 重要技术决策与变更原因 |
 | [变更日志](../CHANGELOG.md) | 面向使用者的版本行为变化 |
 
@@ -26,7 +29,7 @@ updated: 2026-11-08
 
 ## 文档管理约定
 
-1. 需求、实现、测试和记录使用 M0/M1/M2 与规则 ID 关联；每个变更同时更新受影响文档。
+1. 需求、实现、测试和记录使用里程碑与规则 ID 关联；每个变更同时更新受影响文档。
 2. 文档有明确负责人、状态、更新时间。ADR 追加新决策并标记替代关系，保留历史。
 3. `docs/baselines/` 是本次开发开始时已确定计划的快照，记录 SHA-256；根目录 roadmap 仍是执行入口。
 4. 可执行契约由 Pydantic 导出 JSON Schema，API 上线后导出 OpenAPI；生成文件不得手工改写。
