@@ -33,3 +33,7 @@ Base URL: `http://127.0.0.1:8000`。交互文档 `/docs`；机器契约 [OpenAPI
 | PATCH `/runs/{id}/fields` | expected_version、values 字典、reason；保留原值及来源 |
 | POST `/runs/{id}/drawing` | multipart：drawing、expected_version、reason；需重新抽取 |
 | GET `/runs/{id}/documents/{document_id}/pages/{page}` | 任务内 PDF 页图 PNG；页号从 1 开始 |
+
+## M4 受控知识 API
+
+`POST /knowledge/search` 需要任一演示角色；接收 KnowledgeQuery，默认空 query 查全部。权限范围由服务端固定，不接受 project_id、plant 或角色覆盖。`GET /knowledge/{record_id}` 使用默认 B 版铝件条件判断适用性；未知/越权均 404。返回 eligible_for_cost、reasons、usage、source_id、record_hash。价格路径通过服务器唯一选用三类依据，无法由客户端提交 ID 覆盖。

@@ -13,11 +13,13 @@ from rfq_workbench.contracts import (
     ChangeInputs,
     ConfirmedInputs,
     CorrectFields,
+    KnowledgeQuery,
     Mutation,
 )
 from rfq_workbench.documents import MAX_FILE_BYTES, asset_path
 from rfq_workbench.errors import DomainError
 from rfq_workbench.file_workflow import FileWorkflow, fixture_catalog
+from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.repository import Repository
 from rfq_workbench.service import Workflow
 
@@ -35,6 +37,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.workflow = workflow
     app.state.settings = settings
     app.state.file_workflow = file_workflow
+    knowledge = Knowledge(settings)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.allowed_origin],
@@ -90,6 +93,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             {"id": c["id"], "label": c["label"], "origin_type": c["origin_type"]}
             for c in fixture_catalog()
         ]
+
+    @app.post("/knowledge/search")
+    def search_knowledge(query: KnowledgeQuery, who: Annotated[str, Depends(actor)]):
+        return knowledge.search(query, who)
+
+    @app.get("/knowledge/{record_id}")
+    def knowledge_detail(record_id: str, who: Annotated[str, Depends(actor)]):
+        return knowledge.get(record_id, KnowledgeQuery(), who)
 
     @app.post("/runs/from-fixture/{case_id}", status_code=201)
     def from_fixture(case_id: str, who: Annotated[str, Depends(engineer)]):

@@ -23,3 +23,7 @@ Owner: Engineering · Status: M0 baseline · Updated: 2026-11-08
 ## M3 证据契约
 
 新增 `EvidenceCheck` 与 `ReviewedField`，schema 在 docs/schemas。`source_exists` 与 `value_supported` 分开；`human_confirmed` 不改写原始证据结论。未知标记规范化为 null，字段最长 200 字符。定位分 text/page；当前 PDF bbox 为 null。模型调用 metrics 可包含服务主机、用量、估算费用和完整费率快照。历史记录不回填不存在的测量。
+
+## M4 知识契约
+
+新增 KnowledgeRecord、KnowledgeQuery；Quote 增加 knowledge_basis 与 routing。reference_hash 从单文件 hash 升级为制造载荷与选中知识快照的组合指纹。旧草案在下一批准/导出时可能触发 STALE_DRAFT，须重新计价审批。

@@ -36,7 +36,7 @@ def test_revision_conflict_blocks_cost_and_approval(client, inputs):
         "/runs/confirmed", json=inputs | {"drawing_revision": "A"}, headers=ENGINEER
     ).json()
     assert run["state"] == "NEEDS_ENGINEERING_REVIEW"
-    assert run["issues"][0]["code"] == "REVISION_CONFLICT"
+    assert "REVISION_CONFLICT" in {i["code"] for i in run["issues"]}
     assert (
         client.post(
             f"/runs/{run['id']}/cost", json={"expected_version": 1}, headers=ENGINEER

@@ -1,6 +1,6 @@
 # 里程碑验收记录
 
-Owner: Engineering · Updated: 2026-11-08
+Owner: Engineering · Updated: 2026-11-10
 
 | 里程碑 | 本地分支 | 当前状态 | 证据与限制 |
 |---|---|---|---|
@@ -8,6 +8,7 @@ Owner: Engineering · Updated: 2026-11-08
 | M1 | `codex/m1-deterministic-core` | 通过 | Decimal 计价、SQLite、角色权限、审批失效、乐观锁、导出；19 项累计测试通过，Ruff 通过 |
 | M2 | `codex/m2-rfq-workbench` | 通过（合成演示） | 31 项测试、生产构建与浏览器闭环通过；详见 [[acceptance-m2]] |
 | M3 | `codex/m3-extraction-evidence` | 通过（开发范围） | 60 项测试，三次真实模型调用与浏览器证据检查；见 [[acceptance-m3]] |
+| M4 | `codex/m4-controlled-knowledge` | 通过（开发范围） | 77 项测试、生产构建、知识查询浏览器验收；见 [[docs/acceptance-m4]] |
 
 原始计划基线与 hash 见 `baselines/manifest.json`。提交哈希在下一里程碑或交付记录中填写，避免提交内自引用。用户原有工作区文档修改不混入实现提交。
 
@@ -20,3 +21,5 @@ Owner: Engineering · Updated: 2026-11-08
 
 
 M2 验收提交：`4a58648`。M3 基于此提交开发。
+
+M3 提交：`9699b76`。

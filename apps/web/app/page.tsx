@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import KnowledgePanel, { type KnowledgeItem } from "./knowledge-panel";
 
 type Evidence = {
   id: string;
@@ -24,6 +25,8 @@ type Fact = {
   correction?: { reason: string };
 };
 type Quote = {
+  knowledge_basis?: KnowledgeItem[];
+  routing?: { step: number; operation: string; basis: string }[];
   draft_version: number;
   quantity: number;
   unit_cost: string;
@@ -77,7 +80,7 @@ type Run = {
   };
 };
 type Capability = { live_available: boolean; model: string | null };
-const views = ["任务总览", "资料与证据", "成本草案", "审批与审计"];
+const views = ["任务总览", "资料与证据", "成本草案", "审批与审计", "受控知识"];
 const evidenceNames: Record<string, string> = {
   MISSING: "未知 · 需补充",
   INVALID_SOURCE: "无效来源",
@@ -461,6 +464,8 @@ export default function Workbench() {
                 )}
               </section>
             </>
+          ) : view === 4 ? (
+            <KnowledgePanel key={token} token={token} />
           ) : !run ? (
             <section className="empty">
               <h2>尚未选择任务</h2>
@@ -799,6 +804,34 @@ export default function Workbench() {
                           <strong>{run.quote.total_price}</strong>
                         </article>
                       </div>
+                      <h3>选用的受控依据</h3>
+                      {run.quote.knowledge_basis?.length ? (
+                        <ul>
+                          {run.quote.knowledge_basis.map((item) => (
+                            <li key={item.id}>
+                              {item.title} · {item.source_id}@{item.version} ·
+                              有效至 {item.valid_until}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="muted">
+                          历史草案未保存 M4
+                          知识快照；重新计算将按当前受控资料校验。
+                        </p>
+                      )}
+                      {run.quote.routing?.length ? (
+                        <details>
+                          <summary>查看批准工艺路线</summary>
+                          <ol>
+                            {run.quote.routing.map((step) => (
+                              <li key={step.step}>
+                                {step.operation} — {step.basis}
+                              </li>
+                            ))}
+                          </ol>
+                        </details>
+                      ) : null}
                       <table>
                         <thead>
                           <tr>

@@ -154,6 +154,113 @@
         }
       }
     },
+    "/knowledge/search": {
+      "post": {
+        "summary": "Search Knowledge",
+        "operationId": "search_knowledge_knowledge_search_post",
+        "parameters": [
+          {
+            "name": "x-demo-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KnowledgeQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/knowledge/{record_id}": {
+      "get": {
+        "summary": "Knowledge Detail",
+        "operationId": "knowledge_detail_knowledge__record_id__get",
+        "parameters": [
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Record Id"
+            }
+          },
+          {
+            "name": "x-demo-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/runs/from-fixture/{case_id}": {
       "post": {
         "summary": "From Fixture",
@@ -1121,6 +1228,66 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "KnowledgeQuery": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Query",
+            "default": ""
+          },
+          "part_number": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Part Number",
+            "default": "PM-BRKT-010"
+          },
+          "material": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Material",
+            "default": "Al-6061-T6"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 16,
+            "title": "Unit",
+            "default": "mm"
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 16,
+            "title": "Currency",
+            "default": "EUR"
+          },
+          "revision": {
+            "type": "string",
+            "maxLength": 16,
+            "title": "Revision",
+            "default": "B"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "catalog",
+                  "template",
+                  "rate",
+                  "history"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "KnowledgeQuery"
       },
       "Mutation": {
         "properties": {

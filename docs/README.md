@@ -35,3 +35,5 @@ updated: 2026-11-08
 
 - [M3 验收](acceptance-m3.md)：证据与模型成本实测。
 - [证据与费用 ADR](adr/002-evidence-and-model-accounting.md)：验证强度和计费口径。
+
+- [M4 验收](acceptance-m4.md)：受控检索、执行依据与变更失效。

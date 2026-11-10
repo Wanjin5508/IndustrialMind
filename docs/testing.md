@@ -16,3 +16,7 @@ Owner: Engineering · Status: active · Updated: 2026-11-08
 ## M3 实测
 
 `tests/test_evidence.py` 覆盖证据与扫描页、`tests/test_model_adapter.py` 覆盖 SDK 与安全错误、`scripts/m3_live_acceptance.py` 为显式真实调用。完整结果见 [[acceptance-m3]]。M1、M2 已验收，见相邻里程碑记录。
+
+## M4 实测
+
+tests/test_knowledge.py 覆盖权限、参考资料、唯一依据、撤销批准、无关历史变更与几何重检。2026-11-10 累计 77 项测试通过，详情见 [[docs/acceptance-m4]]。

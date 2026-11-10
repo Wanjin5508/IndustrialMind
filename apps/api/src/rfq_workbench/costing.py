@@ -21,12 +21,32 @@ def load_reference(path: Path, today: date | None = None) -> tuple[dict, str]:
         raw = path.read_bytes()
         ref = json.loads(raw)
         now = today or date.today()
+        if ref["project_id"] != "PM-DEMO" or not {"demo-engineer", "demo-approver"} <= set(
+            ref["roles"]
+        ):
+            raise ValueError("Reference outside authorized project or workflow roles")
+        if not ref["approved_revisions"] or not all(
+            isinstance(v, str) for v in ref["approved_revisions"]
+        ):
+            raise ValueError("Missing approved revisions")
+        applicability = ref["applicability"]
+        if not applicability["part_number"] or not applicability["surface_finish"]:
+            raise ValueError("Missing applicability")
+        for key in ("width_mm", "height_mm", "thickness_mm", "hole_diameter_mm"):
+            dimension = Decimal(applicability["dimensions"][key])
+            if not dimension.is_finite() or dimension <= 0:
+                raise ValueError("Invalid template dimensions")
+        if not ref["routing"] or any(
+            not row["operation"] or not row["basis"] for row in ref["routing"]
+        ):
+            raise ValueError("Missing routing")
         if ref["approved"] is not True or not date.fromisoformat(
             ref["valid_from"]
         ) <= now <= date.fromisoformat(ref["valid_until"]):
             raise ValueError("Unapproved or expired reference")
         for key in [
             "rules_version",
+            "catalog_version",
             "rate_version",
             "template_version",
             "plant",
@@ -65,6 +85,21 @@ def load_reference(path: Path, today: date | None = None) -> tuple[dict, str]:
 
 def validate_inputs(inputs: ConfirmedInputs, ref: dict) -> list[Issue]:
     issues = []
+    if inputs.part_number != ref["applicability"]["part_number"]:
+        issues.append(
+            Issue(code="NO_TEMPLATE", field="part_number", message="No approved part template.")
+        )
+    if (
+        inputs.drawing_revision not in ref["approved_revisions"]
+        or inputs.required_revision not in ref["approved_revisions"]
+    ):
+        issues.append(
+            Issue(
+                code="UNAPPROVED_REVISION",
+                field="drawing_revision",
+                message="Revision has no approved manufacturing template.",
+            )
+        )
     if inputs.required_revision != inputs.drawing_revision:
         issues.append(
             Issue(

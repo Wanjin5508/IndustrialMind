@@ -26,3 +26,7 @@ Owner: Engineering · Status: active · Updated: 2026-11-08
 ## M3 分支与检查
 
 从已验收 M2 `4a58648` 创建 `codex/m3-extraction-evidence`。格式化：Python 使用 Ruff；前端使用项目锁定 Prettier。修改契约后运行两个 schema 导出脚本。真实调用用独立验收脚本 opt-in，自动测试不读取本机密钥。编辑器 `.history/` 不进入 Git，避免本机配置的历史副本被提交。
+
+## M4 分支
+
+从 M3 的 9699b76 创建 codex/m4-controlled-knowledge。本地累计分支保留 M0–M4 检查点；没有自动合并 main 或推送。

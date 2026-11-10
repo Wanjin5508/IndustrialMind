@@ -18,7 +18,9 @@ APPROVER = {"X-Demo-Token": "demo-approver"}
 def settings(tmp_path):
     ref = tmp_path / "reference.json"
     shutil.copyfile(ROOT / "fixtures/reference/manufacturing.json", ref)
-    return Settings(data_dir=tmp_path / "data", reference_path=ref)
+    knowledge = tmp_path / "knowledge.json"
+    shutil.copyfile(ROOT / "fixtures/reference/knowledge.json", knowledge)
+    return Settings(data_dir=tmp_path / "data", reference_path=ref, knowledge_path=knowledge)
 
 
 @pytest.fixture

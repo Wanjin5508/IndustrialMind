@@ -16,7 +16,9 @@ for name in [
     "AuditEvent",
     "EvidenceCheck",
     "ReviewedField",
+    "KnowledgeRecord",
+    "KnowledgeQuery",
 ]:
     schema = getattr(contracts, name).model_json_schema()
     (root / f"{name}.json").write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
-print("Exported 8 domain schemas.")
+print("Exported 10 domain schemas.")

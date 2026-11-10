@@ -53,3 +53,7 @@ Python 3.12+，Node 20.9+。在项目根目录建立 `.venv`，安装 `requireme
 `MODEL_CONNECTION_FAILED` 检查网络，`MODEL_AUTH_FAILED` 检查密钥，`MODEL_RATE_LIMIT` 等待服务额度恢复，`MODEL_TIMEOUT` 检查服务耗时与超时参数。错误不会打印供应商原始正文。配置更改后重启后端。
 
 默认费率在 `config/model-pricing.json`，可用绝对路径 `RFQ_MODEL_PRICING_FILE` 覆盖。复核期限后自动显示未知，需核对官方价格再更新；估算不是账单。`python scripts/m3_live_acceptance.py` 对三个开发样例发起真实调用，证据保存到当前 RFQ_DATA_DIR 下的 acceptance/m3-live.json。
+
+## M4 知识维护
+
+知识注册表为 fixtures/reference/knowledge.json；制造执行载荷为 fixtures/reference/manufacturing.json。两者版本必须一致。更新前停止演示写操作、检查适用范围与批准状态，运行测试后提交；不编辑数据库以保留旧审批。NO_UNIQUE_BASIS 表示某类有效候选数量不是 1，检查期限、权限、版本与重复记录。查询中的参考资料不会用于价格。

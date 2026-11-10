@@ -6,6 +6,7 @@ from rfq_workbench.config import Settings
 from rfq_workbench.contracts import ApproveRequest, ConfirmedInputs, RunState
 from rfq_workbench.costing import calculate, fingerprint, load_reference, validate_inputs
 from rfq_workbench.errors import DomainError
+from rfq_workbench.knowledge import Knowledge
 from rfq_workbench.repository import Repository, utc_now
 
 
@@ -91,10 +92,20 @@ class Workflow:
             if body["inputs"] is None or any(i["severity"] == "blocking" for i in body["issues"]):
                 raise DomainError("REVIEW_REQUIRED", "Resolve blocking issues before calculating.")
             inputs = ConfirmedInputs.model_validate(body["inputs"])
-            ref, ref_hash = load_reference(self.settings.reference_path)
+            if body["documents"]:
+                from rfq_workbench.file_workflow import check_fields
+
+                check_fields(body, self.settings)
+                if body["issues"]:
+                    raise DomainError(
+                        "REVIEW_REQUIRED", "Current template requires engineering review."
+                    )
+            ref, ref_hash, basis = Knowledge(self.settings).resolve(inputs, actor)
             clear_results(body)
             body["draft_counter"] += 1
             quote = calculate(inputs, ref, ref_hash, input_hash(body), body["draft_counter"])
+            quote.knowledge_basis = basis
+            quote.routing = ref["routing"]
             body["quote"] = quote.model_dump(mode="json")
             body["state"] = RunState.READY_FOR_APPROVAL
             return {
@@ -112,7 +123,9 @@ class Workflow:
         if body["quote"] is None:
             raise DomainError("NO_QUOTE", "Calculate a valid draft first.")
         try:
-            _, ref_hash = load_reference(self.settings.reference_path)
+            _, ref_hash, _ = Knowledge(self.settings).resolve(
+                ConfirmedInputs.model_validate(body["inputs"]), actor
+            )
             fresh = body["quote"]["reference_hash"] == ref_hash and body["quote"][
                 "input_hash"
             ] == input_hash(body)
@@ -195,6 +208,10 @@ class Workflow:
                 f"Input hash: {quote['input_hash']}",
                 f"Reference hash: {quote['reference_hash']}",
                 f"Draft version: {quote['draft_version']}",
+                "Knowledge basis: "
+                + ", ".join(
+                    k["source_id"] + "@" + k["version"] for k in quote.get("knowledge_basis", [])
+                ),
             ]
             body["export"] = {
                 "filename": f"internal-draft-{run_id[:8]}-v{quote['draft_version']}.md",

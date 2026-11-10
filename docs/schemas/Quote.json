@@ -142,6 +142,22 @@
       },
       "title": "Pending",
       "type": "array"
+    },
+    "knowledge_basis": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Knowledge Basis",
+      "type": "array"
+    },
+    "routing": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Routing",
+      "type": "array"
     }
   },
   "required": [

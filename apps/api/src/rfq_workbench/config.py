@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[4]
 class Settings:
     data_dir: Path
     reference_path: Path = ROOT / "fixtures/reference/manufacturing.json"
+    knowledge_path: Path = ROOT / "fixtures/reference/knowledge.json"
     engineer_token: str = "demo-engineer"
     approver_token: str = "demo-approver"
     allowed_origin: str = "http://127.0.0.1:3000"
