@@ -5,7 +5,7 @@ from pathlib import Path
 
 from rfq_workbench import contracts
 
-root = Path(__file__).resolve().parents[1] / "docs/schemas"
+root = Path(__file__).resolve().parents[1] / "docs/04-项目介绍与展示/09-接口模式"
 root.mkdir(parents=True, exist_ok=True)
 for name in [
     "ConfirmedInputs",

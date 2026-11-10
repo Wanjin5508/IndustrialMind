@@ -227,7 +227,7 @@ class FileWorkflow:
         rfq, drawing = ROOT / case["rfq"], ROOT / case["drawing"]
         # Only server-owned catalog paths are read; no client path or expected answer is accepted.
         return self.create(
-            f"{case_id}-{rfq.name}",
+            f"{case_id}-rfq.md",
             rfq.read_bytes(),
             drawing.name,
             drawing.read_bytes(),

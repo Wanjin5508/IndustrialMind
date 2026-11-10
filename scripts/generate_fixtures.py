@@ -14,13 +14,14 @@ from reportlab.pdfgen import canvas
 
 ROOT = Path(__file__).resolve().parents[1]
 DRAWINGS = ROOT / "fixtures/dev/drawings"
+RFQ_EXAMPLES = ROOT / "docs/04-项目介绍与展示/08-RFQ样例"
 CASES = [
-    ("DEV-001", "Normal / 100 parts", 100, "B", "Al-6061-T6", "mm"),
-    ("DEV-002", "Quantity / 500 parts", 500, "B", "Al-6061-T6", "mm"),
-    ("DEV-003", "Revision conflict", 100, "A", "Al-6061-T6", "mm"),
-    ("DEV-004", "Missing material", 100, "B", None, "mm"),
-    ("DEV-005", "Unsupported unit", 100, "B", "Al-6061-T6", "inch"),
-    ("DEV-006", "No approved material template", 100, "B", "Steel-S235", "mm"),
+    ("DEV-001", "Normal / 100 parts", 100, "B", "Al-6061-T6", "mm", "01-正常报价.md"),
+    ("DEV-002", "Quantity / 500 parts", 500, "B", "Al-6061-T6", "mm", "02-数量变更.md"),
+    ("DEV-003", "Revision conflict", 100, "A", "Al-6061-T6", "mm", "03-版次冲突.md"),
+    ("DEV-004", "Missing material", 100, "B", None, "mm", "04-材料缺失.md"),
+    ("DEV-005", "Unsupported unit", 100, "B", "Al-6061-T6", "inch", "05-单位不适用.md"),
+    ("DEV-006", "No approved material template", 100, "B", "Steel-S235", "mm", "06-材料不适用.md"),
 ]
 
 
@@ -103,8 +104,9 @@ def drawing(path: Path, revision: str, material: str | None, unit: str) -> None:
 
 def main() -> None:
     DRAWINGS.mkdir(parents=True, exist_ok=True)
+    RFQ_EXAMPLES.mkdir(parents=True, exist_ok=True)
     index = []
-    for case_id, label, quantity, revision, material, unit in CASES:
+    for case_id, label, quantity, revision, material, unit, filename in CASES:
         suffix = (
             "missing-material"
             if material is None
@@ -117,9 +119,7 @@ def main() -> None:
         pdf = DRAWINGS / f"PM-BRKT-010_{suffix}.pdf"
         if not any(item["drawing"] == pdf.relative_to(ROOT).as_posix() for item in index):
             drawing(pdf, revision, material, unit)
-        folder = ROOT / "fixtures/dev" / case_id
-        folder.mkdir(parents=True, exist_ok=True)
-        rfq = folder / "rfq.md"
+        rfq = RFQ_EXAMPLES / filename
         rfq.write_text(
             f"# RFQ {case_id}\n\nSYNTHETIC DEMO DATA\n\n"
             f"Part number: PM-BRKT-010\nRequired revision: B\nQuantity: {quantity}\n"

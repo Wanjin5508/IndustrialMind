@@ -7,11 +7,17 @@ import pytest
 from fastapi.testclient import TestClient
 
 from rfq_workbench.config import Settings
+from rfq_workbench.file_workflow import fixture_catalog
 from rfq_workbench.main import create_app
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINEER = {"X-Demo-Token": "demo-engineer"}
 APPROVER = {"X-Demo-Token": "demo-approver"}
+
+
+def fixture_rfq(case_id: str = "DEV-001") -> Path:
+    case = next(case for case in fixture_catalog() if case["id"] == case_id)
+    return ROOT / case["rfq"]
 
 
 @pytest.fixture

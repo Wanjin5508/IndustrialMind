@@ -16,7 +16,7 @@ jobs:
       - run: python -m ruff format --check apps/api scripts tests
       - run: python -m pytest -q
       - run: python scripts/export_schemas.py && python scripts/export_openapi.py
-      - run: git diff --exit-code -- docs/schemas
+      - run: git diff --exit-code -- 'docs/04-项目介绍与展示/09-接口模式'
   frontend:
     runs-on: ubuntu-latest
     defaults:

@@ -1,0 +1,20 @@
+[
+  {
+    "source": "IndustrialMindAI-OptionB-RFQ工作台-roadmap.md",
+    "sha256": "bc93a03cbaa39e6ea84944dc01ec68b527b2b505a24d74f89d99c7ef5792ea0b",
+    "captured": "2026-11-08",
+    "role": "Historical planning snapshot. The active document governs implementation.",
+    "snapshot": "docs/02-方案与规划/04-规划基线/01-路线图快照.md",
+    "active_document": "docs/03-实施与开发/01-实施路线图.md",
+    "snapshot_sha256_lf": "ab3dd89b4cfbfee519466ad26f44c1504d3ef102a4bac88ecfddc18d25057e82"
+  },
+  {
+    "source": "IndustrialMindAI-OptionB-输入数据准备计划.md",
+    "sha256": "e2d514c7bd72eeee76622f25da0badaa91869c7dec1255d0722bbfd48e633db5",
+    "captured": "2026-11-08",
+    "role": "Historical planning snapshot. The active document governs implementation.",
+    "snapshot": "docs/02-方案与规划/04-规划基线/02-输入计划快照.md",
+    "active_document": "docs/02-方案与规划/03-输入数据规划.md",
+    "snapshot_sha256_lf": "e2d514c7bd72eeee76622f25da0badaa91869c7dec1255d0722bbfd48e633db5"
+  }
+]

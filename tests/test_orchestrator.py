@@ -3,7 +3,7 @@
 import json
 
 import pytest
-from conftest import APPROVER, ENGINEER, ROOT, approve
+from conftest import APPROVER, ENGINEER, ROOT, approve, fixture_rfq
 from fastapi.testclient import TestClient
 
 from rfq_workbench.main import create_app
@@ -46,7 +46,7 @@ def test_unknown_text_clarifies_without_guessing_and_missing_files_persist(clien
     assert run["metrics"] == {} and run["quote"] is None
     run = resume(client, run, intent="prepare_quote")
     assert run["orchestration"]["pause"]["missing"] == ["drawing", "rfq"]
-    run = upload(client, run, "rfq", ROOT / "fixtures/dev/DEV-001/rfq.md")
+    run = upload(client, run, "rfq", fixture_rfq())
     assert run["orchestration"]["pause"]["missing"] == ["drawing"]
     with TestClient(create_app(settings)) as restarted:
         restored = restarted.get(f"/runs/{run['id']}", headers=ENGINEER).json()

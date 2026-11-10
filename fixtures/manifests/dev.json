@@ -9,7 +9,7 @@
       "part_family_group": "PM-BRKT-010",
       "author": "RFQ Workbench",
       "license": "Original project fixture; synthetic demonstration only",
-      "rfq": "fixtures/dev/DEV-001/rfq.md",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/01-正常报价.md",
       "drawing": "fixtures/dev/drawings/PM-BRKT-010_B.pdf",
       "hashes": {
         "rfq": "8afc523214520fc72aa953ff946c30609bf31e0d296a8ef5e08ee0a693974b4a",
@@ -24,7 +24,7 @@
       "part_family_group": "PM-BRKT-010",
       "author": "RFQ Workbench",
       "license": "Original project fixture; synthetic demonstration only",
-      "rfq": "fixtures/dev/DEV-002/rfq.md",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/02-数量变更.md",
       "drawing": "fixtures/dev/drawings/PM-BRKT-010_B.pdf",
       "hashes": {
         "rfq": "42a7260dde27439662abfd4be0c9074ed479ba4496a7d4defd67c4fc92eefd7f",
@@ -39,7 +39,7 @@
       "part_family_group": "PM-BRKT-010",
       "author": "RFQ Workbench",
       "license": "Original project fixture; synthetic demonstration only",
-      "rfq": "fixtures/dev/DEV-003/rfq.md",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/03-版次冲突.md",
       "drawing": "fixtures/dev/drawings/PM-BRKT-010_A.pdf",
       "hashes": {
         "rfq": "b5dc64862f5c7720220d8b3a871ebcfb362e3a2619b4b988b0e293b6d64ed232",
@@ -54,7 +54,7 @@
       "part_family_group": "PM-BRKT-010",
       "author": "RFQ Workbench",
       "license": "Original project fixture; synthetic demonstration only",
-      "rfq": "fixtures/dev/DEV-004/rfq.md",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/04-材料缺失.md",
       "drawing": "fixtures/dev/drawings/PM-BRKT-010_missing-material.pdf",
       "hashes": {
         "rfq": "3b1614aa9c90a5a23d0a6b784cfe7d4e28e0c71b625600f75d2180a52e156f16",
@@ -69,7 +69,7 @@
       "part_family_group": "PM-BRKT-010",
       "author": "RFQ Workbench",
       "license": "Original project fixture; synthetic demonstration only",
-      "rfq": "fixtures/dev/DEV-005/rfq.md",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/05-单位不适用.md",
       "drawing": "fixtures/dev/drawings/PM-BRKT-010_inch.pdf",
       "hashes": {
         "rfq": "c306c3cc3d12a9bdd23d74f1aa6458a95d4c9a1094302bfce44a231355d75472",
@@ -84,7 +84,7 @@
       "part_family_group": "PM-BRKT-010",
       "author": "RFQ Workbench",
       "license": "Original project fixture; synthetic demonstration only",
-      "rfq": "fixtures/dev/DEV-006/rfq.md",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/06-材料不适用.md",
       "drawing": "fixtures/dev/drawings/PM-BRKT-010_steel.pdf",
       "hashes": {
         "rfq": "95c199f1f19b99b955c96d041c0dafefa4c4fca14e76ca6f300b95abeaf01eec",

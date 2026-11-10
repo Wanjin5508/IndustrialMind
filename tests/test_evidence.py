@@ -4,7 +4,7 @@ from dataclasses import replace
 from datetime import date
 
 import pytest
-from conftest import ENGINEER
+from conftest import ENGINEER, fixture_rfq
 from pydantic import ValidationError
 from test_files import analyze, cost, fixture_run
 
@@ -71,7 +71,7 @@ def test_document_internal_conflict_blocks_model_selection(client):
     from conftest import ROOT
 
     drawing = (ROOT / "fixtures/dev/drawings/PM-BRKT-010_B.pdf").read_bytes()
-    text = (ROOT / "fixtures/dev/DEV-001/rfq.md").read_bytes() + b"\nQuantity: 500\n"
+    text = fixture_rfq().read_bytes() + b"\nQuantity: 500\n"
     run = client.post(
         "/runs/upload",
         headers=ENGINEER,
@@ -95,7 +95,6 @@ def test_visual_page_requires_manual_confirmation(client):
     # Image-only PDF is built from the real rendered fixture page, with no text layer.
     from io import BytesIO
 
-    from conftest import ROOT
     from reportlab.lib.utils import ImageReader
     from reportlab.pdfgen.canvas import Canvas
 
@@ -112,7 +111,7 @@ def test_visual_page_requires_manual_confirmation(client):
         "/runs/upload",
         headers=ENGINEER,
         files={
-            "rfq": ("rfq.md", (ROOT / "fixtures/dev/DEV-001/rfq.md").read_bytes()),
+            "rfq": ("rfq.md", fixture_rfq().read_bytes()),
             "drawing": ("scan.pdf", pdf.getvalue()),
         },
     ).json()
