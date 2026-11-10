@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { knowledgeSummary, knowledgeReasons } from "./knowledge-copy";
 
 export type TaskContext = {
   intent: string | null;
@@ -24,7 +25,7 @@ export type TaskContext = {
 
 const intents = [
   ["prepare_quote", "准备内部报价"],
-  ["review_drawing", "只审查图纸"],
+  ["review_drawing", "图纸审查"],
   ["search_knowledge", "查询受控知识"],
 ];
 
@@ -47,10 +48,7 @@ export function CreateTask({
   const [query, setQuery] = useState("");
   return (
     <section>
-      <h2>统一任务入口</h2>
-      <p className="muted">
-        选择目标 → 补齐资料 → 显式执行 → 人工复核。创建任务不会调用模型。
-      </p>
+      <h2>新建任务</h2>
       <form
         className="upload"
         onSubmit={(e) => {
@@ -72,7 +70,7 @@ export function CreateTask({
             value={intent}
             onChange={(e) => setIntent(e.target.value)}
           >
-            <option value="">尚不明确 · 请求澄清</option>
+            <option value="">请选择任务类型</option>
             {intents.map(([value, label]) => (
               <option
                 key={value}
@@ -102,19 +100,19 @@ export function CreateTask({
               value={query}
               maxLength={200}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="留空表示浏览当前权限内资料"
+              placeholder="留空查询全部资料"
             />
           </label>
         ) : (
           intent && (
             <label>
-              开发样例
+              样例资料
               <select
                 aria-label="任务样例"
                 value={fixture}
                 onChange={(e) => setFixture(e.target.value)}
               >
-                <option value="">暂不附资料 · 创建后上传</option>
+                <option value="">稍后上传</option>
                 {fixtures.map((f) => (
                   <option key={f.id} value={f.id}>
                     {f.id} · {f.label}
@@ -125,13 +123,9 @@ export function CreateTask({
           )
         )}
         <button className="primary" disabled={busy}>
-          创建所选任务
+          创建任务
         </button>
       </form>
-      <p className="muted">
-        文字说明只作上下文；目标不明确时要求人选择。查询条件默认 PM-BRKT-010 / B
-        / Al-6061-T6 / mm / EUR。
-      </p>
     </section>
   );
 }
@@ -169,34 +163,43 @@ export function TaskControls({
   return (
     <section>
       <h2>
-        任务路径 ·{" "}
-        {intents.find(([value]) => value === task.intent)?.[1] ||
-          "等待明确目标"}
+        任务 ·{" "}
+        {intents.find(([value]) => value === task.intent)?.[1] || "待选择类型"}
       </h2>
-      <p>{task.request}</p>
-      <p className="muted">
-        {!selected
-          ? "选择目标后显示对应流程。"
-          : selected === "search_knowledge"
-            ? "权限过滤 → 检索 → 来源与适用条件"
-            : selected === "review_drawing"
-              ? "图纸 → 字段与证据 → 工程问题 → 审查结果（不计价）"
-              : "RFQ + 图纸 → 抽取 → 工程门禁 → 受控依据 → 计价 → 等待审批"}
-      </p>
+      {task.request && <p>{task.request}</p>}
       {task.pause && (
         <div role="status" className="alert">
-          <strong>{task.pause.code}</strong>
-          <p>{task.pause.message}</p>
+          <strong>待处理</strong>
+          <p>
+            {task.pause.code === "MISSING_INPUT"
+              ? "请补充以下内容。"
+              : task.pause.code === "ENGINEERING_REVIEW"
+                ? "请处理工程问题后继续。"
+                : task.pause.message}
+          </p>
           {task.pause.missing.length > 0 && (
-            <p>待补充：{task.pause.missing.join(" / ")}</p>
+            <p>
+              待补充：
+              {task.pause.missing
+                .map(
+                  (field) =>
+                    ({
+                      intent: "任务类型",
+                      query: "查询条件",
+                      drawing: "图纸",
+                      rfq: "RFQ",
+                    })[field] || field,
+                )
+                .join(" / ")}
+            </p>
           )}
         </div>
       )}
       {!task.intent && (
         <label>
-          澄清任务目标
+          任务类型
           <select
-            aria-label="澄清任务目标"
+            aria-label="任务类型"
             value={intent}
             onChange={(e) => setIntent(e.target.value)}
           >
@@ -221,30 +224,25 @@ export function TaskControls({
             value={query}
             maxLength={200}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="留空浏览获准资料"
+            placeholder="留空查询全部资料"
           />
         </label>
       )}
       {fileTask && (
         <label>
-          执行时的抽取模式
+          识别方式
           <select
             aria-label="任务抽取模式"
             value={mode}
             onChange={(e) => setMode(e.target.value)}
           >
-            <option value="local_text">LOCAL_TEXT · 本地文本</option>
+            <option value="local_text">本地文本识别</option>
             <option value="live" disabled={!live}>
-              LIVE · 真实多模态
+              在线图文识别
             </option>
           </select>
         </label>
       )}
-      <p className="muted">
-        {fileTask
-          ? "每次执行最多一次抽取；已有字段时沿用人工修正。LIVE 会发送文本和页图至配置的模型。审批和导出需要另行确认。"
-          : "查询在当前角色的授权范围内执行，结果保留为本次任务快照，不调用模型。"}
-      </p>
       <button
         className="primary"
         disabled={
@@ -260,7 +258,7 @@ export function TaskControls({
           })
         }
       >
-        执行 / 恢复任务
+        继续处理
       </button>
       {task.intent && fileTask && engineer && (
         <form
@@ -297,24 +295,20 @@ export function TaskControls({
           <button
             disabled={busy || state === "EXTRACTING" || (!rfq && !drawing)}
           >
-            保存资料并使旧草案失效
+            保存资料
           </button>
         </form>
       )}
       {task.result?.summary && (
         <div className="alert">
-          <strong>{task.result.summary}</strong>
-          {task.result.limitations?.map((text) => (
-            <p key={text}>{text}</p>
-          ))}
+          <strong>图纸字段审查完成</strong>
+          <p>待复核：GD&T、孔位、可制造性、客户要求及交期。</p>
         </div>
       )}
       {task.result?.results && (
         <div>
-          <h3>查询快照 · {task.result.results.length} 条</h3>
-          <p className="muted">
-            本次查询时的来源和适用条件；再次查询请新建任务。历史案例仅作参考。
-          </p>
+          <h3>查询结果 · {task.result.results.length} 条</h3>
+          <p className="muted">重新查询请新建任务。</p>
           {task.result.results.map((item) => (
             <article key={item.id}>
               <h3>{item.title}</h3>
@@ -322,8 +316,12 @@ export function TaskControls({
                 {item.id} · {item.version} ·{" "}
                 {item.eligible_for_cost ? "批准依据" : "仅供参考"}
               </small>
-              <p>{item.content}</p>
-              <p className="muted">{item.reasons.join(" / ")}</p>
+              <p>{knowledgeSummary(item.content)}</p>
+              <p className="muted">
+                {item.reasons
+                  .map((reason) => knowledgeReasons[reason] || reason)
+                  .join(" / ")}
+              </p>
             </article>
           ))}
         </div>

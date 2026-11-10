@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { knowledgeSummary, knowledgeReasons } from "./knowledge-copy";
 
 export type KnowledgeItem = {
   id: string;
@@ -17,19 +18,6 @@ export type KnowledgeItem = {
   material: string;
   revisions: string[];
   approved: boolean;
-};
-const reasons: Record<string, string> = {
-  UNAPPROVED: "尚未批准",
-  OUTSIDE_VALIDITY: "不在有效期内",
-  REFERENCE_ONLY: "历史 / 参考资料，不能用于当前计价",
-  MISMATCH_MATERIAL: "材料不适用",
-  MISMATCH_REVISION: "版次不适用",
-  MISMATCH_PART_NUMBER: "零件不适用",
-  MISMATCH_UNIT: "单位不适用",
-  MISMATCH_CURRENCY: "币种不适用",
-  PAYLOAD_VERSION_MISMATCH: "知识版本与执行资料不一致",
-  INVALID_MANUFACTURING_PAYLOAD: "制造资料无效或过期",
-  PAYLOAD_NOT_APPLICABLE: "制造资料不适用于当前条件",
 };
 
 export default function KnowledgePanel({ token }: { token: string }) {
@@ -79,13 +67,8 @@ export default function KnowledgePanel({ token }: { token: string }) {
   return (
     <>
       <section>
-        <h2>作用域内的工程知识</h2>
-        <p>
-          PM-DEMO / 德国 DE-DEMO / mounting-bracket · PM-BRKT-010 · EUR / mm
-        </p>
-        <p className="muted">
-          先校验权限和适用范围，再匹配关键词。检索结果不会自动修改报价；成本只能来自后端批准且有效的资料。
-        </p>
+        <h2>工程资料</h2>
+        <p>PM-BRKT-010 · 德国工厂 · EUR / mm</p>
         <form
           className="correction"
           onSubmit={(e) => {
@@ -142,15 +125,10 @@ export default function KnowledgePanel({ token }: { token: string }) {
           {error}
         </div>
       )}
-      {searched && (
-        <p className="muted">
-          当前授权范围内匹配 {items.length} 条 · 仅供参考的资料已明确标注 ·
-          全部为合成演示数据
-        </p>
-      )}
+      {searched && <p className="muted">找到 {items.length} 条资料</p>}
       {searched && !items.length && (
         <section className="empty">
-          没有当前权限范围内的匹配资料。请调整查询；不会从其他项目或工厂补取。
+          没有匹配资料，请调整关键词或筛选条件。
         </section>
       )}
       {items.map((item) => (
@@ -158,10 +136,10 @@ export default function KnowledgePanel({ token }: { token: string }) {
           <div className="section-heading">
             <h2>{item.title}</h2>
             <span className="badge">
-              {item.eligible_for_cost ? "批准依据候选" : "仅供参考 · 禁止计价"}
+              {item.eligible_for_cost ? "可用于计价" : "参考资料"}
             </span>
           </div>
-          <p>{item.content}</p>
+          <p>{knowledgeSummary(item.content)}</p>
           <p className="muted">
             {item.source_id} · {item.kind} · {item.version} ·{" "}
             {item.approved ? "已批准" : "未批准"}
@@ -173,12 +151,12 @@ export default function KnowledgePanel({ token }: { token: string }) {
           {!!item.reasons.length && (
             <ul>
               {item.reasons.map((reason) => (
-                <li key={reason}>{reasons[reason] || reason}</li>
+                <li key={reason}>{knowledgeReasons[reason] || reason}</li>
               ))}
             </ul>
           )}
           <details>
-            <summary>查看来源指纹</summary>
+            <summary>来源校验信息</summary>
             <pre>{item.record_hash}</pre>
           </details>
         </section>

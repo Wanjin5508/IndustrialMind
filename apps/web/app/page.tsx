@@ -89,7 +89,7 @@ const evidenceNames: Record<string, string> = {
   TEXT_VERIFIED: "文本依据已核对",
   TEXT_MISMATCH: "原文不支持该值",
   AMBIGUOUS: "同文档存在冲突",
-  VISUAL_REVIEW: "页图可回查 · 需人工确认",
+  VISUAL_REVIEW: "待人工核对",
 };
 const names: Record<string, string> = {
   "rfq.part_number": "RFQ 零件号",
@@ -105,6 +105,13 @@ const names: Record<string, string> = {
   "drawing.thickness_mm": "厚度",
   "drawing.hole_diameter_mm": "孔径",
   "drawing.surface_finish": "表面处理",
+};
+const modeNames: Record<string, string> = {
+  LOCAL_TEXT: "本地文本识别",
+  LIVE: "在线图文识别",
+  FILES: "待识别",
+  TASK: "待处理",
+  MANUAL_CONFIRMED: "人工录入",
 };
 const states: Record<string, string> = {
   CLARIFICATION_REQUIRED: "待澄清 / 补件",
@@ -293,19 +300,18 @@ export default function Workbench() {
         </nav>
         <div className="aside-bottom">
           <span className="dot" />
-          本地演示环境<p>PM-BRKT-010 · EUR / mm</p>
-          <small>合成资料 · 内部预算用途</small>
+          演示环境<p>PM-BRKT-010 · EUR / mm</p>
         </div>
       </aside>
       <main>
         <header>
           <div className="breadcrumb">
-            Option B <span>/</span> RFQ 工作台 <span>/</span> {views[view]}
+            RFQ 工作台 <span>/</span> {views[view]}
           </div>
           <label className="role">
-            演示角色{" "}
+            当前角色{" "}
             <select
-              aria-label="演示角色"
+              aria-label="当前角色"
               value={token}
               disabled={busy}
               onChange={(e) => {
@@ -330,11 +336,8 @@ export default function Workbench() {
         <div className="content">
           <div className="heading">
             <div>
-              <div className="eyebrow">EVIDENCE → REVIEW → INTERNAL DRAFT</div>
               <h1>{views[view]}</h1>
-              <p>让每个判断有依据，让每份草案可复核。</p>
             </div>
-            <span className="pill">SYNTHETIC DATA</span>
           </div>
           {error && (
             <div role="alert" className="alert danger">
@@ -368,9 +371,9 @@ export default function Workbench() {
                   <strong>{runs.filter((r) => r.approval).length}</strong>
                 </article>
                 <article>
-                  <small>抽取服务</small>
+                  <small>识别方式</small>
                   <strong className="text-stat">
-                    {cap?.live_available ? "Live 已配置" : "本地文本"}
+                    {cap?.live_available ? "本地 / 在线" : "本地"}
                   </strong>
                 </article>
               </div>
@@ -386,7 +389,7 @@ export default function Workbench() {
               <section>
                 <div className="section-heading">
                   <h2>快捷打开 RFQ 资料</h2>
-                  <span>01 / 选择合成样例或上传文件</span>
+                  <span>样例 / 文件上传</span>
                 </div>
                 <div className="fixture-grid">
                   {fixtures.map((f) => (
@@ -444,19 +447,15 @@ export default function Workbench() {
                     className="primary"
                     disabled={!rfq || !drawing || busy || !engineer}
                   >
-                    创建任务
+                    上传并创建
                   </button>
                 </form>
-                <p className="muted">
-                  每份文件最多 5 MiB，PDF 最多 3 页。仅处理获准用于演示的资料。
-                </p>
+                <p className="muted">单文件最大 5 MiB，PDF 最多 3 页。</p>
               </section>
               <section>
                 <h2>最近任务</h2>
                 {!runs.length ? (
-                  <p className="empty">
-                    从上方样例开始，任务及审计记录将保存在本机。
-                  </p>
+                  <p className="empty">暂无任务。请选择样例或上传资料。</p>
                 ) : (
                   <div className="table-wrap">
                     <table>
@@ -481,7 +480,7 @@ export default function Workbench() {
                                 {states[r.state] || r.state}
                               </span>
                             </td>
-                            <td>{r.mode}</td>
+                            <td>{modeNames[r.mode] || r.mode}</td>
                             <td>v{r.version}</td>
                             <td>
                               <button
@@ -521,7 +520,7 @@ export default function Workbench() {
                 </div>
                 <span className="badge">{states[run.state] || run.state}</span>
                 <span className="muted">
-                  {run.mode}{" "}
+                  {modeNames[run.mode] || run.mode}{" "}
                   {run.metrics.elapsed_ms !== undefined &&
                     `· ${run.metrics.elapsed_ms} ms`}
                 </span>
@@ -588,11 +587,9 @@ export default function Workbench() {
                         value={mode}
                         onChange={(e) => setMode(e.target.value)}
                       >
-                        <option value="local_text">
-                          LOCAL_TEXT · 本地标签解析
-                        </option>
+                        <option value="local_text">本地文本识别</option>
                         <option value="live" disabled={!cap?.live_available}>
-                          LIVE · 真实多模态调用
+                          在线图文识别
                         </option>
                       </select>
                       <button
@@ -602,10 +599,6 @@ export default function Workbench() {
                       >
                         开始抽取
                       </button>
-                      <p className="full muted">
-                        本地模式不调用模型。Live
-                        将发送所选资料的文本与页图至后端配置的模型服务；模型无法审批或决定价格。
-                      </p>
                     </section>
                     <div className="evidence-grid">
                       <section>
@@ -630,7 +623,7 @@ export default function Workbench() {
                                   {fact.evidence
                                     ? evidenceNames[fact.evidence.status] ||
                                       fact.evidence.status
-                                    : "历史记录 · 未执行 M3 证据校验"}
+                                    : "待核对"}
                                 </small>
                                 {fact.human_confirmed && (
                                   <small className="human">
@@ -683,9 +676,6 @@ export default function Workbench() {
                                 <small>打开原尺寸页图 ↗</small>
                               </a>
                             )}
-                            <p className="muted">
-                              页级定位未宣称区域框选。人工修正值与原始依据分别保留。
-                            </p>
                           </>
                         ) : (
                           <div className="empty">
@@ -696,51 +686,49 @@ export default function Workbench() {
                     </div>
                     {run.metrics.model && (
                       <section>
-                        <h2>模型调用记录</h2>
-                        <p>
-                          {run.metrics.model} ·{" "}
-                          {run.metrics.endpoint_host ||
-                            "历史记录未保存服务地址"}{" "}
-                          ·{" "}
-                          {run.metrics.real_model_call
-                            ? "真实响应"
-                            : "调用未完成"}
-                        </p>
-                        <div className="stats">
-                          <article>
-                            <small>耗时 / ms</small>
-                            <strong>{run.metrics.elapsed_ms ?? "未知"}</strong>
-                          </article>
-                          <article>
-                            <small>输入 tokens</small>
-                            <strong>
-                              {run.metrics.usage?.input_tokens ?? "未知"}
-                            </strong>
-                          </article>
-                          <article>
-                            <small>输出 tokens</small>
-                            <strong>
-                              {run.metrics.usage?.output_tokens ?? "未知"}
-                            </strong>
-                          </article>
-                          <article>
-                            <small>
-                              估算费用 / {run.metrics.cost_currency || "未配置"}
-                            </small>
-                            <strong className="text-stat">
-                              {run.metrics.estimated_cost ?? "未知"}
-                            </strong>
-                          </article>
-                        </div>
-                        <p className="muted">
-                          {run.metrics.cost_note}{" "}
-                          {run.metrics.pricing &&
-                            `费率版本：${run.metrics.pricing.version}`}
-                        </p>
-                        <small>
-                          响应 ID：{run.metrics.response_id || "无可用响应"}{" "}
-                          {run.metrics.error_code}
-                        </small>
+                        <details>
+                          <summary>处理详情</summary>
+                          <p>
+                            {run.metrics.model} ·{" "}
+                            {run.metrics.endpoint_host || "服务地址未记录"} ·{" "}
+                            {run.metrics.real_model_call
+                              ? "已完成"
+                              : "调用未完成"}
+                          </p>
+                          <div className="stats">
+                            <article>
+                              <small>耗时 / ms</small>
+                              <strong>
+                                {run.metrics.elapsed_ms ?? "未知"}
+                              </strong>
+                            </article>
+                            <article>
+                              <small>输入 tokens</small>
+                              <strong>
+                                {run.metrics.usage?.input_tokens ?? "未知"}
+                              </strong>
+                            </article>
+                            <article>
+                              <small>输出 tokens</small>
+                              <strong>
+                                {run.metrics.usage?.output_tokens ?? "未知"}
+                              </strong>
+                            </article>
+                            <article>
+                              <small>
+                                估算费用 /{" "}
+                                {run.metrics.cost_currency || "未配置"}
+                              </small>
+                              <strong className="text-stat">
+                                {run.metrics.estimated_cost ?? "未知"}
+                              </strong>
+                            </article>
+                          </div>
+                          <small>
+                            响应 ID：{run.metrics.response_id || "无可用响应"}{" "}
+                            {run.metrics.error_code}
+                          </small>
+                        </details>
                       </section>
                     )}
                     <section>
@@ -833,11 +821,11 @@ export default function Workbench() {
                             );
                           }}
                         >
-                          替换图纸并使旧结果失效
+                          替换图纸
                         </button>
                       </div>
                       <p className="muted">
-                        替换图纸沿用上方原因，随后需要重新抽取。版次冲突请补充有效图纸或有依据的工程确认。
+                        请在上方填写修改原因。换图后需重新识别并计算。
                       </p>
                       <button
                         className="primary"
@@ -858,7 +846,7 @@ export default function Workbench() {
               {view === 2 && (
                 <section>
                   <div className="section-heading">
-                    <h2>确定性成本明细</h2>
+                    <h2>成本明细</h2>
                     <button
                       disabled={
                         busy || !engineer || !quoteTask || run.issues.length > 0
@@ -888,7 +876,7 @@ export default function Workbench() {
                           <strong>{run.quote.total_price}</strong>
                         </article>
                       </div>
-                      <h3>选用的受控依据</h3>
+                      <h3>计价依据</h3>
                       {run.quote.knowledge_basis?.length ? (
                         <ul>
                           {run.quote.knowledge_basis.map((item) => (
@@ -899,10 +887,7 @@ export default function Workbench() {
                           ))}
                         </ul>
                       ) : (
-                        <p className="muted">
-                          历史草案未保存 M4
-                          知识快照；重新计算将按当前受控资料校验。
-                        </p>
+                        <p className="muted">计价依据未记录，请重新计算。</p>
                       )}
                       {run.quote.routing?.length ? (
                         <details>
@@ -935,8 +920,7 @@ export default function Workbench() {
                         </tbody>
                       </table>
                       <p className="muted">
-                        目标毛利率 {Number(run.quote.margin) * 100}% · 单价先按
-                        HALF_UP 保留两位，再乘数量。工时与费率来自合成受控模板。
+                        目标毛利率 {Number(run.quote.margin) * 100}%
                       </p>
                       <div className="provenance">
                         <p>
@@ -944,9 +928,10 @@ export default function Workbench() {
                           {run.quote.rate_version}
                         </p>
                         <p>{run.quote.template_version}</p>
-                        <small>
-                          参考资料 SHA-256：{run.quote.reference_hash}
-                        </small>
+                        <details>
+                          <summary>版本校验信息</summary>
+                          <pre>{run.quote.reference_hash}</pre>
+                        </details>
                       </div>
                       <h3>待确认 / 未包含</h3>
                       <ul>
@@ -968,10 +953,7 @@ export default function Workbench() {
               {view === 3 && (
                 <>
                   <section>
-                    <h2>人工审批 · 内部预算草案</h2>
-                    <p>
-                      审批绑定当前输入、模板、费率和草案版本；修改后必须重新审批。
-                    </p>
+                    <h2>审批 · 内部预算草案</h2>
                     {run.approval ? (
                       <div className="alert">
                         已由 {run.approval.actor} 批准 · {run.approval.note}
@@ -1015,11 +997,6 @@ export default function Workbench() {
                         >
                           批准当前草案
                         </button>
-                        {engineer && (
-                          <p className="muted">
-                            在右上角切换为演示审批人，后端将独立校验角色。
-                          </p>
-                        )}
                       </>
                     )}
                     <div className="actions">
@@ -1027,10 +1004,10 @@ export default function Workbench() {
                         disabled={busy || engineer || !run.approval}
                         onClick={() => act(() => mutate("export"))}
                       >
-                        生成已批准导出件
+                        生成导出文件
                       </button>
                       <button disabled={!run.export} onClick={download}>
-                        下载内部草案 .md
+                        下载草案
                       </button>
                     </div>
                   </section>
@@ -1054,10 +1031,6 @@ export default function Workbench() {
               )}
             </>
           )}
-          <footer>
-            PrecisionMotion / 本地合成演示 · 未连接客户 ERP、PLM 或 MES ·
-            输出仅供内部预算复核
-          </footer>
         </div>
       </main>
     </div>

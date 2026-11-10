@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "PrecisionMotion · RFQ 工作台",
-  description: "证据驱动的内部报价工作台",
+  description: "工程询价与报价管理",
 };
 export default function Layout({
   children,
