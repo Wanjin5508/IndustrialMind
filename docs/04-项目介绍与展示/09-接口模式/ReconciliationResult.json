@@ -1,0 +1,85 @@
+{
+  "$defs": {
+    "FieldDiff": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "expected": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected"
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Actual"
+        }
+      },
+      "required": [
+        "field",
+        "expected",
+        "actual"
+      ],
+      "title": "FieldDiff",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "MATCH",
+        "DIFF",
+        "MISSING",
+        "DUPLICATE"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "diffs": {
+      "items": {
+        "$ref": "#/$defs/FieldDiff"
+      },
+      "title": "Diffs",
+      "type": "array"
+    },
+    "target_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Version"
+    },
+    "checked_at": {
+      "format": "date-time",
+      "title": "Checked At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "checked_at"
+  ],
+  "title": "ReconciliationResult",
+  "type": "object"
+}

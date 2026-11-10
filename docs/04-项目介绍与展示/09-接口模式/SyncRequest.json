@@ -1,0 +1,28 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "expected_version": {
+      "minimum": 1,
+      "title": "Expected Version",
+      "type": "integer"
+    },
+    "target": {
+      "const": "ERP",
+      "title": "Target",
+      "type": "string"
+    },
+    "note": {
+      "maxLength": 1000,
+      "minLength": 3,
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "expected_version",
+    "target",
+    "note"
+  ],
+  "title": "SyncRequest",
+  "type": "object"
+}

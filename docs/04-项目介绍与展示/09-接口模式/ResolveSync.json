@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "enum": [
+        "rebase",
+        "abandon"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "note": {
+      "maxLength": 1000,
+      "minLength": 3,
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision",
+    "note"
+  ],
+  "title": "ResolveSync",
+  "type": "object"
+}

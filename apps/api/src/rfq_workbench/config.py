@@ -25,8 +25,22 @@ class Settings:
     model_timeout: float = 60.0
     simulate_model_timeout: bool = False
     model_pricing_path: Path = ROOT / "config/model-pricing.json"
+    sync_max_attempts: int = 5
+    sync_lease_seconds: int = 60
+    snapshot_ttl_seconds: int = 900
+    fake_systems_path: Path | None = None
+    sync_fault_plan: str = ""
+
+    @property
+    def systems_path(self) -> Path:
+        return self.fake_systems_path or self.data_dir / "fake-systems.sqlite3"
 
     def __post_init__(self):
+        for value in (self.sync_max_attempts, self.sync_lease_seconds, self.snapshot_ttl_seconds):
+            if type(value) is not int or value <= 0:
+                raise ValueError("Integration budgets and TTL must be positive integers.")
+        if self.systems_path.resolve() == (self.data_dir / "workbench.sqlite3").resolve():
+            raise ValueError("Simulated systems must have an independent database.")
         url = urlsplit(self.model_base_url)
         if (
             url.scheme not in {"https", "http"}
@@ -64,6 +78,13 @@ class Settings:
             model_base_url=os.environ.get("OPENAI_BASE_URL") or "https://api.openai.com/v1",
             model_timeout=float(os.environ.get("RFQ_MODEL_TIMEOUT_SECONDS", "60")),
             simulate_model_timeout=os.environ.get("RFQ_SIMULATE_MODEL_TIMEOUT") == "1",
+            sync_max_attempts=int(os.environ.get("RFQ_SYNC_MAX_ATTEMPTS", "5")),
+            sync_lease_seconds=int(os.environ.get("RFQ_SYNC_LEASE_SECONDS", "60")),
+            snapshot_ttl_seconds=int(os.environ.get("RFQ_SNAPSHOT_TTL_SECONDS", "900")),
+            fake_systems_path=Path(os.environ["RFQ_FAKE_SYSTEMS_PATH"])
+            if os.environ.get("RFQ_FAKE_SYSTEMS_PATH")
+            else None,
+            sync_fault_plan=os.environ.get("RFQ_SYNC_FAULT_PLAN", ""),
             model_pricing_path=Path(
                 os.environ.get("RFQ_MODEL_PRICING_FILE", str(ROOT / "config/model-pricing.json"))
             ),

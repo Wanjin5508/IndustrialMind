@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "field": {
+      "title": "Field",
+      "type": "string"
+    },
+    "expected": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Expected"
+    },
+    "actual": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Actual"
+    }
+  },
+  "required": [
+    "field",
+    "expected",
+    "actual"
+  ],
+  "title": "FieldDiff",
+  "type": "object"
+}
