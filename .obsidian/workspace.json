@@ -6,6 +6,7 @@
       {
         "id": "1c098c39529be10f",
         "type": "tabs",
+        "dimension": 54.47494033412888,
         "children": [
           {
             "id": "51a738baef08665a",
@@ -13,12 +14,48 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "About IndustrialMind.ai  (For Candidates).md",
+                "file": "IndustrialMindAI-OptionB-RFQ工作台-roadmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "About IndustrialMind.ai  (For Candidates)"
+              "title": "IndustrialMindAI-OptionB-RFQ工作台-roadmap"
+            }
+          },
+          {
+            "id": "67cdb5a2c1615cbe",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "IndustrialMind FDE 项目需求分析与实施规划.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "IndustrialMind FDE 项目需求分析与实施规划"
+            }
+          }
+        ],
+        "currentTab": 1
+      },
+      {
+        "id": "7de8a6ee59d108b7",
+        "type": "tabs",
+        "dimension": 45.52505966587112,
+        "children": [
+          {
+            "id": "87bd3470d79ff829",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "IndustrialMindAI-项目手册.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "IndustrialMindAI-项目手册"
             }
           }
         ]
@@ -83,7 +120,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 276.5
   },
   "right": {
     "id": "a39ff2b094d43dff",
@@ -99,7 +136,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "About IndustrialMind.ai  (For Candidates).md",
+                "file": "IndustrialMindAI-OptionB-RFQ工作台-roadmap.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +155,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "About IndustrialMind.ai  (For Candidates).md",
+                "file": "IndustrialMindAI-OptionB-RFQ工作台-roadmap.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +198,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "About IndustrialMind.ai  (For Candidates).md",
+                "file": "IndustrialMindAI-OptionB-RFQ工作台-roadmap.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -188,9 +225,46 @@
       "bases:新建数据库": false
     }
   },
-  "active": "51a738baef08665a",
+  "active": "87bd3470d79ff829",
   "lastOpenFiles": [
+    "IndustrialMind.ai Solution Design Challenge.md",
     "IndustrialMind FDE 项目需求分析与实施规划.md",
-    "About IndustrialMind.ai  (For Candidates).md"
+    "var/startup/m6-web.stderr.log",
+    "var/startup/m6-web.stdout.log",
+    "var/startup/m6-api.stderr.log",
+    "var/startup/m6-api.stdout.log",
+    "docs/acceptance-m6.md",
+    "About IndustrialMind.ai  (For Candidates).md",
+    "var/m6-browser/workbench.sqlite3-journal",
+    "var/m6-browser/uploads/a031f906b7fb4f66bf61c9f36ea8e6a0/67926752d53749358ac40bb5fc49a248.page1.png",
+    "var/m6-browser/uploads/a031f906b7fb4f66bf61c9f36ea8e6a0/67926752d53749358ac40bb5fc49a248.pdf",
+    "var/m6-browser/uploads/a031f906b7fb4f66bf61c9f36ea8e6a0/6958072936f84e56a8a21e870da9c871.md",
+    "var/m6-browser/uploads/a031f906b7fb4f66bf61c9f36ea8e6a0",
+    "var/m6-browser/uploads",
+    "var/m6-browser/workbench.sqlite3",
+    "var/m6-browser",
+    "docs/adr/001-local-modular-monolith.md",
+    "docs/contracts.md",
+    "docs/architecture.md",
+    "docs/api.md",
+    "docs/acceptance-m5.md",
+    "IndustrialMindAI-OptionB-RFQ工作台-roadmap.md",
+    "tmp/pdfs/contact-sheet.png",
+    "docs/milestones.md",
+    "docs/runbook.md",
+    "docs/testing.md",
+    "README.md",
+    "tmp/pdfs/bracket-B.png",
+    "fixtures/dev/DEV-005/rfq.md",
+    "fixtures/dev/DEV-002/rfq.md",
+    "fixtures/dev/DEV-003/rfq.md",
+    "fixtures/dev/DEV-006/rfq.md",
+    "fixtures/dev/DEV-004/rfq.md",
+    "fixtures/dev/DEV-001/rfq.md",
+    "apps/web/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/webVitalsAttribution.md",
+    "apps/web/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/useLightningcss.md",
+    "apps/web/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/webpack.md",
+    "apps/web/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/useTypeScriptCli.md",
+    "apps/web/node_modules/next/dist/docs/02-pages/04-api-reference/04-config/01-next-config-js/urlImports.md"
   ]
 }
