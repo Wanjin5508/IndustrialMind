@@ -1,0 +1,131 @@
+[
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-5083-H111",
+    "unit": "mm",
+    "part_number": "BJ-976",
+    "revisions": [
+      "L"
+    ],
+    "id": "F12-CATALOG",
+    "kind": "catalog",
+    "title": "M7 approved catalog",
+    "version": "m7-f12-catalog-1",
+    "payload_source": "manufacturing",
+    "content": "Synthetic BJ-976 catalog record."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-5083-H111",
+    "unit": "mm",
+    "part_number": "BJ-976",
+    "revisions": [
+      "L"
+    ],
+    "id": "F12-TEMPLATE",
+    "kind": "template",
+    "title": "M7 approved template",
+    "version": "m7-f12-template-1",
+    "payload_source": "manufacturing",
+    "content": "Synthetic BJ-976 template record."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2026-02-01",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-5083-H111",
+    "unit": "mm",
+    "part_number": "BJ-976",
+    "revisions": [
+      "L"
+    ],
+    "id": "F12-RATE",
+    "kind": "rate",
+    "title": "M7 approved rate",
+    "version": "m7-f12-rate-1",
+    "payload_source": "manufacturing",
+    "content": "Synthetic BJ-976 rate record."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-5083-H111",
+    "unit": "mm",
+    "part_number": "ZZ-104",
+    "revisions": [
+      "A"
+    ],
+    "kind": "history",
+    "version": "m7-archive-1",
+    "payload_source": "reference_only",
+    "content": "Archived unit amount EUR 1.23. Different part and revision.",
+    "id": "F12-HISTORY",
+    "title": "Archive 1.23"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-5083-H111",
+    "unit": "mm",
+    "part_number": "BJ-976",
+    "revisions": [
+      "L"
+    ],
+    "kind": "history",
+    "version": "m7-archive-1",
+    "payload_source": "reference_only",
+    "content": "Archived unit amount EUR 1.23. Different part and revision.",
+    "id": "F12-PRIVATE",
+    "title": "Approver-only archive"
+  }
+]

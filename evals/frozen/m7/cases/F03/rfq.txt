@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6012
+SYNTHETIC EVALUATION
+
+Part number: VC-531
+Required revision: E
+Quantity: 60
+Currency: EUR
+
+Request an internal budget; confirm delivery separately.

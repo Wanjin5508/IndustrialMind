@@ -1,0 +1,75 @@
+{
+  "project_id": "PM-DEMO",
+  "plant": "DE-DEMO",
+  "product_family": "mounting-bracket",
+  "valid_from": "2026-01-01",
+  "valid_until": "2027-12-31",
+  "roles": [
+    "demo-engineer",
+    "demo-approver"
+  ],
+  "origin_type": "synthetic",
+  "approved": true,
+  "currency": "EUR",
+  "material": "Al-5083-H111",
+  "unit": "mm",
+  "material_unit": "13.60",
+  "finish_unit": "4.20",
+  "machine_hourly": "78",
+  "cycle_hours": "0.23",
+  "setup_hours": "2.00",
+  "inspection_hourly": "56",
+  "inspection_hours": "0.030",
+  "target_margin": "0.30",
+  "notice": "SYNTHETIC; approved only for isolated M7 evaluation",
+  "rules_version": "m7-quote-1",
+  "catalog_version": "m7-f12-catalog-1",
+  "template_version": "m7-f12-template-1",
+  "rate_version": "m7-f12-rate-1",
+  "approved_revisions": [
+    "L"
+  ],
+  "applicability": {
+    "part_number": "BJ-976",
+    "dimensions": {
+      "width_mm": "83",
+      "height_mm": "46",
+      "thickness_mm": "10",
+      "hole_diameter_mm": "6.3"
+    },
+    "surface_finish": "Bead blast"
+  },
+  "blank": {
+    "code": "RAW-BJ-976",
+    "specification": "86 x 50 x 12 mm",
+    "unit": "piece",
+    "quantity_per_part": 1
+  },
+  "routing": [
+    {
+      "step": 10,
+      "operation": "Cut blank",
+      "basis": "Frozen material allowance"
+    },
+    {
+      "step": 20,
+      "operation": "Machine and deburr",
+      "basis": "Frozen machine and setup time"
+    },
+    {
+      "step": 30,
+      "operation": "Bead blast",
+      "basis": "Frozen finishing allowance"
+    },
+    {
+      "step": 40,
+      "operation": "Inspect",
+      "basis": "Frozen inspection time"
+    }
+  ],
+  "pending": [
+    "Supplier availability",
+    "Capacity and delivery",
+    "Freight and terms"
+  ]
+}

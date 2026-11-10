@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6010
+SYNTHETIC EVALUATION
+
+Part number: AX-218
+Required revision: C
+Quantity: 48
+Currency: EUR
+
+Request an internal budget; confirm delivery separately.

@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6015
+SYNTHETIC EVALUATION
+
+Currency: EUR
+Quantity: 90
+Required revision: G
+Part number: HF-291
+
+Request an internal budget; confirm delivery separately.

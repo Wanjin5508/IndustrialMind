@@ -1,0 +1,75 @@
+{
+  "project_id": "PM-DEMO",
+  "plant": "DE-DEMO",
+  "product_family": "mounting-bracket",
+  "valid_from": "2026-01-01",
+  "valid_until": "2027-12-31",
+  "roles": [
+    "demo-engineer",
+    "demo-approver"
+  ],
+  "origin_type": "synthetic",
+  "approved": true,
+  "currency": "EUR",
+  "material": "Al-6082-T6",
+  "unit": "mm",
+  "material_unit": "12.45",
+  "finish_unit": "3.15",
+  "machine_hourly": "84",
+  "cycle_hours": "0.19",
+  "setup_hours": "0.75",
+  "inspection_hourly": "48",
+  "inspection_hours": "0.035",
+  "target_margin": "0.28",
+  "notice": "SYNTHETIC; approved only for isolated M7 evaluation",
+  "rules_version": "m7-quote-1",
+  "catalog_version": "m7-f10-catalog-1",
+  "template_version": "m7-f10-template-1",
+  "rate_version": "m7-f10-rate-1",
+  "approved_revisions": [
+    "J"
+  ],
+  "applicability": {
+    "part_number": "QW-685",
+    "dimensions": {
+      "width_mm": "96",
+      "height_mm": "59",
+      "thickness_mm": "13",
+      "hole_diameter_mm": "7.2"
+    },
+    "surface_finish": "Clear anodize"
+  },
+  "blank": {
+    "code": "RAW-QW-685",
+    "specification": "99 x 63 x 15 mm",
+    "unit": "piece",
+    "quantity_per_part": 1
+  },
+  "routing": [
+    {
+      "step": 10,
+      "operation": "Cut blank",
+      "basis": "Frozen material allowance"
+    },
+    {
+      "step": 20,
+      "operation": "Machine and deburr",
+      "basis": "Frozen machine and setup time"
+    },
+    {
+      "step": 30,
+      "operation": "Clear anodize",
+      "basis": "Frozen finishing allowance"
+    },
+    {
+      "step": 40,
+      "operation": "Inspect",
+      "basis": "Frozen inspection time"
+    }
+  ],
+  "pending": [
+    "Supplier availability",
+    "Capacity and delivery",
+    "Freight and terms"
+  ]
+}

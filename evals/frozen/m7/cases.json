@@ -1,0 +1,74 @@
+[
+  {
+    "id": "F01",
+    "part_number": "AX-218",
+    "layout": 1,
+    "raster": false
+  },
+  {
+    "id": "F02",
+    "part_number": "KJ-407",
+    "layout": 2,
+    "raster": false
+  },
+  {
+    "id": "F03",
+    "part_number": "VC-531",
+    "layout": 3,
+    "raster": false
+  },
+  {
+    "id": "F04",
+    "part_number": "YT-624",
+    "layout": 4,
+    "raster": false
+  },
+  {
+    "id": "F05",
+    "part_number": "CZ-817",
+    "layout": 1,
+    "raster": false
+  },
+  {
+    "id": "F06",
+    "part_number": "HF-291",
+    "layout": 2,
+    "raster": false
+  },
+  {
+    "id": "F07",
+    "part_number": "MN-762",
+    "layout": 3,
+    "raster": false
+  },
+  {
+    "id": "F08",
+    "part_number": "RU-138",
+    "layout": 4,
+    "raster": false
+  },
+  {
+    "id": "F09",
+    "part_number": "DP-354",
+    "layout": 1,
+    "raster": false
+  },
+  {
+    "id": "F10",
+    "part_number": "QW-685",
+    "layout": 2,
+    "raster": true
+  },
+  {
+    "id": "F11",
+    "part_number": "GS-443",
+    "layout": 3,
+    "raster": false
+  },
+  {
+    "id": "F12",
+    "part_number": "BJ-976",
+    "layout": 4,
+    "raster": false
+  }
+]

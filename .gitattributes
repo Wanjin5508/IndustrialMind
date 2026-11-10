@@ -2,4 +2,4 @@
 *.pdf binary
 *.png binary
 *.jpg binary
-docs/baselines/*.md -text
+docs/02-*/04-*/*.md -text

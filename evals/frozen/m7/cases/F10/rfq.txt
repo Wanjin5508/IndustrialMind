@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6019
+SYNTHETIC EVALUATION
+
+Currency: EUR
+Quantity: 110
+Required revision: J
+Part number: QW-685
+
+Request an internal budget; confirm delivery separately.

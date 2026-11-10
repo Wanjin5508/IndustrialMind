@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6013
+SYNTHETIC EVALUATION
+
+Currency: EUR
+Quantity: 240
+Required revision: F
+Part number: YT-624
+
+Request an internal budget; confirm delivery separately.

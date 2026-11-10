@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6011
+SYNTHETIC EVALUATION
+
+Currency: EUR
+Quantity: 125
+Required revision: D
+Part number: KJ-407
+
+Request an internal budget; confirm delivery separately.
