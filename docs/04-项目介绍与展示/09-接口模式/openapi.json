@@ -86,6 +86,17 @@
               ],
               "title": "X-Demo-Token"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
           }
         ],
         "requestBody": {
@@ -407,6 +418,17 @@
               ],
               "title": "X-Demo-Token"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
           }
         ],
         "responses": {
@@ -514,6 +536,17 @@
               ],
               "title": "X-Demo-Token"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
           }
         ],
         "requestBody": {
@@ -567,6 +600,17 @@
                 }
               ],
               "title": "X-Demo-Token"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
             }
           }
         ],
@@ -766,7 +810,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OutboundIntent"
+                  "$ref": "#/components/schemas/SyncIntentView"
                 }
               }
             }
@@ -1536,6 +1580,17 @@
               ],
               "title": "X-Demo-Token"
             }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
           }
         ],
         "requestBody": {
@@ -1598,6 +1653,17 @@
                 }
               ],
               "title": "X-Demo-Token"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$"
             }
           }
         ],
@@ -2251,7 +2317,156 @@
         ],
         "title": "Mutation"
       },
-      "OutboundIntent": {
+      "PLMRevision": {
+        "properties": {
+          "released_revision": {
+            "type": "string",
+            "title": "Released Revision"
+          },
+          "rfq_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rfq Revision"
+          },
+          "drawing_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing Revision"
+          },
+          "reference_id": {
+            "type": "string",
+            "title": "Reference Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "released_revision",
+          "rfq_revision",
+          "drawing_revision",
+          "reference_id"
+        ],
+        "title": "PLMRevision"
+      },
+      "Receipt": {
+        "properties": {
+          "external_id": {
+            "type": "string",
+            "title": "External Id"
+          },
+          "target_version": {
+            "type": "string",
+            "title": "Target Version"
+          },
+          "acked_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Acked At"
+          },
+          "response_sha256": {
+            "type": "string",
+            "title": "Response Sha256"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "external_id",
+          "target_version",
+          "acked_at",
+          "response_sha256"
+        ],
+        "title": "Receipt"
+      },
+      "ResolveSync": {
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "rebase",
+              "abandon"
+            ],
+            "title": "Decision"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision",
+          "note"
+        ],
+        "title": "ResolveSync"
+      },
+      "ResumeTask": {
+        "properties": {
+          "expected_version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Expected Version"
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "prepare_quote",
+                  "review_drawing",
+                  "search_knowledge"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeQuery"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "local_text",
+              "live",
+              "replay"
+            ],
+            "title": "Mode",
+            "default": "local_text"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_version"
+        ],
+        "title": "ResumeTask"
+      },
+      "SyncIntentView": {
         "properties": {
           "id": {
             "type": "string",
@@ -2423,6 +2638,26 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "reconciliation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reconciliation"
+          },
+          "attempt_log": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Attempt Log"
           }
         },
         "additionalProperties": false,
@@ -2443,156 +2678,7 @@
           "created_at",
           "updated_at"
         ],
-        "title": "OutboundIntent"
-      },
-      "PLMRevision": {
-        "properties": {
-          "released_revision": {
-            "type": "string",
-            "title": "Released Revision"
-          },
-          "rfq_revision": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rfq Revision"
-          },
-          "drawing_revision": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Drawing Revision"
-          },
-          "reference_id": {
-            "type": "string",
-            "title": "Reference Id"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "released_revision",
-          "rfq_revision",
-          "drawing_revision",
-          "reference_id"
-        ],
-        "title": "PLMRevision"
-      },
-      "Receipt": {
-        "properties": {
-          "external_id": {
-            "type": "string",
-            "title": "External Id"
-          },
-          "target_version": {
-            "type": "string",
-            "title": "Target Version"
-          },
-          "acked_at": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Acked At"
-          },
-          "response_sha256": {
-            "type": "string",
-            "title": "Response Sha256"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "external_id",
-          "target_version",
-          "acked_at",
-          "response_sha256"
-        ],
-        "title": "Receipt"
-      },
-      "ResolveSync": {
-        "properties": {
-          "decision": {
-            "type": "string",
-            "enum": [
-              "rebase",
-              "abandon"
-            ],
-            "title": "Decision"
-          },
-          "note": {
-            "type": "string",
-            "maxLength": 1000,
-            "minLength": 3,
-            "title": "Note"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "decision",
-          "note"
-        ],
-        "title": "ResolveSync"
-      },
-      "ResumeTask": {
-        "properties": {
-          "expected_version": {
-            "type": "integer",
-            "minimum": 1.0,
-            "title": "Expected Version"
-          },
-          "intent": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "prepare_quote",
-                  "review_drawing",
-                  "search_knowledge"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Intent"
-          },
-          "query": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/KnowledgeQuery"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "mode": {
-            "type": "string",
-            "enum": [
-              "local_text",
-              "live",
-              "replay"
-            ],
-            "title": "Mode",
-            "default": "local_text"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "expected_version"
-        ],
-        "title": "ResumeTask"
+        "title": "SyncIntentView"
       },
       "SyncRequest": {
         "properties": {

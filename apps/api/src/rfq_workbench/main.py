@@ -21,11 +21,12 @@ from rfq_workbench.contracts import (
 from rfq_workbench.documents import MAX_FILE_BYTES, asset_path
 from rfq_workbench.errors import DomainError
 from rfq_workbench.file_workflow import FileWorkflow, fixture_catalog
+from rfq_workbench.idempotency import Idempotency, IdempotentRoute
 from rfq_workbench.integrations import IntegrationPreview, preview_integrations
 from rfq_workbench.integrations.contracts import (
     DispatchDue,
-    OutboundIntent,
     ResolveSync,
+    SyncIntentView,
     SyncRequest,
 )
 from rfq_workbench.knowledge import Knowledge
@@ -54,12 +55,14 @@ def create_app(
     app.state.file_workflow = file_workflow
     app.state.sync = sync
     app.state.systems = workflow.systems
+    app.state.idempotency = Idempotency(repository, workflow.clock)
+    app.router.route_class = IdempotentRoute
     knowledge = Knowledge(settings)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.allowed_origin],
         allow_methods=["GET", "POST", "PATCH"],
-        allow_headers=["Content-Type", "X-Demo-Token"],
+        allow_headers=["Content-Type", "X-Demo-Token", "Idempotency-Key"],
     )
 
     @app.exception_handler(DomainError)
@@ -180,7 +183,7 @@ def create_app(
     def integration_preview(run_id: str, who: Annotated[str, Depends(actor)]):
         return preview_integrations(orchestrator.get(run_id, who), who, workflow)
 
-    @app.post("/runs/{run_id}/sync", response_model=OutboundIntent)
+    @app.post("/runs/{run_id}/sync", response_model=SyncIntentView)
     def request_sync(
         run_id: str,
         request: SyncRequest,

@@ -42,6 +42,7 @@ for name in (
     "ReconciliationResult",
     "OutboundIntent",
     "SyncRequest",
+    "SyncIntentView",
     "ResolveSync",
     "DispatchDue",
 ):

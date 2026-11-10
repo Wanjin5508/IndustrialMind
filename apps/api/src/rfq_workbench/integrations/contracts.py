@@ -99,6 +99,11 @@ class SyncRequest(Mutation):
     note: str = Field(min_length=3, max_length=1000)
 
 
+class SyncIntentView(OutboundIntent):
+    reconciliation: dict | None = None
+    attempt_log: list[dict] = Field(default_factory=list)
+
+
 class ResolveSync(Contract):
     decision: Literal["rebase", "abandon"]
     note: str = Field(min_length=3, max_length=1000)
