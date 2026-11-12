@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import KnowledgePanel, { type KnowledgeItem } from "./knowledge-panel";
+import AgentPanel from "./agent-panel";
 import { CreateTask, TaskControls, type TaskContext } from "./task-controls";
 import IntegrationPreview from "./integration-preview";
 
@@ -98,8 +99,16 @@ type Capability = {
   live_available: boolean;
   model: string | null;
   simulate_model_timeout?: boolean;
+  agent_enabled?: boolean;
 };
-const views = ["任务总览", "资料与证据", "成本草案", "审批与审计", "受控知识"];
+const views = [
+  "任务总览",
+  "资料与证据",
+  "成本草案",
+  "审批与审计",
+  "受控知识",
+  "报价 Agent",
+];
 const evidenceNames: Record<string, string> = {
   MISSING: "未知 · 需补充",
   INVALID_SOURCE: "无效来源",
@@ -315,6 +324,7 @@ export default function Workbench() {
     }
   }
   const engineer = token !== "demo-approver";
+  const agentAvailable = engineer && cap?.agent_enabled;
   const quoteTask =
     !run?.orchestration || run.orchestration.intent === "prepare_quote";
   const retryBlocked =
@@ -333,16 +343,19 @@ export default function Workbench() {
         </div>
         <div className="workspace">德国工厂 / DE-DEMO</div>
         <nav>
-          {views.map((label, i) => (
-            <button
-              key={label}
-              className={view === i ? "active" : ""}
-              onClick={() => setView(i)}
-            >
-              <span>0{i + 1}</span>
-              {label}
-            </button>
-          ))}
+          {views.map(
+            (label, i) =>
+              (i !== 5 || agentAvailable) && (
+                <button
+                  key={label}
+                  className={view === i ? "active" : ""}
+                  onClick={() => setView(i)}
+                >
+                  <span>0{i + 1}</span>
+                  {label}
+                </button>
+              ),
+          )}
         </nav>
         <div className="aside-bottom">
           <span className="dot" />
@@ -364,6 +377,7 @@ export default function Workbench() {
                 const next = e.target.value;
                 setToken(next);
                 setRuns([]);
+                if (view === 5) setView(0);
                 if (
                   run?.orchestration &&
                   [null, "search_knowledge"].includes(
@@ -547,6 +561,13 @@ export default function Workbench() {
             </>
           ) : view === 4 ? (
             <KnowledgePanel key={token} token={token} />
+          ) : view === 5 && agentAvailable ? (
+            <AgentPanel
+              request={request}
+              openCase={(id) => {
+                void act(() => request<Run>(`/runs/${id}`), 1);
+              }}
+            />
           ) : !run ? (
             <section className="empty">
               <h2>尚未选择任务</h2>

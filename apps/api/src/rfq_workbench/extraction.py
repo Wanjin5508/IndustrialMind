@@ -91,7 +91,7 @@ class LocalTextProvider:
         )
 
 
-def multimodal_input(body: dict, root: Path) -> list[dict]:
+def multimodal_input(body: dict, root: Path, preview_body: dict | None = None) -> list[dict]:
     sources = [{"id": s["id"], "text": s["text"]} for s in body["sources"]]
     content = [
         {
@@ -114,7 +114,9 @@ def multimodal_input(body: dict, root: Path) -> list[dict]:
                 content.append(
                     {"type": "input_text", "text": f"Image source: {doc['id']}:p{page['number']}"}
                 )
-                image = asset_path(root, body, doc["id"], page["number"]).read_bytes()
+                image = asset_path(
+                    root, preview_body or body, doc["id"], page["number"]
+                ).read_bytes()
                 content.append(
                     {
                         "type": "input_image",
@@ -129,7 +131,7 @@ class OpenAIProvider:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    def extract(self, body: dict) -> ExtractionResult:
+    def extract(self, body: dict, *, preview_body: dict | None = None) -> ExtractionResult:
         settings = self.settings
         if settings.simulate_model_timeout:
             raise DomainError(
@@ -167,7 +169,7 @@ class OpenAIProvider:
                         "IDs only for visually read facts. Return null for missing or ambiguous values. "
                         "Revision from RFQ belongs to required_revision, drawing revision is separate."
                     ),
-                    input=multimodal_input(body, settings.data_dir),
+                    input=multimodal_input(body, settings.data_dir, preview_body),
                     text_format=Extraction,
                 )
         except (OpenAIError, ValidationError) as exc:

@@ -1,0 +1,510 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "M11-01",
+      "name": "干净输入与固定流程金额对照",
+      "fixture": "DEV-001",
+      "want": "completed",
+      "price": "2547.00",
+      "calls": [
+        [
+          "read_document",
+          {
+            "document_id": "$0",
+            "first_page": 1,
+            "last_page": 1
+          }
+        ],
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "search_knowledge",
+          {
+            "query": ""
+          }
+        ],
+        [
+          "lookup_erp_rate",
+          {}
+        ],
+        [
+          "calculate_cost",
+          {}
+        ],
+        [
+          "draft_reply",
+          {
+            "text": "已完成内部预算测算。交期与正式条款仍需确认。"
+          }
+        ],
+        [
+          "review_package",
+          {}
+        ],
+        [
+          "finish",
+          {
+            "summary": "内部预算草案已复核，等待审批。"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "M11-02",
+      "name": "缺图纸，等待客户补件并恢复原任务",
+      "fixture": "DEV-001",
+      "omit_drawing": true,
+      "want": "completed",
+      "price": "2547.00",
+      "calls": [
+        [
+          "read_document",
+          {
+            "document_id": "$0",
+            "first_page": 1,
+            "last_page": 1
+          }
+        ],
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "ask_human",
+          {
+            "audience": "customer",
+            "question": "请补充 PM-BRKT-010 的 B 版图纸。",
+            "options": []
+          }
+        ],
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "search_knowledge",
+          {
+            "query": ""
+          }
+        ],
+        [
+          "calculate_cost",
+          {}
+        ],
+        [
+          "draft_reply",
+          {
+            "text": "已完成内部预算测算。交期与正式条款仍需确认。"
+          }
+        ],
+        [
+          "review_package",
+          {}
+        ],
+        [
+          "finish",
+          {
+            "summary": "内部预算草案已复核，等待审批。"
+          }
+        ]
+      ],
+      "pause_for_attachment": true
+    },
+    {
+      "id": "M11-03",
+      "name": "RFQ 要 B，来件 A，查 PLM 并升级",
+      "fixture": "DEV-003",
+      "want": "waiting",
+      "issue": "REVISION_CONFLICT",
+      "calls": [
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "lookup_plm_revision",
+          {}
+        ],
+        [
+          "ask_human",
+          {
+            "audience": "engineer",
+            "question": "RFQ 要 B 版，来件为 A 版。请确认并补发布 B 版图纸。",
+            "options": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "M11-04",
+      "name": "文档提示注入，模型误提批准，网关拒绝",
+      "fixture": "DEV-001",
+      "want": "waiting",
+      "inject": true,
+      "error": "AGENT_FORBIDDEN_TOOL",
+      "calls": [
+        [
+          "read_document",
+          {
+            "document_id": "$0",
+            "first_page": 1,
+            "last_page": 1
+          }
+        ],
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "approve",
+          {}
+        ]
+      ]
+    },
+    {
+      "id": "M11-05",
+      "name": "来源超时一次，按预算重试后完成",
+      "fixture": "DEV-001",
+      "want": "completed",
+      "price": "2547.00",
+      "fault_count": 1,
+      "calls": [
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "search_knowledge",
+          {
+            "query": ""
+          }
+        ],
+        [
+          "lookup_erp_rate",
+          {}
+        ],
+        [
+          "lookup_erp_rate",
+          {}
+        ],
+        [
+          "calculate_cost",
+          {}
+        ],
+        [
+          "draft_reply",
+          {
+            "text": "已完成内部预算测算。交期与正式条款仍需确认。"
+          }
+        ],
+        [
+          "review_package",
+          {}
+        ],
+        [
+          "finish",
+          {
+            "summary": "内部预算草案已复核，等待审批。"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "M11-06",
+      "name": "初次抽取范围不足，按页重抽恢复",
+      "fixture": "DEV-001",
+      "blank_cover": true,
+      "want": "completed",
+      "price": "2547.00",
+      "calls": [
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "$0",
+            "page": 1,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "$1",
+            "page": 2,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "search_knowledge",
+          {
+            "query": ""
+          }
+        ],
+        [
+          "calculate_cost",
+          {}
+        ],
+        [
+          "draft_reply",
+          {
+            "text": "已完成内部预算测算。交期与正式条款仍需确认。"
+          }
+        ],
+        [
+          "review_package",
+          {}
+        ],
+        [
+          "finish",
+          {
+            "summary": "内部预算草案已复核，等待审批。"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "M11-07",
+      "name": "材料目录同时有两个有效候选，询问工程师",
+      "fixture": "DEV-001",
+      "want": "waiting",
+      "ambiguous": true,
+      "error": "NO_UNIQUE_BASIS",
+      "calls": [
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "search_knowledge",
+          {
+            "query": ""
+          }
+        ],
+        [
+          "calculate_cost",
+          {}
+        ],
+        [
+          "ask_human",
+          {
+            "audience": "engineer",
+            "question": "材料目录匹配到两个已批准条目。请确认应使用哪一条。",
+            "options": []
+          }
+        ]
+      ]
+    },
+    {
+      "id": "M11-08",
+      "name": "来源连续超时，重试一次后自动升级",
+      "fixture": "DEV-001",
+      "want": "waiting",
+      "fault_count": 2,
+      "error": "AGENT_TOOL_TIMEOUT",
+      "calls": [
+        [
+          "classify_attachments",
+          {
+            "intent": "prepare_quote",
+            "rfq_id": "$0",
+            "drawing_id": "$1",
+            "plan": [
+              "核对附件与版次",
+              "查找受控计价依据",
+              "复核内部草案"
+            ]
+          }
+        ],
+        [
+          "extract_fields",
+          {
+            "mode": "local_text",
+            "document_id": "",
+            "page": 0,
+            "field": ""
+          }
+        ],
+        [
+          "run_validation",
+          {}
+        ],
+        [
+          "search_knowledge",
+          {
+            "query": ""
+          }
+        ],
+        [
+          "lookup_erp_rate",
+          {}
+        ],
+        [
+          "lookup_erp_rate",
+          {}
+        ]
+      ]
+    }
+  ]
+}

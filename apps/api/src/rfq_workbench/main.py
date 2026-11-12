@@ -6,6 +6,7 @@ from fastapi import Depends, FastAPI, File, Form, Header, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, Response
 
+from rfq_workbench.agent.routes import mount_agent
 from rfq_workbench.config import Settings
 from rfq_workbench.contracts import (
     AnalyzeRequest,
@@ -111,6 +112,7 @@ def create_app(
             "live_available": settings.simulate_model_timeout
             or bool(settings.model_key and settings.model_name),
             "simulate_model_timeout": settings.simulate_model_timeout,
+            "agent_enabled": settings.agent_enabled,
             "model": settings.model_name or None,
             "local_mode": "LOCAL_TEXT",
             "scope": "PM-DEMO / DE-DEMO / PM-BRKT-010",
@@ -142,6 +144,9 @@ def create_app(
             return upload.file.read(MAX_FILE_BYTES + 1)
         finally:
             upload.file.close()
+
+    if settings.agent_enabled:
+        mount_agent(app, workflow, file_workflow, engineer, read_upload)
 
     @app.post("/tasks/{run_id}/documents")
     def attach_task_documents(

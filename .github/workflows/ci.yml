@@ -17,6 +17,7 @@ jobs:
       - run: python -m pytest -q
       - run: python scripts/evaluate_m7.py --output var/m7/ci
       - run: python scripts/evaluate_m9.py --output var/m9/ci
+      - run: python scripts/evaluate_m11.py --output var/m11/ci.json
       - run: python scripts/export_schemas.py && python scripts/export_openapi.py
       - run: git diff --exit-code -- 'docs/04-项目介绍与展示/09-接口模式'
   frontend:

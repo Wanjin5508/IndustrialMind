@@ -31,12 +31,16 @@ class Settings:
     snapshot_ttl_seconds: int = 900
     fake_systems_path: Path | None = None
     sync_fault_plan: str = ""
+    agent_enabled: bool = False
+    agent_model_api: str = "auto"
 
     @property
     def systems_path(self) -> Path:
         return self.fake_systems_path or self.data_dir / "fake-systems.sqlite3"
 
     def __post_init__(self):
+        if self.agent_model_api not in {"auto", "responses", "chat"}:
+            raise ValueError("RFQ_AGENT_MODEL_API must be auto, responses or chat.")
         for value in (self.sync_max_attempts, self.sync_lease_seconds, self.snapshot_ttl_seconds):
             if type(value) is not int or value <= 0:
                 raise ValueError("Integration budgets and TTL must be positive integers.")
@@ -102,6 +106,8 @@ class Settings:
             snapshot_ttl_seconds=int(os.environ.get("RFQ_SNAPSHOT_TTL_SECONDS", "900")),
             fake_systems_path=fake_systems_path,
             sync_fault_plan=os.environ.get("RFQ_SYNC_FAULT_PLAN", ""),
+            agent_enabled=os.environ.get("RFQ_AGENT_ENABLED") == "1",
+            agent_model_api=os.environ.get("RFQ_AGENT_MODEL_API", "auto"),
             model_pricing_path=Path(
                 os.environ.get("RFQ_MODEL_PRICING_FILE", str(ROOT / "config/model-pricing.json"))
             ),

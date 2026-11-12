@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1130" viewBox="0 0 1440 1130" role="img" aria-labelledby="title desc">
+<title id="title">RFQ 工作台 · 子模块与 Agent 调用链</title><desc id="desc">浏览器逐步请求 Agent，Runner 保存观察及模型决策，按权限调用工具并持久化结果。网关分支负责文档证据、校验与知识、计价和交付。审批与 ERP 派发在独立的人工通道。</desc>
+<defs>
+<marker id="blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3153c8"/></marker>
+<marker id="teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#087c83"/></marker>
+<marker id="amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#985019"/></marker>
+<marker id="grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6f7b8d"/></marker>
+</defs>
+<g font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif">
+<rect x="0" y="0" width="1440" height="1130" rx="0" fill="#ffffff" stroke="none" stroke-width="1.4"/>
+<rect x="0" y="0" width="1440" height="7" rx="0" fill="#3153c8" stroke="none" stroke-width="1.4"/>
+<text x="45" y="37" font-size="15" font-weight="700" fill="#3153c8">PRECISIONMOTION   /   RFQ AGENT   /   02</text>
+<text x="45" y="86" font-size="43" font-weight="700" fill="#13283e">当前子模块与 Agent 调用链</text>
+<text x="46" y="120" font-size="20" font-weight="400" fill="#42566c">一次 /step 处理一个模型工具选择，工具结果成为下一步的观察</text>
+<rect x="44" y="147" width="1352" height="337" rx="18" fill="#f7f9ff" stroke="#c4cfee" stroke-width="1.4"/>
+<text x="69" y="177" font-size="21" font-weight="700" fill="#3153c8">模型决策与运行状态</text>
+<polyline points="294,241 355,241" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="355,277 294,277" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<polyline points="687,240 764,240" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="764,277 687,277" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="567,209 567,186 1203,186 1203,209" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-start="url(#teal)" marker-end="url(#teal)"/>
+<text x="872" y="179" font-size="16" font-weight="400" fill="#087c83" text-anchor="middle" stroke="#f7f9ff" stroke-width="6" stroke-linejoin="round" paint-order="stroke fill">观察、决策、步骤落库与恢复</text>
+<polyline points="182,322 182,369" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<polyline points="479,322 479,369" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="566,369 566,322" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="462" y="351" font-size="16" font-weight="400" fill="#3153c8" text-anchor="middle" stroke="#f7f9ff" stroke-width="6" stroke-linejoin="round" paint-order="stroke fill">调用</text>
+<text x="598" y="351" font-size="16" font-weight="400" fill="#087c83" text-anchor="middle" stroke="#f7f9ff" stroke-width="6" stroke-linejoin="round" paint-order="stroke fill">结果</text>
+<rect x="69" y="209" width="225" height="113" rx="12" fill="#ffffff" stroke="#cfdae6" stroke-width="1.4"/>
+<rect x="84" y="224" width="4" height="21" rx="2" fill="#5f738b" stroke="none" stroke-width="1.4"/>
+<text x="97" y="242" font-size="22" font-weight="700" fill="#13283e">工作台 → API</text>
+<text x="86" y="269" font-size="16" font-weight="400" fill="#42566c">/agent/runs · /step</text>
+<text x="86" y="292" font-size="16" font-weight="400" fill="#42566c">接收工具轨迹与结果</text>
+<rect x="355" y="209" width="332" height="113" rx="12" fill="#f0f3ff" stroke="#bfc9f1" stroke-width="1.4"/>
+<rect x="370" y="224" width="4" height="21" rx="2" fill="#3153c8" stroke="none" stroke-width="1.4"/>
+<text x="383" y="242" font-size="22" font-weight="700" fill="#13283e">Agent Runner · 观察与决策</text>
+<text x="372" y="269" font-size="16" font-weight="400" fill="#42566c">读取任务与有限观察；控制执行预算</text>
+<text x="372" y="292" font-size="16" font-weight="400" fill="#42566c">保存工具选择，再执行并记录结果</text>
+<rect x="764" y="209" width="227" height="113" rx="12" fill="#f0f3ff" stroke="#bfc9f1" stroke-width="1.4"/>
+<rect x="779" y="224" width="4" height="21" rx="2" fill="#3153c8" stroke="none" stroke-width="1.4"/>
+<text x="792" y="242" font-size="22" font-weight="700" fill="#13283e">外部模型服务</text>
+<text x="781" y="269" font-size="16" font-weight="400" fill="#42566c">收上下文、可用工具</text>
+<text x="781" y="292" font-size="16" font-weight="400" fill="#42566c">回原生函数名、参数</text>
+<rect x="1052" y="209" width="319" height="113" rx="12" fill="#ffffff" stroke="#cfdae6" stroke-width="1.4"/>
+<rect x="1067" y="224" width="4" height="21" rx="2" fill="#5f738b" stroke="none" stroke-width="1.4"/>
+<text x="1080" y="242" font-size="22" font-weight="700" fill="#13283e">Agent 运行库</text>
+<text x="1069" y="269" font-size="16" font-weight="400" fill="#42566c">agent.sqlite3：租约、步骤和答复</text>
+<text x="1069" y="292" font-size="16" font-weight="400" fill="#42566c">保存待执行调用，恢复同一任务</text>
+<rect x="69" y="369" width="225" height="99" rx="12" fill="#ffffff" stroke="#cfdae6" stroke-width="1.4"/>
+<rect x="84" y="384" width="4" height="21" rx="2" fill="#5f738b" stroke="none" stroke-width="1.4"/>
+<text x="97" y="402" font-size="22" font-weight="700" fill="#13283e">暂停与恢复</text>
+<text x="86" y="429" font-size="16" font-weight="400" fill="#42566c">补件／答复 → /answer</text>
+<text x="86" y="452" font-size="16" font-weight="400" fill="#42566c">模型服务暂停 → /retry</text>
+<rect x="355" y="369" width="332" height="99" rx="12" fill="#f0f3ff" stroke="#bfc9f1" stroke-width="1.4"/>
+<rect x="370" y="384" width="4" height="21" rx="2" fill="#3153c8" stroke="none" stroke-width="1.4"/>
+<text x="383" y="402" font-size="22" font-weight="700" fill="#13283e">Tool Gateway · 工具网关</text>
+<text x="372" y="429" font-size="16" font-weight="400" fill="#42566c">检查白名单、参数、证据与前置状态</text>
+<text x="372" y="452" font-size="16" font-weight="400" fill="#42566c">校验任务范围，防止重复业务写入</text>
+<text x="770" y="399" font-size="19" font-weight="700" fill="#13283e">循环：工作台请求下一步 → 模型选工具 → 结果返回</text>
+<text x="770" y="429" font-size="17" font-weight="400" fill="#42566c">模型不持有批准、导出、派发或对客发送的工具。</text>
+<rect x="44" y="500" width="1352" height="346" rx="18" fill="#f7fafc" stroke="#ccdce7" stroke-width="1.4"/>
+<text x="69" y="531" font-size="20" font-weight="700" fill="#13283e">工程服务 · 工具按观察结果选择</text>
+<polyline points="522,468 522,550 1212,550" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="522,550 218,550" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="218,550 218,572" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="538,550 538,572" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="866,550 866,572" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<polyline points="1212,550 1212,572" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<rect x="69" y="572" width="298" height="132" rx="12" fill="#edf9f9" stroke="#b3dadd" stroke-width="1.4"/>
+<rect x="84" y="587" width="4" height="21" rx="2" fill="#087c83" stroke="none" stroke-width="1.4"/>
+<text x="97" y="605" font-size="22" font-weight="700" fill="#13283e">分诊、文档与证据</text>
+<text x="86" y="632" font-size="15" font-weight="400" fill="#42566c">classify_attachments · 识别角色</text>
+<text x="86" y="655" font-size="15" font-weight="400" fill="#42566c">read_document / view_page · 读页</text>
+<text x="86" y="678" font-size="15" font-weight="400" fill="#42566c">extract_fields · 按页抽取及证据校验</text>
+<rect x="389" y="572" width="298" height="132" rx="12" fill="#edf9f9" stroke="#b3dadd" stroke-width="1.4"/>
+<rect x="404" y="587" width="4" height="21" rx="2" fill="#087c83" stroke="none" stroke-width="1.4"/>
+<text x="417" y="605" font-size="22" font-weight="700" fill="#13283e">查询依据与校验</text>
+<text x="406" y="632" font-size="16" font-weight="400" fill="#42566c">search_knowledge · 受控依据</text>
+<text x="406" y="655" font-size="16" font-weight="400" fill="#42566c">run_validation · 字段与冲突</text>
+<text x="406" y="678" font-size="16" font-weight="400" fill="#42566c">可选工具：只读查询 PLM／ERP</text>
+<rect x="709" y="572" width="316" height="132" rx="12" fill="#edf9f9" stroke="#b3dadd" stroke-width="1.4"/>
+<rect x="724" y="587" width="4" height="21" rx="2" fill="#087c83" stroke="none" stroke-width="1.4"/>
+<text x="737" y="605" font-size="22" font-weight="700" fill="#13283e">确定性计价与快照</text>
+<text x="726" y="632" font-size="16" font-weight="400" fill="#42566c">calculate_cost → Workflow.cost</text>
+<text x="726" y="655" font-size="16" font-weight="400" fill="#42566c">已校验、无阻断、依据有效才计价</text>
+<text x="726" y="678" font-size="16" font-weight="400" fill="#42566c">SnapshotService 固化版次与费率</text>
+<rect x="1047" y="572" width="324" height="132" rx="12" fill="#edf9f9" stroke="#b3dadd" stroke-width="1.4"/>
+<rect x="1062" y="587" width="4" height="21" rx="2" fill="#087c83" stroke="none" stroke-width="1.4"/>
+<text x="1075" y="605" font-size="22" font-weight="700" fill="#13283e">澄清、草拟与交付</text>
+<text x="1064" y="632" font-size="16" font-weight="400" fill="#42566c">ask_human · 补件或确认后恢复</text>
+<text x="1064" y="655" font-size="16" font-weight="400" fill="#42566c">draft_reply · 保存客户回复草稿</text>
+<text x="1064" y="678" font-size="16" font-weight="400" fill="#42566c">review_package / finish · 复核交付</text>
+<polyline points="218,704 218,744" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-start="url(#teal)" marker-end="url(#teal)"/>
+<polyline points="538,744 538,704" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<polyline points="866,704 866,744" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-start="url(#teal)" marker-end="url(#teal)"/>
+<polyline points="985,704 985,726 1212,726 1212,744" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="1064" y="721" font-size="15" font-weight="400" fill="#087c83" stroke="#f7fafc" stroke-width="6" stroke-linejoin="round" paint-order="stroke fill">计价时读取源版本与参考</text>
+<rect x="69" y="744" width="298" height="82" rx="12" fill="#ffffff" stroke="#cfdae6" stroke-width="1.4"/>
+<rect x="84" y="759" width="4" height="21" rx="2" fill="#5f738b" stroke="none" stroke-width="1.4"/>
+<text x="97" y="777" font-size="22" font-weight="700" fill="#13283e">附件与原页文件</text>
+<text x="86" y="804" font-size="16" font-weight="400" fill="#42566c">原件、页图、证据定位</text>
+<rect x="389" y="744" width="298" height="82" rx="12" fill="#ffffff" stroke="#cfdae6" stroke-width="1.4"/>
+<rect x="404" y="759" width="4" height="21" rx="2" fill="#5f738b" stroke="none" stroke-width="1.4"/>
+<text x="417" y="777" font-size="22" font-weight="700" fill="#13283e">受控知识 JSON</text>
+<text x="406" y="804" font-size="16" font-weight="400" fill="#42566c">材料目录、工艺模板、费率版本</text>
+<rect x="709" y="744" width="316" height="82" rx="12" fill="#ffffff" stroke="#cfdae6" stroke-width="1.4"/>
+<rect x="724" y="759" width="4" height="21" rx="2" fill="#5f738b" stroke="none" stroke-width="1.4"/>
+<text x="737" y="777" font-size="22" font-weight="700" fill="#13283e">工程任务库 · SQLite</text>
+<text x="726" y="804" font-size="16" font-weight="400" fill="#42566c">字段、阻断、快照、草案、审批</text>
+<rect x="1047" y="744" width="324" height="82" rx="12" fill="#eff8f0" stroke="#bdd9c3" stroke-width="1.4"/>
+<rect x="1062" y="759" width="4" height="21" rx="2" fill="#347047" stroke="none" stroke-width="1.4"/>
+<text x="1075" y="777" font-size="22" font-weight="700" fill="#13283e">本地模拟 PLM／ERP／MES</text>
+<text x="1064" y="804" font-size="16" font-weight="400" fill="#42566c">发布版次、成本费率与工序反馈</text>
+<rect x="44" y="865" width="1352" height="193" rx="18" fill="#fffbf7" stroke="#ead4bf" stroke-width="1.4"/>
+<text x="69" y="898" font-size="21" font-weight="700" fill="#985019">人工审批与模拟同步 · 独立入口</text>
+<polyline points="866,826 866,914 497,914 497,935" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="666" y="909" font-size="15" font-weight="400" fill="#087c83" text-anchor="middle" stroke="#fffbf7" stroke-width="6" stroke-linejoin="round" paint-order="stroke fill">读取同一任务的草案与证据</text>
+<polyline points="288,973 335,973" fill="none" stroke="#985019" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#amber)"/>
+<polyline points="659,973 698,973" fill="none" stroke="#985019" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#amber)"/>
+<polyline points="1011,961 1047,961" fill="none" stroke="#985019" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#amber)"/>
+<polyline points="1047,1004 1011,1004" fill="none" stroke="#985019" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#amber)"/>
+<rect x="69" y="935" width="219" height="101" rx="12" fill="#fff6ed" stroke="#ecd1b7" stroke-width="1.4"/>
+<rect x="84" y="950" width="4" height="21" rx="2" fill="#985019" stroke="none" stroke-width="1.4"/>
+<text x="97" y="968" font-size="22" font-weight="700" fill="#13283e">审批人 · 工作台</text>
+<text x="86" y="995" font-size="16" font-weight="400" fill="#42566c">复核报价依据与金额</text>
+<text x="86" y="1018" font-size="16" font-weight="400" fill="#42566c">从审批角色入口操作</text>
+<rect x="335" y="935" width="324" height="101" rx="12" fill="#fff6ed" stroke="#ecd1b7" stroke-width="1.4"/>
+<rect x="350" y="950" width="4" height="21" rx="2" fill="#985019" stroke="none" stroke-width="1.4"/>
+<text x="363" y="968" font-size="22" font-weight="700" fill="#13283e">审批与导出</text>
+<text x="352" y="995" font-size="16" font-weight="400" fill="#42566c">绑定草案版本和哈希</text>
+<text x="352" y="1018" font-size="16" font-weight="400" fill="#42566c">通过审批后可导出或申请同步</text>
+<rect x="698" y="935" width="313" height="101" rx="12" fill="#fff6ed" stroke="#ecd1b7" stroke-width="1.4"/>
+<rect x="713" y="950" width="4" height="21" rx="2" fill="#985019" stroke="none" stroke-width="1.4"/>
+<text x="726" y="968" font-size="22" font-weight="700" fill="#13283e">Outbox 与回读对账</text>
+<text x="715" y="995" font-size="16" font-weight="400" fill="#42566c">保存出站意图，幂等派发</text>
+<text x="715" y="1018" font-size="16" font-weight="400" fill="#42566c">比对回执、回读与草案版本</text>
+<rect x="1047" y="935" width="324" height="101" rx="12" fill="#eff8f0" stroke="#bdd9c3" stroke-width="1.4"/>
+<rect x="1062" y="950" width="4" height="21" rx="2" fill="#347047" stroke="none" stroke-width="1.4"/>
+<text x="1075" y="968" font-size="22" font-weight="700" fill="#13283e">模拟 ERP 草案</text>
+<text x="1064" y="995" font-size="16" font-weight="400" fill="#42566c">接收获批草案，返回目标 ID</text>
+<text x="1064" y="1018" font-size="16" font-weight="400" fill="#42566c">可查询回执及回读值</text>
+<polyline points="45,1093 88,1093" fill="none" stroke="#3153c8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#blue)"/>
+<text x="99" y="1098" font-size="16" font-weight="400" fill="#42566c">Agent 调用与模型决策</text>
+<polyline points="367,1093 410,1093" fill="none" stroke="#087c83" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#teal)"/>
+<text x="421" y="1098" font-size="16" font-weight="400" fill="#42566c">业务数据与工具结果</text>
+<polyline points="689,1093 732,1093" fill="none" stroke="#985019" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#amber)"/>
+<text x="743" y="1098" font-size="16" font-weight="400" fill="#42566c">人工授权与同步</text>
+</g></svg>
