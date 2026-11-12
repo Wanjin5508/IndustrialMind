@@ -9,13 +9,14 @@ from urllib.parse import urlsplit
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[4]
+REFERENCE_DIR = ROOT / "fixtures/reference"
 
 
 @dataclass(frozen=True)
 class Settings:
     data_dir: Path
-    reference_path: Path = ROOT / "fixtures/reference/manufacturing.json"
-    knowledge_path: Path = ROOT / "fixtures/reference/knowledge.json"
+    reference_path: Path = REFERENCE_DIR / "manufacturing.json"
+    knowledge_path: Path = REFERENCE_DIR / "knowledge.json"
     engineer_token: str = "demo-engineer"
     approver_token: str = "demo-approver"
     allowed_origin: str = "http://127.0.0.1:3000"
@@ -67,9 +68,27 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         load_dotenv(ROOT / ".env.local")
-        path = Path(os.environ.get("RFQ_DATA_DIR", "var"))
+        profile = (os.environ.get("RFQ_RATE_PROFILE") or "A").strip().upper()
+        if profile not in {"A", "B"}:
+            raise ValueError("RFQ_RATE_PROFILE must be A or B.")
+
+        reference_dir = REFERENCE_DIR
+        data_dir = ROOT / Path(os.environ.get("RFQ_DATA_DIR", "var"))
+        fake_path = os.environ.get("RFQ_FAKE_SYSTEMS_PATH")
+        fake_systems_path = Path(fake_path) if fake_path else None
+        if profile == "B":
+            # Simulated ERP references are seeded once, so each profile needs its own store.
+            reference_dir /= "rate-variant"
+            data_dir /= "rate-variant"
+            if fake_systems_path is not None:
+                fake_systems_path = fake_systems_path.with_stem(
+                    f"{fake_systems_path.stem}.rate-variant"
+                )
+
         return cls(
-            data_dir=path if path.is_absolute() else ROOT / path,
+            data_dir=data_dir,
+            reference_path=reference_dir / "manufacturing.json",
+            knowledge_path=reference_dir / "knowledge.json",
             engineer_token=os.environ.get("RFQ_ENGINEER_TOKEN") or "demo-engineer",
             approver_token=os.environ.get("RFQ_APPROVER_TOKEN") or "demo-approver",
             allowed_origin=os.environ.get("RFQ_ALLOWED_ORIGIN", "http://127.0.0.1:3000"),
@@ -81,9 +100,7 @@ class Settings:
             sync_max_attempts=int(os.environ.get("RFQ_SYNC_MAX_ATTEMPTS", "5")),
             sync_lease_seconds=int(os.environ.get("RFQ_SYNC_LEASE_SECONDS", "60")),
             snapshot_ttl_seconds=int(os.environ.get("RFQ_SNAPSHOT_TTL_SECONDS", "900")),
-            fake_systems_path=Path(os.environ["RFQ_FAKE_SYSTEMS_PATH"])
-            if os.environ.get("RFQ_FAKE_SYSTEMS_PATH")
-            else None,
+            fake_systems_path=fake_systems_path,
             sync_fault_plan=os.environ.get("RFQ_SYNC_FAULT_PLAN", ""),
             model_pricing_path=Path(
                 os.environ.get("RFQ_MODEL_PRICING_FILE", str(ROOT / "config/model-pricing.json"))

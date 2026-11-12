@@ -1,0 +1,46 @@
+{
+  "origin_type": "synthetic",
+  "notice": "SYNTHETIC DEMO DATA - not a manufacturing instruction or customer price",
+  "rules_version": "rules-demo-2",
+  "catalog_version": "catalog-demo-1",
+  "rate_version": "rates-eur-demo-b-1",
+  "template_version": "bracket-routing-demo-2",
+  "approved": true,
+  "project_id": "PM-DEMO",
+  "roles": ["demo-engineer", "demo-approver"],
+  "approved_revisions": ["B"],
+  "plant": "DE-DEMO",
+  "product_family": "mounting-bracket",
+  "material": "Al-6061-T6",
+  "unit": "mm",
+  "currency": "EUR",
+  "valid_from": "2026-01-01",
+  "valid_until": "2030-12-31",
+  "material_unit": "8.00",
+  "machine_hourly": "75.00",
+  "cycle_hours": "0.12",
+  "setup_hours": "1.50",
+  "finish_unit": "2.00",
+  "inspection_hourly": "50.00",
+  "inspection_hours": "0.02",
+  "target_margin": "0.25",
+  "blank": {
+    "code": "BLANK-PM-BRKT-010",
+    "specification": "82 × 52 × 13 mm",
+    "quantity_per_part": 1,
+    "unit": "piece"
+  },
+  "applicability": {
+    "part_number": "PM-BRKT-010",
+    "dimensions": {"width_mm": "80", "height_mm": "50", "thickness_mm": "12", "hole_diameter_mm": "6.5"},
+    "surface_finish": "Anodize",
+    "notice": "Single demonstration part template. Engineering must confirm hole count, positions and all geometry before approval."
+  },
+  "routing": [
+    {"step": 10, "operation": "Blank preparation", "basis": "Included in material allowance"},
+    {"step": 20, "operation": "Milling and drilling", "basis": "0.12 h/part + 1.50 h/batch; synthetic template"},
+    {"step": 30, "operation": "Deburr and anodize", "basis": "2.00 EUR/part; synthetic service allowance"},
+    {"step": 40, "operation": "Inspection", "basis": "0.02 h/part; synthetic template"}
+  ],
+  "pending": ["Supplier availability", "Production capacity and delivery date", "Packaging and freight", "Taxes and customer terms"]
+}
