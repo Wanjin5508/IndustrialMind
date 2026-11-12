@@ -1,0 +1,19 @@
+[
+  {"id":"M9-01","name":"正常创建与验证","state":"VERIFIED","draft_count":1},
+  {"id":"M9-02","name":"提交前超时","state":"VERIFIED","draft_count":1},
+  {"id":"M9-03","name":"提交后超时","state":"VERIFIED","draft_count":1},
+  {"id":"M9-04","name":"重复投递","state":"VERIFIED","draft_count":1},
+  {"id":"M9-05","name":"发送后崩溃与重启","state":"VERIFIED","draft_count":1},
+  {"id":"M9-06","name":"双派发器并发","state":"VERIFIED","draft_count":1},
+  {"id":"M9-07","name":"租约回收后的迟到结果","state":"VERIFIED","draft_count":1},
+  {"id":"M9-08","name":"目标版本冲突","state":"DIVERGED","draft_count":1},
+  {"id":"M9-09","name":"429与503预算耗尽","state":"QUARANTINED","draft_count":0},
+  {"id":"M9-10","name":"排队期间PLM发布变更","state":"HELD","draft_count":0},
+  {"id":"M9-11","name":"排队期间批准失效","state":"SUPERSEDED","draft_count":0},
+  {"id":"M9-12","name":"缺行的部分写入","state":"DIVERGED","draft_count":1},
+  {"id":"M9-13","name":"币种单位与精度映射阻断","state":"BLOCKED","draft_count":0},
+  {"id":"M9-14","name":"缺关键字段与新增可选字段","state":"VERIFIED","draft_count":1},
+  {"id":"M9-15","name":"新批准版本更新同一草案","state":"VERIFIED","draft_count":1},
+  {"id":"M9-16","name":"API幂等键重试与复用","state":"VERIFIED","draft_count":1},
+  {"id":"M9-17","name":"人工注入的重复目标记录","state":"DIVERGED","draft_count":2,"injected_extra_records":1}
+]

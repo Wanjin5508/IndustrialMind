@@ -1,0 +1,65 @@
+{
+  "additionalProperties": false,
+  "description": "Explicitly confirmed M1 input; not a substitute for M2 file extraction.",
+  "properties": {
+    "part_number": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Part Number",
+      "type": "string"
+    },
+    "required_revision": {
+      "maxLength": 16,
+      "minLength": 1,
+      "title": "Required Revision",
+      "type": "string"
+    },
+    "drawing_revision": {
+      "maxLength": 16,
+      "minLength": 1,
+      "title": "Drawing Revision",
+      "type": "string"
+    },
+    "quantity": {
+      "exclusiveMinimum": 0,
+      "maximum": 100000,
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "material": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Material",
+      "type": "string"
+    },
+    "unit": {
+      "default": "mm",
+      "title": "Unit",
+      "type": "string"
+    },
+    "currency": {
+      "default": "EUR",
+      "title": "Currency",
+      "type": "string"
+    },
+    "plant": {
+      "default": "DE-DEMO",
+      "title": "Plant",
+      "type": "string"
+    },
+    "product_family": {
+      "default": "mounting-bracket",
+      "title": "Product Family",
+      "type": "string"
+    }
+  },
+  "required": [
+    "part_number",
+    "required_revision",
+    "drawing_revision",
+    "quantity",
+    "material"
+  ],
+  "title": "ConfirmedInputs",
+  "type": "object"
+}

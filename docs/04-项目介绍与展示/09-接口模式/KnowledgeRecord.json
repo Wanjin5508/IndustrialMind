@@ -1,0 +1,131 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "catalog",
+        "template",
+        "rate",
+        "history"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "plant": {
+      "title": "Plant",
+      "type": "string"
+    },
+    "product_family": {
+      "title": "Product Family",
+      "type": "string"
+    },
+    "roles": {
+      "items": {
+        "enum": [
+          "demo-engineer",
+          "demo-approver"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Roles",
+      "type": "array"
+    },
+    "part_number": {
+      "title": "Part Number",
+      "type": "string"
+    },
+    "material": {
+      "title": "Material",
+      "type": "string"
+    },
+    "unit": {
+      "title": "Unit",
+      "type": "string"
+    },
+    "currency": {
+      "title": "Currency",
+      "type": "string"
+    },
+    "revisions": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Revisions",
+      "type": "array"
+    },
+    "approved": {
+      "title": "Approved",
+      "type": "boolean"
+    },
+    "valid_from": {
+      "format": "date",
+      "title": "Valid From",
+      "type": "string"
+    },
+    "valid_until": {
+      "format": "date",
+      "title": "Valid Until",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "content": {
+      "title": "Content",
+      "type": "string"
+    },
+    "origin_type": {
+      "const": "synthetic",
+      "title": "Origin Type",
+      "type": "string"
+    },
+    "payload_source": {
+      "enum": [
+        "manufacturing",
+        "reference_only"
+      ],
+      "title": "Payload Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "kind",
+    "project_id",
+    "plant",
+    "product_family",
+    "roles",
+    "part_number",
+    "material",
+    "unit",
+    "currency",
+    "revisions",
+    "approved",
+    "valid_from",
+    "valid_until",
+    "version",
+    "content",
+    "origin_type",
+    "payload_source"
+  ],
+  "title": "KnowledgeRecord",
+  "type": "object"
+}

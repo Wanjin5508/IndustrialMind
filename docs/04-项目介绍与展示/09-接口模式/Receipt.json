@@ -1,0 +1,30 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "external_id": {
+      "title": "External Id",
+      "type": "string"
+    },
+    "target_version": {
+      "title": "Target Version",
+      "type": "string"
+    },
+    "acked_at": {
+      "format": "date-time",
+      "title": "Acked At",
+      "type": "string"
+    },
+    "response_sha256": {
+      "title": "Response Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "external_id",
+    "target_version",
+    "acked_at",
+    "response_sha256"
+  ],
+  "title": "Receipt",
+  "type": "object"
+}

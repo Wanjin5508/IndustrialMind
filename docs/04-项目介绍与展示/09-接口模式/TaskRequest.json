@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "KnowledgeQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Query",
+          "type": "string"
+        },
+        "part_number": {
+          "default": "PM-BRKT-010",
+          "maxLength": 80,
+          "title": "Part Number",
+          "type": "string"
+        },
+        "material": {
+          "default": "Al-6061-T6",
+          "maxLength": 80,
+          "title": "Material",
+          "type": "string"
+        },
+        "unit": {
+          "default": "mm",
+          "maxLength": 16,
+          "title": "Unit",
+          "type": "string"
+        },
+        "currency": {
+          "default": "EUR",
+          "maxLength": 16,
+          "title": "Currency",
+          "type": "string"
+        },
+        "revision": {
+          "default": "B",
+          "maxLength": 16,
+          "title": "Revision",
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "catalog",
+                "template",
+                "rate",
+                "history"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        }
+      },
+      "title": "KnowledgeQuery",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Explicit routing only: free text is retained for human clarification.",
+  "properties": {
+    "intent": {
+      "anyOf": [
+        {
+          "enum": [
+            "prepare_quote",
+            "review_drawing",
+            "search_knowledge"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Intent"
+    },
+    "request": {
+      "default": "",
+      "maxLength": 1000,
+      "title": "Request",
+      "type": "string"
+    },
+    "query": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KnowledgeQuery"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "fixture_id": {
+      "anyOf": [
+        {
+          "maxLength": 80,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fixture Id"
+    }
+  },
+  "title": "TaskRequest",
+  "type": "object"
+}

@@ -1,0 +1,272 @@
+{
+  "$defs": {
+    "IntentState": {
+      "enum": [
+        "PREPARED",
+        "DISPATCHING",
+        "RETRY_WAIT",
+        "UNKNOWN_OUTCOME",
+        "ACKED",
+        "VERIFIED",
+        "DIVERGED",
+        "HELD",
+        "REJECTED",
+        "QUARANTINED",
+        "SUPERSEDED"
+      ],
+      "title": "IntentState",
+      "type": "string"
+    },
+    "Receipt": {
+      "additionalProperties": false,
+      "properties": {
+        "external_id": {
+          "title": "External Id",
+          "type": "string"
+        },
+        "target_version": {
+          "title": "Target Version",
+          "type": "string"
+        },
+        "acked_at": {
+          "format": "date-time",
+          "title": "Acked At",
+          "type": "string"
+        },
+        "response_sha256": {
+          "title": "Response Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "external_id",
+        "target_version",
+        "acked_at",
+        "response_sha256"
+      ],
+      "title": "Receipt",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "target": {
+      "const": "ERP",
+      "default": "ERP",
+      "title": "Target",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "CREATE_DRAFT",
+        "UPDATE_DRAFT"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "business_key": {
+      "title": "Business Key",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "payload_sha256": {
+      "title": "Payload Sha256",
+      "type": "string"
+    },
+    "approved_quote_hash": {
+      "title": "Approved Quote Hash",
+      "type": "string"
+    },
+    "base_snapshot_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Base Snapshot Ids",
+      "type": "array"
+    },
+    "mapping_version": {
+      "title": "Mapping Version",
+      "type": "string"
+    },
+    "external_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "External Id"
+    },
+    "expected_target_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Target Version"
+    },
+    "state": {
+      "$ref": "#/$defs/IntentState",
+      "default": "PREPARED"
+    },
+    "attempts": {
+      "default": 0,
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "max_attempts": {
+      "exclusiveMinimum": 0,
+      "title": "Max Attempts",
+      "type": "integer"
+    },
+    "next_attempt_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Next Attempt At"
+    },
+    "lease_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lease Until"
+    },
+    "lease_token": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Lease Token"
+    },
+    "last_error_class": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Error Class"
+    },
+    "last_error_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Error Code"
+    },
+    "receipt": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Receipt"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "requested_by": {
+      "title": "Requested By",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "reconciliation": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reconciliation"
+    },
+    "attempt_log": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Attempt Log",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "run_id",
+    "operation",
+    "business_key",
+    "idempotency_key",
+    "payload",
+    "payload_sha256",
+    "approved_quote_hash",
+    "base_snapshot_ids",
+    "mapping_version",
+    "max_attempts",
+    "requested_by",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "SyncIntentView",
+  "type": "object"
+}

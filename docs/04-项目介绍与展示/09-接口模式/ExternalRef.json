@@ -1,0 +1,34 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "system": {
+      "enum": [
+        "PLM",
+        "ERP",
+        "MES"
+      ],
+      "title": "System",
+      "type": "string"
+    },
+    "entity": {
+      "title": "Entity",
+      "type": "string"
+    },
+    "external_id": {
+      "title": "External Id",
+      "type": "string"
+    },
+    "plant": {
+      "title": "Plant",
+      "type": "string"
+    }
+  },
+  "required": [
+    "system",
+    "entity",
+    "external_id",
+    "plant"
+  ],
+  "title": "ExternalRef",
+  "type": "object"
+}

@@ -1,0 +1,124 @@
+{
+  "$defs": {
+    "DrawingExtraction": {
+      "additionalProperties": false,
+      "properties": {
+        "part_number": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "revision": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "material": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "unit": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "width_mm": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "height_mm": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "thickness_mm": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "hole_diameter_mm": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "surface_finish": {
+          "$ref": "#/$defs/ExtractedValue"
+        }
+      },
+      "required": [
+        "part_number",
+        "revision",
+        "material",
+        "unit",
+        "width_mm",
+        "height_mm",
+        "thickness_mm",
+        "hole_diameter_mm",
+        "surface_finish"
+      ],
+      "title": "DrawingExtraction",
+      "type": "object"
+    },
+    "ExtractedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "value",
+        "source_id"
+      ],
+      "title": "ExtractedValue",
+      "type": "object"
+    },
+    "RfqExtraction": {
+      "additionalProperties": false,
+      "properties": {
+        "part_number": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "required_revision": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "quantity": {
+          "$ref": "#/$defs/ExtractedValue"
+        },
+        "currency": {
+          "$ref": "#/$defs/ExtractedValue"
+        }
+      },
+      "required": [
+        "part_number",
+        "required_revision",
+        "quantity",
+        "currency"
+      ],
+      "title": "RfqExtraction",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "rfq": {
+      "$ref": "#/$defs/RfqExtraction"
+    },
+    "drawing": {
+      "$ref": "#/$defs/DrawingExtraction"
+    }
+  },
+  "required": [
+    "rfq",
+    "drawing"
+  ],
+  "title": "Extraction",
+  "type": "object"
+}

@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6021
+SYNTHETIC EVALUATION
+
+Currency: EUR
+Quantity: 140
+Required revision: L
+Part number: BJ-976
+
+Request an internal budget; confirm delivery separately.

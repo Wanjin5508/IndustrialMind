@@ -1,0 +1,313 @@
+[
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "manufacturing",
+    "id": "KB-CATALOG",
+    "kind": "catalog",
+    "version": "catalog-demo-1",
+    "title": "批准材料目录 / Aluminum catalog",
+    "content": "SYNTHETIC. Al-6061-T6 mounting plate; supplier availability pending. 材料目录"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "manufacturing",
+    "id": "KB-TEMPLATE",
+    "kind": "template",
+    "version": "bracket-routing-demo-2",
+    "title": "批准工艺模板 / Routing",
+    "content": "SYNTHETIC. Blank preparation, milling/drilling, anodize, inspection. 工艺模板"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "manufacturing",
+    "id": "KB-RATE",
+    "kind": "rate",
+    "version": "rates-eur-demo-b-1",
+    "title": "有效德国费率 / EUR rates",
+    "content": "SYNTHETIC. Current prices only from manufacturing.json. 有效费率"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-HISTORY",
+    "kind": "history",
+    "version": "history-1",
+    "title": "历史支架 / Historical bracket",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2024-01-01",
+    "valid_until": "2025-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "manufacturing",
+    "id": "KB-EXPIRED",
+    "kind": "rate",
+    "version": "rates-eur-demo-1",
+    "title": "过期费率 / Expired rate",
+    "content": "SYNTHETIC. Current prices only from manufacturing.json. 有效费率"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": false,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "manufacturing",
+    "id": "KB-DRAFT",
+    "kind": "rate",
+    "version": "rates-eur-demo-1",
+    "title": "未批准费率 / Draft rate",
+    "content": "SYNTHETIC. Current prices only from manufacturing.json. 有效费率"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Steel-S235",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-STEEL",
+    "kind": "history",
+    "version": "history-1",
+    "title": "钢材料历史件 / Steel history",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "A"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-REV-A",
+    "kind": "history",
+    "version": "history-1",
+    "title": "历史 A 版 / Revision A",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-PRIVATE",
+    "kind": "history",
+    "version": "history-1",
+    "title": "审批人参考记录 / Approver only",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  },
+  {
+    "project_id": "OTHER-PROJECT",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-OTHER-PROJECT",
+    "kind": "history",
+    "version": "history-1",
+    "title": "Other project private",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "PL-DEMO",
+    "product_family": "mounting-bracket",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-OTHER-PLANT",
+    "kind": "history",
+    "version": "history-1",
+    "title": "Other plant private",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "actuator",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "part_number": "PM-BRKT-010",
+    "material": "Al-6061-T6",
+    "unit": "mm",
+    "currency": "EUR",
+    "revisions": [
+      "B"
+    ],
+    "approved": true,
+    "valid_from": "2026-01-01",
+    "valid_until": "2030-12-31",
+    "origin_type": "synthetic",
+    "payload_source": "reference_only",
+    "id": "KB-OTHER-FAMILY",
+    "kind": "history",
+    "version": "history-1",
+    "title": "Other family private",
+    "content": "SYNTHETIC. Historical unit price EUR 9.99. Prior batch assumptions differ; never reuse this price."
+  }
+]

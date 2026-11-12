@@ -1,0 +1,75 @@
+{
+  "project_id": "PM-DEMO",
+  "plant": "DE-DEMO",
+  "product_family": "mounting-bracket",
+  "valid_from": "2026-01-01",
+  "valid_until": "2027-12-31",
+  "roles": [
+    "demo-engineer",
+    "demo-approver"
+  ],
+  "origin_type": "synthetic",
+  "approved": true,
+  "currency": "EUR",
+  "material": "Al-6082-T6",
+  "unit": "mm",
+  "material_unit": "5.60",
+  "finish_unit": "1.80",
+  "machine_hourly": "72",
+  "cycle_hours": "0.14",
+  "setup_hours": "1.25",
+  "inspection_hourly": "52",
+  "inspection_hours": "0.025",
+  "target_margin": "0.20",
+  "notice": "SYNTHETIC; approved only for isolated M7 evaluation",
+  "rules_version": "m7-quote-1",
+  "catalog_version": "m7-f01-catalog-1",
+  "template_version": "m7-f01-template-1",
+  "rate_version": "m7-f01-rate-1",
+  "approved_revisions": [
+    "C"
+  ],
+  "applicability": {
+    "part_number": "AX-218",
+    "dimensions": {
+      "width_mm": "63",
+      "height_mm": "38",
+      "thickness_mm": "9",
+      "hole_diameter_mm": "4.8"
+    },
+    "surface_finish": "Clear anodize"
+  },
+  "blank": {
+    "code": "RAW-AX-218",
+    "specification": "66 x 42 x 11 mm",
+    "unit": "piece",
+    "quantity_per_part": 1
+  },
+  "routing": [
+    {
+      "step": 10,
+      "operation": "Cut blank",
+      "basis": "Frozen material allowance"
+    },
+    {
+      "step": 20,
+      "operation": "Machine and deburr",
+      "basis": "Frozen machine and setup time"
+    },
+    {
+      "step": 30,
+      "operation": "Clear anodize",
+      "basis": "Frozen finishing allowance"
+    },
+    {
+      "step": 40,
+      "operation": "Inspect",
+      "basis": "Frozen inspection time"
+    }
+  ],
+  "pending": [
+    "Supplier availability",
+    "Capacity and delivery",
+    "Freight and terms"
+  ]
+}

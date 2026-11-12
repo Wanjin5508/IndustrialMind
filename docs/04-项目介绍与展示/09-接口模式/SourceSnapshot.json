@@ -1,0 +1,110 @@
+{
+  "$defs": {
+    "ExternalRef": {
+      "additionalProperties": false,
+      "properties": {
+        "system": {
+          "enum": [
+            "PLM",
+            "ERP",
+            "MES"
+          ],
+          "title": "System",
+          "type": "string"
+        },
+        "entity": {
+          "title": "Entity",
+          "type": "string"
+        },
+        "external_id": {
+          "title": "External Id",
+          "type": "string"
+        },
+        "plant": {
+          "title": "Plant",
+          "type": "string"
+        }
+      },
+      "required": [
+        "system",
+        "entity",
+        "external_id",
+        "plant"
+      ],
+      "title": "ExternalRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "ref": {
+      "$ref": "#/$defs/ExternalRef"
+    },
+    "source_version": {
+      "title": "Source Version",
+      "type": "string"
+    },
+    "as_of": {
+      "format": "date-time",
+      "title": "As Of",
+      "type": "string"
+    },
+    "fetched_at": {
+      "format": "date-time",
+      "title": "Fetched At",
+      "type": "string"
+    },
+    "ttl_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Ttl Seconds",
+      "type": "integer"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "payload_sha256": {
+      "title": "Payload Sha256",
+      "type": "string"
+    },
+    "adapter_version": {
+      "title": "Adapter Version",
+      "type": "string"
+    },
+    "mapping_version": {
+      "title": "Mapping Version",
+      "type": "string"
+    },
+    "unknown_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unknown Fields",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "run_id",
+    "ref",
+    "source_version",
+    "as_of",
+    "fetched_at",
+    "ttl_seconds",
+    "payload",
+    "payload_sha256",
+    "adapter_version",
+    "mapping_version"
+  ],
+  "title": "SourceSnapshot",
+  "type": "object"
+}

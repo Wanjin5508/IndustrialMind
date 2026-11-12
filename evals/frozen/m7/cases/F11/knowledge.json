@@ -1,0 +1,131 @@
+[
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-7075-T6",
+    "unit": "mm",
+    "part_number": "GS-443",
+    "revisions": [
+      "K"
+    ],
+    "id": "F11-CATALOG",
+    "kind": "catalog",
+    "title": "M7 approved catalog",
+    "version": "m7-f11-catalog-1",
+    "payload_source": "manufacturing",
+    "content": "Synthetic GS-443 catalog record."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-7075-T6",
+    "unit": "mm",
+    "part_number": "GS-443",
+    "revisions": [
+      "K"
+    ],
+    "id": "F11-TEMPLATE",
+    "kind": "template",
+    "title": "M7 approved template",
+    "version": "m7-f11-template-1",
+    "payload_source": "manufacturing",
+    "content": "Synthetic GS-443 template record."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-7075-T6",
+    "unit": "mm",
+    "part_number": "GS-443",
+    "revisions": [
+      "K"
+    ],
+    "id": "F11-RATE",
+    "kind": "rate",
+    "title": "M7 approved rate",
+    "version": "m7-f11-rate-1",
+    "payload_source": "manufacturing",
+    "content": "Synthetic GS-443 rate record."
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-engineer",
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-7075-T6",
+    "unit": "mm",
+    "part_number": "ZZ-104",
+    "revisions": [
+      "A"
+    ],
+    "kind": "history",
+    "version": "m7-archive-1",
+    "payload_source": "reference_only",
+    "content": "Archived unit amount EUR 1.23. Different part and revision.",
+    "id": "F11-HISTORY",
+    "title": "Archive 1.23"
+  },
+  {
+    "project_id": "PM-DEMO",
+    "plant": "DE-DEMO",
+    "product_family": "mounting-bracket",
+    "valid_from": "2026-01-01",
+    "valid_until": "2027-12-31",
+    "roles": [
+      "demo-approver"
+    ],
+    "origin_type": "synthetic",
+    "approved": true,
+    "currency": "EUR",
+    "material": "Al-7075-T6",
+    "unit": "mm",
+    "part_number": "GS-443",
+    "revisions": [
+      "K"
+    ],
+    "kind": "history",
+    "version": "m7-archive-1",
+    "payload_source": "reference_only",
+    "content": "Archived unit amount EUR 1.23. Different part and revision.",
+    "id": "F11-PRIVATE",
+    "title": "Approver-only archive"
+  }
+]

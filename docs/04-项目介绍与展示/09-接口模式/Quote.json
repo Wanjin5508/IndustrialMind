@@ -1,0 +1,241 @@
+{
+  "$defs": {
+    "CostLine": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "unit_cost": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Unit Cost"
+        },
+        "batch_cost": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Batch Cost"
+        },
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "description",
+        "unit_cost",
+        "batch_cost",
+        "basis"
+      ],
+      "title": "CostLine",
+      "type": "object"
+    },
+    "MaterialLine": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "specification": {
+          "minLength": 1,
+          "title": "Specification",
+          "type": "string"
+        },
+        "quantity_per_part": {
+          "exclusiveMinimum": 0,
+          "title": "Quantity Per Part",
+          "type": "integer"
+        },
+        "unit": {
+          "const": "piece",
+          "title": "Unit",
+          "type": "string"
+        },
+        "material": {
+          "title": "Material",
+          "type": "string"
+        },
+        "batch_quantity": {
+          "exclusiveMinimum": 0,
+          "title": "Batch Quantity",
+          "type": "integer"
+        },
+        "template_version": {
+          "title": "Template Version",
+          "type": "string"
+        },
+        "catalog_version": {
+          "title": "Catalog Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "specification",
+        "quantity_per_part",
+        "unit",
+        "material",
+        "batch_quantity",
+        "template_version",
+        "catalog_version"
+      ],
+      "title": "MaterialLine",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "draft_version": {
+      "title": "Draft Version",
+      "type": "integer"
+    },
+    "quantity": {
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "currency": {
+      "const": "EUR",
+      "default": "EUR",
+      "title": "Currency",
+      "type": "string"
+    },
+    "unit_cost": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Unit Cost"
+    },
+    "unit_price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Unit Price"
+    },
+    "total_price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Total Price"
+    },
+    "margin": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Margin"
+    },
+    "lines": {
+      "items": {
+        "$ref": "#/$defs/CostLine"
+      },
+      "title": "Lines",
+      "type": "array"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "reference_hash": {
+      "title": "Reference Hash",
+      "type": "string"
+    },
+    "rules_version": {
+      "title": "Rules Version",
+      "type": "string"
+    },
+    "rate_version": {
+      "title": "Rate Version",
+      "type": "string"
+    },
+    "template_version": {
+      "title": "Template Version",
+      "type": "string"
+    },
+    "pending": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Pending",
+      "type": "array"
+    },
+    "knowledge_basis": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Knowledge Basis",
+      "type": "array"
+    },
+    "routing": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Routing",
+      "type": "array"
+    },
+    "material_lines": {
+      "items": {
+        "$ref": "#/$defs/MaterialLine"
+      },
+      "title": "Material Lines",
+      "type": "array"
+    }
+  },
+  "required": [
+    "draft_version",
+    "quantity",
+    "unit_cost",
+    "unit_price",
+    "total_price",
+    "margin",
+    "lines",
+    "input_hash",
+    "reference_hash",
+    "rules_version",
+    "rate_version",
+    "template_version",
+    "pending"
+  ],
+  "title": "Quote",
+  "type": "object"
+}

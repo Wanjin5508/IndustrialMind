@@ -1,0 +1,75 @@
+{
+  "project_id": "PM-DEMO",
+  "plant": "DE-DEMO",
+  "product_family": "mounting-bracket",
+  "valid_from": "2026-01-01",
+  "valid_until": "2027-12-31",
+  "roles": [
+    "demo-engineer",
+    "demo-approver"
+  ],
+  "origin_type": "synthetic",
+  "approved": true,
+  "currency": "EUR",
+  "material": "Al-7075-T6",
+  "unit": "mm",
+  "material_unit": "9.20",
+  "finish_unit": "1.25",
+  "machine_hourly": "65",
+  "cycle_hours": "0.11",
+  "setup_hours": "1.10",
+  "inspection_hourly": "54",
+  "inspection_hours": "0.020",
+  "target_margin": "0.22",
+  "notice": "SYNTHETIC; approved only for isolated M7 evaluation",
+  "rules_version": "m7-quote-1",
+  "catalog_version": "m7-f11-catalog-1",
+  "template_version": "m7-f11-template-1",
+  "rate_version": "m7-f11-rate-1",
+  "approved_revisions": [
+    "K"
+  ],
+  "applicability": {
+    "part_number": "GS-443",
+    "dimensions": {
+      "width_mm": "109.22",
+      "height_mm": "73.66",
+      "thickness_mm": "12.7",
+      "hole_diameter_mm": "6.35"
+    },
+    "surface_finish": "Hard anodize"
+  },
+  "blank": {
+    "code": "RAW-GS-443",
+    "specification": "112 x 77 x 14 mm",
+    "unit": "piece",
+    "quantity_per_part": 1
+  },
+  "routing": [
+    {
+      "step": 10,
+      "operation": "Cut blank",
+      "basis": "Frozen material allowance"
+    },
+    {
+      "step": 20,
+      "operation": "Machine and deburr",
+      "basis": "Frozen machine and setup time"
+    },
+    {
+      "step": 30,
+      "operation": "Hard anodize",
+      "basis": "Frozen finishing allowance"
+    },
+    {
+      "step": 40,
+      "operation": "Inspect",
+      "basis": "Frozen inspection time"
+    }
+  ],
+  "pending": [
+    "Supplier availability",
+    "Capacity and delivery",
+    "Freight and terms"
+  ]
+}

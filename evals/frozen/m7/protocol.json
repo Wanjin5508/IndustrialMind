@@ -1,0 +1,13 @@
+{
+  "effective_date": "2026-11-10",
+  "primary_cases": 12,
+  "positive_cases": 4,
+  "drawing_page": 1,
+  "local_mode": "local_text",
+  "live": {
+    "mode": "live",
+    "timeout_seconds": 60,
+    "attempts_per_input": 1
+  },
+  "latency_percentile": "nearest-rank"
+}

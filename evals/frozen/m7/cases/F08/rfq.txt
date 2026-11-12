@@ -1,0 +1,9 @@
+QUOTE REQUEST / 6017
+SYNTHETIC EVALUATION
+
+Currency: EUR
+Quantity: 54
+Required revision: C
+Part number: RU-138
+
+Request an internal budget; confirm delivery separately.

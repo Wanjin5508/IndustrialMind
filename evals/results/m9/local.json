@@ -1,0 +1,478 @@
+{
+  "suite": "m9-system-harness-v1",
+  "mode": "SIMULATED / NO EXTERNAL WRITE",
+  "complete": true,
+  "protocol": {
+    "version": "m9-system-harness-v1",
+    "effective_utc": "2026-11-10T00:00:00+00:00",
+    "clock": "FakeClock",
+    "scenario_count": 17,
+    "scope": "Independent persistent fake systems; no external write",
+    "duplicate_metric": "Excludes the one deliberately injected target record in M9-17; that case must detect DUPLICATE.",
+    "sha256": {
+      "evals/frozen/m9/scenarios.json": "1b36e164b194f047ce82c5af1aaee47051a4d287eb28bc9ccc72b8c5fe9ac8e1",
+      "fixtures/reference/manufacturing.json": "bd2cad7ad786b50524de72e3ae63f9f410fd31edf50921126109820da29aeb1a",
+      "fixtures/reference/knowledge.json": "d6423819dbf096c148ddd3c72274db8396ab981b0caff3f953e0aece2fd8dbfb"
+    }
+  },
+  "git_commit": "5a388cb15230e2949898b6f1f52780cc309073a3",
+  "source_sha256": {
+    "apps/api/src/rfq_workbench/__init__.py": "2f5591126e32e27f60101b06f7997185db6367bb6f8fc71b51259234aa8c8963",
+    "apps/api/src/rfq_workbench/canonical.py": "ef311e901e075d0724f76870c866b0246ac4e8d26bd090560f873cf498e705ec",
+    "apps/api/src/rfq_workbench/clock.py": "1482078e0ebcd205807b42a09b4f216904fa0be0c4b56cdba68e24e73faa0455",
+    "apps/api/src/rfq_workbench/config.py": "3ae747fc05adbe363335d971f0b8714fe9b7d6493444c97d7fd8073a37a83c7a",
+    "apps/api/src/rfq_workbench/contracts.py": "23ca7c462cf71e783d2d1bed2a965e1a6bcb90ffe9dd61a63c069ffec8908a18",
+    "apps/api/src/rfq_workbench/costing.py": "73943ffb7520da0a5bfb8f6db41a922e68d9a8c9a66ced6968145586aa1c3b35",
+    "apps/api/src/rfq_workbench/documents.py": "20b6baa4697b7d1b1d5b82a2edc3c8babab16c497e05e030044f4ecb35d81112",
+    "apps/api/src/rfq_workbench/errors.py": "ab95c708a07a133306d54af8639aafca5ee17249b3f31b026fee184fca2e9c39",
+    "apps/api/src/rfq_workbench/evidence.py": "ea4c146f68065d5fd3e87dcd4684e9411c3e037c1208a92bc50b49db1c0a2bc3",
+    "apps/api/src/rfq_workbench/extraction.py": "cdd8896516806740b3fe26a88f8bfceec7a68e3f78ff4861e5ce58d49ad4276f",
+    "apps/api/src/rfq_workbench/file_workflow.py": "e35cd819ff1f1aedbead20f3ac56336f2e8b0b2a47fc325ddd58e878108054f6",
+    "apps/api/src/rfq_workbench/idempotency.py": "e4e2fc8b40165e8cda555d7557ee511eba225000575cbfa995a1cd880248bad8",
+    "apps/api/src/rfq_workbench/integrations/__init__.py": "818aacf9f48c43b5aabe6be1ddd76b45b666dc535a52859113f06e59681539d3",
+    "apps/api/src/rfq_workbench/integrations/contracts.py": "dc7fc3436fe981791f9df4bbc4fbe5bb0ae5320d2167e6715b013c2923478138",
+    "apps/api/src/rfq_workbench/integrations/fakes.py": "51eca39a538c3847d24b9193a3b047f36c4014ac955458f14c8c5bccdd3adfc7",
+    "apps/api/src/rfq_workbench/integrations/faults.py": "28029ffa770e59c16c71a9a18a2f45513f6661337818dd9a5089c512f1e90bce",
+    "apps/api/src/rfq_workbench/integrations/mappers.py": "8ea99a0a5d1fa140c4c6926ada011865f8c9a6ae99427d77769ca2d67fadcff3",
+    "apps/api/src/rfq_workbench/integrations/ports.py": "b4f59954a62a63c4f6912144313ab495c699cb2e0646ffcff165a9570d39f799",
+    "apps/api/src/rfq_workbench/integrations/snapshots.py": "a22127c738a7b4107abf2fae86a4848f040169631b521b2421965baaef09cef9",
+    "apps/api/src/rfq_workbench/knowledge.py": "2df38a835651d1ed1c94b52f8cc38dc5d8c6a1f80cb2b8821a53ab763269999a",
+    "apps/api/src/rfq_workbench/main.py": "1cf965eb8099a91b54d459f21176d5055c298ce9afa1fd29232cd4b294cf660b",
+    "apps/api/src/rfq_workbench/model_usage.py": "50407694fb0e4e457a2a8abaf0966de0ccf4160815aa1c77de6900ba10f81e05",
+    "apps/api/src/rfq_workbench/orchestrator.py": "7011d4406bd716c58124c3d37b5141acc4e12d5fd710786fe6f816439da19ed3",
+    "apps/api/src/rfq_workbench/replay.py": "d9f145e574c3160c479630f6179e2a6d00e707645a26e0d1c52e6de59ed2a478",
+    "apps/api/src/rfq_workbench/repository.py": "3a540bf630f55ebffaf3fc140925663f9c74fca0a35b58ffafe2683c910df4e6",
+    "apps/api/src/rfq_workbench/service.py": "64b95deabdcfe9a0c15ea83f3f00049fb6f91a56ee8551fbfd6bd8d53bcff92d",
+    "apps/api/src/rfq_workbench/sync.py": "8af99cfc1cba6beb771e7e1b2df4aaee1c04603b8bc79758e9fb7159c286f302",
+    "apps/api/src/rfq_workbench/sync_store.py": "9c1b2ec8d1451ce4558001bda030cfdb1b303ee1abaf292fa93d799e5ca16792",
+    "scripts/build_m7_fixtures.py": "dffe5edc4e2514f629271716b3cc8ba5cdb43301804bce74bc329ffe1d064632",
+    "scripts/calculate_m8_roi.py": "97ad147fded26cc6330bd6f0b75d8d5102855bd7477cf0e0a6958a98315290c9",
+    "scripts/evaluate_m7.py": "e1d5f4a97877909d01b0803175f1ba0cd0fbbd4719637efde5a3f459fa104725",
+    "scripts/evaluate_m9.py": "dcacfa67ae3ecb75839acc5ef19c42810b4ddb326c60cc6e93bc64b6eaf39bfb",
+    "scripts/export_openapi.py": "17299147ba91498edac7c76d94931ad8e1d99a45f1328100788eef2dc68981ba",
+    "scripts/export_schemas.py": "26632f08e995a625a055c999c14ec48c507c479ea7763d5a6e95e91e540d02b6",
+    "scripts/generate_fixtures.py": "20d8853ec9fad78657287d2485fdc0c4003f57bb5488bf49010e3a08b36fa6db",
+    "scripts/generate_interview_pdfs.py": "c9cbe30701c76686595ea56f40e983c00574c858d8fd643702487f0f568815c4",
+    "scripts/live_acceptance.py": "d3f56ba197356a4f5cfacaf3df4fe9f9033758ca55c91f74e14edf242fbb1976",
+    "scripts/m3_live_acceptance.py": "cc9101703ba61e6bc37a3fdae93a7a74bd32780bbae6e195712d65312a6de8d9",
+    "scripts/m7_business.py": "7ae435a75f53a96b8f7776da02032548c22667aefdc792f2a2d4bcdbc593b580",
+    "scripts/m7_suite.py": "a2d9785e0f271d8e1018fca63d629582c3c83ec305c93c6ec0a1bc79c72ef5f3",
+    "scripts/m9_scenarios.py": "09f5ac7aa40c26df46a36578ea0193e98e47fc513b9489a5512a8904f95ac597",
+    "scripts/sync_worker.py": "5c0efba6243596a813856f5ff5058fa58c29a71a4f3b71bd6c2743be819ae5f4"
+  },
+  "cases": [
+    {
+      "id": "M9-01",
+      "name": "正常创建与验证",
+      "passed": true,
+      "expected": {
+        "id": "M9-01",
+        "name": "正常创建与验证",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "b2f10560a37a8de2adaff9bd27500dd55a94c4c2c0983adacc942eb73ffc0d55"
+        ]
+      }
+    },
+    {
+      "id": "M9-02",
+      "name": "提交前超时",
+      "passed": true,
+      "expected": {
+        "id": "M9-02",
+        "name": "提交前超时",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 2,
+        "attempts": 2,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "703b7849ba208ec0486fe188798a0bd8d90d089043257f3c50fb80dd8780f691"
+        ]
+      }
+    },
+    {
+      "id": "M9-03",
+      "name": "提交后超时",
+      "passed": true,
+      "expected": {
+        "id": "M9-03",
+        "name": "提交后超时",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "0eb94e0efb22c4ed51f193197d96ba7d98a803e43ad81f19b52a2c2637963fa3"
+        ]
+      }
+    },
+    {
+      "id": "M9-04",
+      "name": "重复投递",
+      "passed": true,
+      "expected": {
+        "id": "M9-04",
+        "name": "重复投递",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 2,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "b84c9028aeadead2edc31ddfd74e9e43835ff608de3002e980f0a70870c75c4f"
+        ]
+      }
+    },
+    {
+      "id": "M9-05",
+      "name": "发送后崩溃与重启",
+      "passed": true,
+      "expected": {
+        "id": "M9-05",
+        "name": "发送后崩溃与重启",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "d013208b63ed0850d58f63efb6f84e8eae7fe113095fe2c487be8a71669a0dd9"
+        ]
+      }
+    },
+    {
+      "id": "M9-06",
+      "name": "双派发器并发",
+      "passed": true,
+      "expected": {
+        "id": "M9-06",
+        "name": "双派发器并发",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "40c2796ed81ec66b6e093535d4d5d3e2cd0b6e1516f70622229dab04c2eba40e"
+        ]
+      }
+    },
+    {
+      "id": "M9-07",
+      "name": "租约回收后的迟到结果",
+      "passed": true,
+      "expected": {
+        "id": "M9-07",
+        "name": "租约回收后的迟到结果",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "5e8eda38658ddd562844788da21c9fd87e275e8963d4a284bb501cf6f41d8809"
+        ]
+      }
+    },
+    {
+      "id": "M9-08",
+      "name": "目标版本冲突",
+      "passed": true,
+      "expected": {
+        "id": "M9-08",
+        "name": "目标版本冲突",
+        "state": "DIVERGED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "DIVERGED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 0,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "2"
+        ],
+        "target_hashes": [
+          "eef581acd25f6e801bcf5c025a656f88df67421a13d473b8031cea05f3f21ff4"
+        ]
+      }
+    },
+    {
+      "id": "M9-09",
+      "name": "429与503预算耗尽",
+      "passed": true,
+      "expected": {
+        "id": "M9-09",
+        "name": "429与503预算耗尽",
+        "state": "QUARANTINED",
+        "draft_count": 0
+      },
+      "observed": {
+        "state": "QUARANTINED",
+        "draft_count": 0,
+        "variants": [
+          "QUARANTINED",
+          "QUARANTINED"
+        ]
+      }
+    },
+    {
+      "id": "M9-10",
+      "name": "排队期间PLM发布变更",
+      "passed": true,
+      "expected": {
+        "id": "M9-10",
+        "name": "排队期间PLM发布变更",
+        "state": "HELD",
+        "draft_count": 0
+      },
+      "observed": {
+        "state": "HELD",
+        "draft_count": 0,
+        "put_calls": 0,
+        "attempts": 0,
+        "verified_payload_matches": true,
+        "target_versions": [],
+        "target_hashes": []
+      }
+    },
+    {
+      "id": "M9-11",
+      "name": "排队期间批准失效",
+      "passed": true,
+      "expected": {
+        "id": "M9-11",
+        "name": "排队期间批准失效",
+        "state": "SUPERSEDED",
+        "draft_count": 0
+      },
+      "observed": {
+        "state": "SUPERSEDED",
+        "draft_count": 0,
+        "put_calls": 0,
+        "attempts": 0,
+        "verified_payload_matches": true,
+        "target_versions": [],
+        "target_hashes": []
+      }
+    },
+    {
+      "id": "M9-12",
+      "name": "缺行的部分写入",
+      "passed": true,
+      "expected": {
+        "id": "M9-12",
+        "name": "缺行的部分写入",
+        "state": "DIVERGED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "DIVERGED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "f7f3283d04fa909a5a9189110ed6b2648b23ff83df98b14c4d8364f1bdf6ec91"
+        ]
+      }
+    },
+    {
+      "id": "M9-13",
+      "name": "币种单位与精度映射阻断",
+      "passed": true,
+      "expected": {
+        "id": "M9-13",
+        "name": "币种单位与精度映射阻断",
+        "state": "BLOCKED",
+        "draft_count": 0
+      },
+      "observed": {
+        "state": "BLOCKED",
+        "draft_count": 0,
+        "errors": [
+          "MAPPING_UNSUPPORTED",
+          "MAPPING_UNSUPPORTED",
+          "MAPPING_UNSUPPORTED",
+          "MAPPING_PRECISION"
+        ]
+      }
+    },
+    {
+      "id": "M9-14",
+      "name": "缺关键字段与新增可选字段",
+      "passed": true,
+      "expected": {
+        "id": "M9-14",
+        "name": "缺关键字段与新增可选字段",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "ab4be4b8b19653413f5c63b6cb9a8f052648621eb0c2de29f401defbbe882b35"
+        ]
+      }
+    },
+    {
+      "id": "M9-15",
+      "name": "新批准版本更新同一草案",
+      "passed": true,
+      "expected": {
+        "id": "M9-15",
+        "name": "新批准版本更新同一草案",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 2,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "2"
+        ],
+        "target_hashes": [
+          "8fa7246e0ddf9de768875e76be4d6bf7fbb08e8c3847c37264cb8af0be3bd19b"
+        ]
+      }
+    },
+    {
+      "id": "M9-16",
+      "name": "API幂等键重试与复用",
+      "passed": true,
+      "expected": {
+        "id": "M9-16",
+        "name": "API幂等键重试与复用",
+        "state": "VERIFIED",
+        "draft_count": 1
+      },
+      "observed": {
+        "state": "VERIFIED",
+        "draft_count": 1,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1"
+        ],
+        "target_hashes": [
+          "606e472a2657b595387bf88fe9c820c57837dd8b293c2f325f9b6425ea2b5637"
+        ]
+      }
+    },
+    {
+      "id": "M9-17",
+      "name": "人工注入的重复目标记录",
+      "passed": true,
+      "expected": {
+        "id": "M9-17",
+        "name": "人工注入的重复目标记录",
+        "state": "DIVERGED",
+        "draft_count": 2,
+        "injected_extra_records": 1
+      },
+      "observed": {
+        "state": "DIVERGED",
+        "draft_count": 2,
+        "put_calls": 1,
+        "attempts": 1,
+        "verified_payload_matches": true,
+        "target_versions": [
+          "1",
+          "1"
+        ],
+        "target_hashes": [
+          "c589fa0ed4be57ab4b82f9f826f64a36e643bfe91f80702da140cae67bf790a3",
+          "c589fa0ed4be57ab4b82f9f826f64a36e643bfe91f80702da140cae67bf790a3"
+        ]
+      }
+    }
+  ],
+  "faults": {},
+  "summary": {
+    "passed": 17,
+    "total": 17,
+    "duplicate_effect": 0,
+    "lost_write": 0,
+    "false_ack": 0,
+    "unsafe_send": 0,
+    "unknown_outcome_resolved": {
+      "numerator": 5,
+      "denominator": 5
+    },
+    "injected_mismatch_detection_recall": {
+      "numerator": 4,
+      "denominator": 4
+    },
+    "injected_duplicate_records": 1
+  }
+}

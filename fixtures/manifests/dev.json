@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "id": "DEV-001",
+      "label": "Normal / 100 parts",
+      "origin_type": "synthetic",
+      "split": "dev",
+      "part_family_group": "PM-BRKT-010",
+      "author": "RFQ Workbench",
+      "license": "Original project fixture; synthetic demonstration only",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/01-正常报价.md",
+      "drawing": "fixtures/dev/drawings/PM-BRKT-010_B.pdf",
+      "hashes": {
+        "rfq": "8afc523214520fc72aa953ff946c30609bf31e0d296a8ef5e08ee0a693974b4a",
+        "drawing": "12f31334b4f24db8cce2b4c030ce464a7ac4c182cb4b3d2f576746b164d8cfd1"
+      }
+    },
+    {
+      "id": "DEV-002",
+      "label": "Quantity / 500 parts",
+      "origin_type": "synthetic",
+      "split": "dev",
+      "part_family_group": "PM-BRKT-010",
+      "author": "RFQ Workbench",
+      "license": "Original project fixture; synthetic demonstration only",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/02-数量变更.md",
+      "drawing": "fixtures/dev/drawings/PM-BRKT-010_B.pdf",
+      "hashes": {
+        "rfq": "42a7260dde27439662abfd4be0c9074ed479ba4496a7d4defd67c4fc92eefd7f",
+        "drawing": "12f31334b4f24db8cce2b4c030ce464a7ac4c182cb4b3d2f576746b164d8cfd1"
+      }
+    },
+    {
+      "id": "DEV-003",
+      "label": "Revision conflict",
+      "origin_type": "synthetic",
+      "split": "dev",
+      "part_family_group": "PM-BRKT-010",
+      "author": "RFQ Workbench",
+      "license": "Original project fixture; synthetic demonstration only",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/03-版次冲突.md",
+      "drawing": "fixtures/dev/drawings/PM-BRKT-010_A.pdf",
+      "hashes": {
+        "rfq": "b5dc64862f5c7720220d8b3a871ebcfb362e3a2619b4b988b0e293b6d64ed232",
+        "drawing": "70be944e521db1635b082a693fb5a7e51a3e37329fcece700eb3ab89bd4a570f"
+      }
+    },
+    {
+      "id": "DEV-004",
+      "label": "Missing material",
+      "origin_type": "synthetic",
+      "split": "dev",
+      "part_family_group": "PM-BRKT-010",
+      "author": "RFQ Workbench",
+      "license": "Original project fixture; synthetic demonstration only",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/04-材料缺失.md",
+      "drawing": "fixtures/dev/drawings/PM-BRKT-010_missing-material.pdf",
+      "hashes": {
+        "rfq": "3b1614aa9c90a5a23d0a6b784cfe7d4e28e0c71b625600f75d2180a52e156f16",
+        "drawing": "309fb6375e587eeba617f8c7a8e238e89fefc3e53c825838bdfff4e870bc1069"
+      }
+    },
+    {
+      "id": "DEV-005",
+      "label": "Unsupported unit",
+      "origin_type": "synthetic",
+      "split": "dev",
+      "part_family_group": "PM-BRKT-010",
+      "author": "RFQ Workbench",
+      "license": "Original project fixture; synthetic demonstration only",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/05-单位不适用.md",
+      "drawing": "fixtures/dev/drawings/PM-BRKT-010_inch.pdf",
+      "hashes": {
+        "rfq": "c306c3cc3d12a9bdd23d74f1aa6458a95d4c9a1094302bfce44a231355d75472",
+        "drawing": "4afdb7586b82d2dd3a3cd4e10825e27889d61c0b4d2c074adb20afe6abdc166a"
+      }
+    },
+    {
+      "id": "DEV-006",
+      "label": "No approved material template",
+      "origin_type": "synthetic",
+      "split": "dev",
+      "part_family_group": "PM-BRKT-010",
+      "author": "RFQ Workbench",
+      "license": "Original project fixture; synthetic demonstration only",
+      "rfq": "docs/04-项目介绍与展示/08-RFQ样例/06-材料不适用.md",
+      "drawing": "fixtures/dev/drawings/PM-BRKT-010_steel.pdf",
+      "hashes": {
+        "rfq": "95c199f1f19b99b955c96d041c0dafefa4c4fca14e76ca6f300b95abeaf01eec",
+        "drawing": "9aa867d9e385719e969ab9c4e2708d06761cb37497e3432bc721b56c6b158359"
+      }
+    }
+  ]
+}

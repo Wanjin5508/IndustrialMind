@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "provenance": "Synthetic holdout. Values transcribed from the authored release-sheet and RFQ specifications; quote amounts and cost components recomputed independently of the application. No external reviewer sign-off.",
+  "field_order": ["rfq.part_number", "rfq.required_revision", "rfq.quantity", "rfq.currency", "drawing.part_number", "drawing.revision", "drawing.material", "drawing.unit", "drawing.width_mm", "drawing.height_mm", "drawing.thickness_mm", "drawing.hole_diameter_mm", "drawing.surface_finish"],
+  "cases": {
+    "F01": {
+      "fields": ["AX-218", "C", "48", "EUR", "AX-218", "C", "Al-6082-T6", "mm", "63", "38", "9", "4.8", "Clear anodize"],
+      "quote": {"unit_price": "25.82", "total_price": "1239.36", "blank_code": "RAW-AX-218", "batch_blanks": 48, "batch_costs": ["268.80", "483.84", "86.40", "62.40", "90.00"]}
+    },
+    "F02": {
+      "fields": ["KJ-407", "D", "125", "EUR", "KJ-407", "D", "Al-7075-T6", "mm", "94", "41", "14", "8.2", "Hard anodize"],
+      "quote": {"unit_price": "46.87", "total_price": "5858.75", "blank_code": "RAW-KJ-407", "batch_blanks": 125, "batch_costs": ["1556.25", "1995.00", "393.75", "210.00", "63.00"]}
+    },
+    "F03": {
+      "fields": ["VC-531", "E", "60", "EUR", "VC-531", "E", "Al-5083-H111", "mm", "72", "58", "11", "5.5", "Bead blast"],
+      "quote": {"unit_price": "25.48", "total_price": "1528.80", "blank_code": "RAW-VC-531", "batch_blanks": 60, "batch_costs": ["552.00", "429.00", "75.00", "64.80", "71.50"]}
+    },
+    "F04": {
+      "fields": ["YT-624", "F", "240", "EUR", "YT-624", "F", "Al-6063-T6", "mm", "105", "63", "16", "9.0", "Black anodize"],
+      "quote": {"unit_price": "54.39", "total_price": "13053.60", "blank_code": "RAW-YT-624", "batch_blanks": 240, "batch_costs": ["3264.00", "4305.60", "1008.00", "403.20", "156.00"]}
+    },
+    "F05": {
+      "fields": ["CZ-817", "D", "85", "EUR", "CZ-817", "C", "Al-6082-T6", "mm", "57", "32", "7", "4.2", "Clear anodize"],
+      "block": {"issue": "REVISION_CONFLICT", "field": "drawing_revision", "cost_error": "REVIEW_REQUIRED"}
+    },
+    "F06": {
+      "fields": ["HF-291", "G", "90", "EUR", "HF-291", "F", "Al-7075-T6", "mm", "88", "52", "10", "6.8", "Hard anodize"],
+      "block": {"issue": "REVISION_CONFLICT", "field": "drawing_revision", "cost_error": "REVIEW_REQUIRED"}
+    },
+    "F07": {
+      "fields": ["MN-762", "F", "72", "EUR", "MN-762", "D", "Al-5083-H111", "mm", "77", "43", "8", "4.5", "Bead blast"],
+      "block": {"issue": "REVISION_CONFLICT", "field": "drawing_revision", "cost_error": "REVIEW_REQUIRED"}
+    },
+    "F08": {
+      "fields": ["RU-138", "C", "54", "EUR", "RU-138", "C", null, "mm", "68", "48", "9", "5.0", "Clear anodize"],
+      "block": {"issue": "MISSING_FIELD", "field": "drawing.material", "cost_error": "REVIEW_REQUIRED"}
+    },
+    "F09": {
+      "fields": ["DP-354", "H", null, "EUR", "DP-354", "H", "Al-6063-T6", "mm", "55", "31", "6", "3.5", "Black anodize"],
+      "block": {"issue": "MISSING_FIELD", "field": "rfq.quantity", "cost_error": "REVIEW_REQUIRED"},
+      "recovered": {"unit_price": "25.23", "total_price": "1614.72"}
+    },
+    "F10": {
+      "fields": ["QW-685", "J", "110", "EUR", "QW-685", "J", "Al-6082-T6", "mm", "96", "59", "13", "7.2", null],
+      "block": {"issue": "MISSING_FIELD", "field": "drawing.surface_finish", "cost_error": "REVIEW_REQUIRED"}
+    },
+    "F11": {
+      "fields": ["GS-443", "K", "96", "EUR", "GS-443", "K", "Al-7075-T6", "inch", "4.3", "2.9", "0.5", "0.25", "Hard anodize"],
+      "block": {"issue": "UNSUPPORTED_UNIT", "field": "unit", "cost_error": "REVIEW_REQUIRED"}
+    },
+    "F12": {
+      "fields": ["BJ-976", "L", "140", "EUR", "BJ-976", "L", "Al-5083-H111", "mm", "83", "46", "10", "6.3", "Bead blast"],
+      "block": {"cost_error": "NO_UNIQUE_BASIS", "knowledge_reason": "OUTSIDE_VALIDITY"}
+    }
+  }
+}

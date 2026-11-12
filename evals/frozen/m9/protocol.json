@@ -1,0 +1,13 @@
+{
+  "version": "m9-system-harness-v1",
+  "effective_utc": "2026-11-10T00:00:00+00:00",
+  "clock": "FakeClock",
+  "scenario_count": 17,
+  "scope": "Independent persistent fake systems; no external write",
+  "duplicate_metric": "Excludes the one deliberately injected target record in M9-17; that case must detect DUPLICATE.",
+  "sha256": {
+    "evals/frozen/m9/scenarios.json": "1b36e164b194f047ce82c5af1aaee47051a4d287eb28bc9ccc72b8c5fe9ac8e1",
+    "fixtures/reference/manufacturing.json": "bd2cad7ad786b50524de72e3ae63f9f410fd31edf50921126109820da29aeb1a",
+    "fixtures/reference/knowledge.json": "d6423819dbf096c148ddd3c72274db8396ab981b0caff3f953e0aece2fd8dbfb"
+  }
+}

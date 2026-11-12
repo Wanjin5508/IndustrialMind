@@ -1,0 +1,36 @@
+name: Engineering checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.lock
+      - run: python -m pip install --no-deps -e .
+      - run: python -m ruff check apps/api scripts tests
+      - run: python -m ruff format --check apps/api scripts tests
+      - run: python -m pytest -q
+      - run: python scripts/evaluate_m7.py --output var/m7/ci
+      - run: python scripts/evaluate_m9.py --output var/m9/ci
+      - run: python scripts/export_schemas.py && python scripts/export_openapi.py
+      - run: git diff --exit-code -- 'docs/04-项目介绍与展示/09-接口模式'
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npx prettier --check app next.config.ts tsconfig.json package.json
+      - run: npm run build
